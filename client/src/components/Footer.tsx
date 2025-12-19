@@ -6,11 +6,16 @@ export default function Footer() {
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                北
+            <div className="flex items-center space-x-3 mb-4">
+              <img 
+                src="/logo.png" 
+                alt="北上市倫理法人会ロゴ" 
+                className="h-10 w-10 object-contain"
+              />
+              <div className="flex flex-col">
+                <span className="text-xs text-muted-foreground">一般社団法人倫理研究所</span>
+                <span className="text-lg font-bold text-primary leading-tight">北上市倫理法人会</span>
               </div>
-              <span className="text-lg font-bold text-primary">北上市倫理法人会</span>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
               「心の経営」を学び、実践し、<br />
