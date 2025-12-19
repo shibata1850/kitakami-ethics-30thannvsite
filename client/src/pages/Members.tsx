@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -216,10 +217,10 @@ export default function Members() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {members.map((member: any) => (
-                      <Card
-                        key={member.id}
-                        className="overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary/60 hover:shadow-lg transition-all duration-300"
-                      >
+                      <Link key={member.id} href={`/members/${member.id}`}>
+                        <Card
+                          className="overflow-hidden border-2 border-dashed border-primary/30 hover:border-primary/60 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                        >
                         <CardContent className="p-6">
                           <div className="flex gap-4">
                             {member.photoUrl && (
@@ -358,6 +359,7 @@ export default function Members() {
                           </div>
                         </CardContent>
                       </Card>
+                      </Link>
                     ))}
                   </div>
                 )}

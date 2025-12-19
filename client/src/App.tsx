@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Schedule from "./pages/Schedule";
 import Overview from "./pages/Overview";
 import Members from "./pages/Members";
+import MemberDetail from "./pages/MemberDetail";
 import Blog from "./pages/Blog";
 import Greeting from "./pages/Greeting";
 import MemberAdmin from "./pages/MemberAdmin";
@@ -42,6 +43,7 @@ function Router() {
       <Route path={"/schedule"} component={Schedule} />
       <Route path={"/overview"} component={Overview} />
       <Route path={"/members"} component={Members} />
+      <Route path="/members/:id" component={MemberDetail} />
       <Route path={"/blog"} component={Blog} />
       <Route path="/blog/:slug" component={BlogDetail} />
       <Route path={"/contact"} component={Contact} />
