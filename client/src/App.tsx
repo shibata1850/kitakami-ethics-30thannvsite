@@ -19,6 +19,7 @@ import SeminarAdmin from "./pages/SeminarAdmin";
 import SeminarArchive from "./pages/SeminarArchive";
 import BlogManagement from "./pages/admin/BlogManagement";
 import BlogDetail from "./pages/BlogDetail";
+import JoinUs from "./pages/JoinUs";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -40,6 +41,7 @@ function Router() {
       <Route path={"/blog"} component={Blog} />
       <Route path="/blog/:slug" component={BlogDetail} />
       <Route path={"/contact"} component={Contact} />
+      <Route path={"/joinus"} component={JoinUs} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

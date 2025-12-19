@@ -78,7 +78,7 @@ export default function Header() {
             )
           ))}
           <Button asChild className="bg-primary hover:bg-primary/90 text-white font-bold shadow-md">
-            <Link href="/join">入会案内</Link>
+            <Link href="/joinus">入会案内</Link>
           </Button>
         </nav>
 
@@ -126,7 +126,7 @@ export default function Header() {
               </div>
             ))}
             <Button asChild className="w-full bg-primary text-white mt-4">
-              <Link href="/join" onClick={() => setIsMobileMenuOpen(false)}>入会案内</Link>
+              <Link href="/joinus" onClick={() => setIsMobileMenuOpen(false)}>入会案内</Link>
             </Button>
           </nav>
         </div>
