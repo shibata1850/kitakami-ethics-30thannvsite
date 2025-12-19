@@ -22,6 +22,13 @@
       "when": 1766135820400,
       "tag": "0002_secret_switch",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1766138179388,
+      "tag": "0003_fresh_mikhail_rasputin",
+      "breakpoints": true
     }
   ]
 }

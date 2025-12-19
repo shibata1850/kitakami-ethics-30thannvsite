@@ -2,31 +2,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 export default function Schedule() {
-  const upcomingSeminars = [
-    {
-      date: "2025年12月23日(火)",
-      time: "6:00〜7:00",
-      speaker: "株式会社〇〇 代表取締役",
-      speakerName: "山田 太郎 様",
-      theme: "逆境を乗り越える経営者の心構え",
-    },
-    {
-      date: "2025年12月30日(火)",
-      time: "6:00〜7:00",
-      speaker: "年末特別セミナー",
-      speakerName: "会員代表スピーチ",
-      theme: "今年の振り返りと来年の抱負",
-    },
-    {
-      date: "2026年1月6日(火)",
-      time: "6:00〜7:00",
-      speaker: "新年特別講話",
-      speakerName: "会長挨拶",
-      theme: "新年の決意と目標設定",
-    },
-  ];
+  const { data: upcomingSeminars = [] } = trpc.seminars.upcoming.useQuery();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -156,33 +135,55 @@ export default function Schedule() {
               今後の経営者モーニングセミナー予定
             </h2>
             <div className="max-w-4xl mx-auto space-y-6">
-              {upcomingSeminars.map((seminar, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Calendar className="w-5 h-5 text-pink-600" />
-                          <span className="font-bold text-lg text-gray-900">{seminar.date}</span>
-                          <Clock className="w-5 h-5 text-pink-600 ml-4" />
-                          <span className="text-gray-700">{seminar.time}</span>
-                        </div>
-                        <h3 className="text-xl font-bold mb-2 text-gray-900">{seminar.theme}</h3>
-                        <p className="text-gray-600">
-                          講師: {seminar.speaker} {seminar.speakerName}
-                        </p>
-                      </div>
-                      <div>
-                        <a href="/contact">
-                          <button className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition-colors whitespace-nowrap">
-                            参加申込
-                          </button>
-                        </a>
-                      </div>
-                    </div>
+              {upcomingSeminars.length === 0 ? (
+                <Card>
+                  <CardContent className="p-12 text-center text-gray-500">
+                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <p>現在、予定されているセミナーはありません。</p>
+                    <p className="text-sm mt-2">最新情報は随時更新されます。</p>
                   </CardContent>
                 </Card>
-              ))}
+              ) : (
+                upcomingSeminars.map((seminar: any) => (
+                  <Card key={seminar.id} className="hover:shadow-lg transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Calendar className="w-5 h-5 text-pink-600" />
+                            <span className="font-bold text-lg text-gray-900">
+                              {new Date(seminar.date).toLocaleDateString("ja-JP", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "short",
+                              })}
+                            </span>
+                            <Clock className="w-5 h-5 text-pink-600 ml-4" />
+                            <span className="text-gray-700">{seminar.time}</span>
+                          </div>
+                          <h3 className="text-xl font-bold mb-2 text-gray-900">{seminar.theme}</h3>
+                          <p className="text-gray-600">講師: {seminar.speaker}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <MapPin className="w-4 h-4 text-pink-600" />
+                            <span className="text-sm text-gray-600">{seminar.venue}</span>
+                          </div>
+                          {seminar.description && (
+                            <p className="text-sm text-gray-600 mt-2">{seminar.description}</p>
+                          )}
+                        </div>
+                        <div>
+                          <a href="/contact">
+                            <button className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition-colors whitespace-nowrap">
+                              参加申込
+                            </button>
+                          </a>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </div>
           </div>
         </section>

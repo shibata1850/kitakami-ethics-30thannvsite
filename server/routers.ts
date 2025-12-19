@@ -298,5 +298,61 @@ export const appRouter = router({
         return result;
       }),
   }),
+  seminars: router({
+    // Public: Get all seminars
+    list: publicProcedure.query(async () => {
+      return db.getAllSeminars();
+    }),
+    // Public: Get upcoming seminars
+    upcoming: publicProcedure.query(async () => {
+      return db.getUpcomingSeminars();
+    }),
+    // Public: Get seminar by ID
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return db.getSeminarById(input.id);
+      }),
+    // Protected: Create new seminar (admin only)
+    create: protectedProcedure
+      .input(
+        z.object({
+          date: z.string().min(1), // YYYY-MM-DD
+          time: z.string().min(1),
+          speaker: z.string().min(1),
+          theme: z.string().min(1),
+          venue: z.string().min(1),
+          description: z.string().optional(),
+          sortOrder: z.number().default(0),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return db.createSeminar(input);
+      }),
+    // Protected: Update seminar (admin only)
+    update: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          date: z.string().min(1).optional(),
+          time: z.string().min(1).optional(),
+          speaker: z.string().min(1).optional(),
+          theme: z.string().min(1).optional(),
+          venue: z.string().min(1).optional(),
+          description: z.string().optional(),
+          sortOrder: z.number().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        return db.updateSeminar(id, data);
+      }),
+    // Protected: Delete seminar (admin only)
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return db.deleteSeminar(input.id);
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

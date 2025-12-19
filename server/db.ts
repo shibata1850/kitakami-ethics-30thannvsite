@@ -1,6 +1,6 @@
 import { eq, like, or, and, desc, asc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer } from "../drizzle/schema";
+import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -223,5 +223,51 @@ export async function deleteOfficer(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(officers).where(eq(officers.id, id));
+  return { id };
+}
+
+// ========== Seminars CRUD ==========
+
+export async function createSeminar(seminar: InsertSeminar) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(seminars).values(seminar);
+  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
+  return { id: Number(insertId) };
+}
+
+export async function getAllSeminars() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.select().from(seminars).orderBy(asc(seminars.date), asc(seminars.sortOrder));
+}
+
+export async function getUpcomingSeminars() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  return db.select().from(seminars)
+    .where(sql`${seminars.date} >= ${today}`)
+    .orderBy(asc(seminars.date), asc(seminars.sortOrder));
+}
+
+export async function getSeminarById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(seminars).where(eq(seminars.id, id));
+  return result[0] || null;
+}
+
+export async function updateSeminar(id: number, data: Partial<InsertSeminar>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(seminars).set(data).where(eq(seminars.id, id));
+  return { id };
+}
+
+export async function deleteSeminar(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(seminars).where(eq(seminars.id, id));
   return { id };
 }

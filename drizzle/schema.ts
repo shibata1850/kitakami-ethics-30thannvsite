@@ -63,3 +63,22 @@ export const officers = mysqlTable("officers", {
 
 export type Officer = typeof officers.$inferSelect;
 export type InsertOfficer = typeof officers.$inferInsert;
+
+/**
+ * Seminars table for storing morning seminar schedule
+ */
+export const seminars = mysqlTable("seminars", {
+  id: int("id").autoincrement().primaryKey(),
+  date: varchar("date", { length: 10 }).notNull(), // YYYY-MM-DD形式
+  time: varchar("time", { length: 20 }).notNull(), // 例: "朝6:00〜7:00"
+  speaker: varchar("speaker", { length: 200 }).notNull(), // 講師名
+  theme: varchar("theme", { length: 300 }).notNull(), // テーマ
+  venue: varchar("venue", { length: 300 }).notNull(), // 会場
+  description: text("description"), // 説明（任意）
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Seminar = typeof seminars.$inferSelect;
+export type InsertSeminar = typeof seminars.$inferInsert;
