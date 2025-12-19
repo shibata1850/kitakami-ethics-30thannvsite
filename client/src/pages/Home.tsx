@@ -127,6 +127,65 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Video Section */}
+        <section className="py-20 bg-white">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4 text-primary font-serif">動画で知る倫理法人会</h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                実際の活動の様子や、会員様の生の声をご覧ください。<br/>
+                倫理法人会での学びが、どのように経営や人生に活かされているかをご紹介します。
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Introduction Video */}
+              <div className="space-y-4">
+                <div className="aspect-video rounded-xl overflow-hidden shadow-lg bg-black">
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    src="https://www.youtube.com/embed/FcV9-7gMdCo" 
+                    title="経営者モーニングセミナー紹介動画" 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                  ></iframe>
+                </div>
+                <div className="p-2">
+                  <h3 className="text-xl font-bold mb-2">120秒でわかる！経営者モーニングセミナー</h3>
+                  <p className="text-muted-foreground">
+                    週に一度の朝活「経営者モーニングセミナー」の魅力を短時間でご紹介します。
+                    経営者としての自己革新の場がここにあります。
+                  </p>
+                </div>
+              </div>
+
+              {/* Interview Video */}
+              <div className="space-y-4">
+                <div className="aspect-video rounded-xl overflow-hidden shadow-lg bg-black">
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    src="https://www.youtube.com/embed/EwsPu_hWWkA" 
+                    title="会員インタビュー動画" 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                  ></iframe>
+                </div>
+                <div className="p-2">
+                  <h3 className="text-xl font-bold mb-2">会員インタビュー：倫理での学びと実践</h3>
+                  <p className="text-muted-foreground">
+                    実際に倫理法人会で学び、実践している経営者の生の声をお届けします。
+                    入会のきっかけや、倫理指導を通じた変化について語っていただきました。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Activities Section */}
         <section className="py-20 bg-secondary/30">
           <div className="container">
