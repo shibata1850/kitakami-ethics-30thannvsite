@@ -37,6 +37,12 @@ export const members = mysqlTable("members", {
   photoUrl: varchar("photoUrl", { length: 500 }),
   category: varchar("category", { length: 50 }).notNull(),
   committee: varchar("committee", { length: 50 }),
+  websiteUrl: varchar("websiteUrl", { length: 500 }), // 公式ホームページURL
+  twitterUrl: varchar("twitterUrl", { length: 500 }), // X (Twitter) URL
+  youtubeUrl: varchar("youtubeUrl", { length: 500 }), // YouTube URL
+  tiktokUrl: varchar("tiktokUrl", { length: 500 }), // TikTok URL
+  instagramUrl: varchar("instagramUrl", { length: 500 }), // Instagram URL
+  lineUrl: varchar("lineUrl", { length: 500 }), // LINE URL
   sortOrder: int("sortOrder").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

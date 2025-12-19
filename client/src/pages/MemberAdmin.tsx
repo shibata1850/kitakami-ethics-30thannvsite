@@ -61,6 +61,12 @@ interface MemberFormData {
   photoUrl?: string;
   category: string;
   committee?: string;
+  websiteUrl?: string;
+  twitterUrl?: string;
+  youtubeUrl?: string;
+  tiktokUrl?: string;
+  instagramUrl?: string;
+  lineUrl?: string;
   sortOrder: number;
 }
 
@@ -216,6 +222,12 @@ export default function MemberAdmin() {
       photoUrl,
       category: formData.get("category") as string,
       committee: formData.get("committee") as string,
+      websiteUrl: formData.get("websiteUrl") as string || undefined,
+      twitterUrl: formData.get("twitterUrl") as string || undefined,
+      youtubeUrl: formData.get("youtubeUrl") as string || undefined,
+      tiktokUrl: formData.get("tiktokUrl") as string || undefined,
+      instagramUrl: formData.get("instagramUrl") as string || undefined,
+      lineUrl: formData.get("lineUrl") as string || undefined,
       sortOrder: parseInt(formData.get("sortOrder") as string) || 0,
     };
 
@@ -383,6 +395,91 @@ export default function MemberAdmin() {
                           className="w-20 h-20 object-cover rounded"
                         />
                       )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="websiteUrl">公式ホームページURL</Label>
+                    <Input
+                      id="websiteUrl"
+                      name="websiteUrl"
+                      type="url"
+                      placeholder="https://example.com"
+                      defaultValue={editingMember?.websiteUrl}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-base font-semibold">SNSリンク</Label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      各SNSのURLを入力すると、会員紹介ページにアイコンが表示されます
+                    </p>
+                    
+                    <div className="grid grid-cols-1 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="twitterUrl" className="flex items-center gap-2">
+                          <span className="font-medium">X (Twitter)</span>
+                        </Label>
+                        <Input
+                          id="twitterUrl"
+                          name="twitterUrl"
+                          type="url"
+                          placeholder="https://twitter.com/username"
+                          defaultValue={editingMember?.twitterUrl}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="youtubeUrl" className="flex items-center gap-2">
+                          <span className="font-medium">YouTube</span>
+                        </Label>
+                        <Input
+                          id="youtubeUrl"
+                          name="youtubeUrl"
+                          type="url"
+                          placeholder="https://youtube.com/@username"
+                          defaultValue={editingMember?.youtubeUrl}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="tiktokUrl" className="flex items-center gap-2">
+                          <span className="font-medium">TikTok</span>
+                        </Label>
+                        <Input
+                          id="tiktokUrl"
+                          name="tiktokUrl"
+                          type="url"
+                          placeholder="https://tiktok.com/@username"
+                          defaultValue={editingMember?.tiktokUrl}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="instagramUrl" className="flex items-center gap-2">
+                          <span className="font-medium">Instagram</span>
+                        </Label>
+                        <Input
+                          id="instagramUrl"
+                          name="instagramUrl"
+                          type="url"
+                          placeholder="https://instagram.com/username"
+                          defaultValue={editingMember?.instagramUrl}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="lineUrl" className="flex items-center gap-2">
+                          <span className="font-medium">LINE</span>
+                        </Label>
+                        <Input
+                          id="lineUrl"
+                          name="lineUrl"
+                          type="url"
+                          placeholder="https://line.me/R/ti/p/@username"
+                          defaultValue={editingMember?.lineUrl}
+                        />
+                      </div>
                     </div>
                   </div>
 

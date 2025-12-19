@@ -43,6 +43,13 @@
       "when": 1766154021735,
       "tag": "0005_public_nehzno",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1766185579408,
+      "tag": "0006_lethal_otto_octavius",
+      "breakpoints": true
     }
   ]
 }

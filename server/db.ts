@@ -110,7 +110,10 @@ export async function createMember(data: InsertMember) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const result = await db.insert(members).values(data);
-  return result;
+  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
+  const member = await getMemberById(Number(insertId));
+  if (!member) throw new Error("Failed to create member");
+  return member;
 }
 
 export async function updateMember(id: number, data: Partial<InsertMember>) {
