@@ -67,6 +67,7 @@ interface MemberFormData {
   tiktokUrl?: string;
   instagramUrl?: string;
   lineUrl?: string;
+  services?: string;
   sortOrder: number;
 }
 
@@ -228,6 +229,7 @@ export default function MemberAdmin() {
       tiktokUrl: formData.get("tiktokUrl") as string || undefined,
       instagramUrl: formData.get("instagramUrl") as string || undefined,
       lineUrl: formData.get("lineUrl") as string || undefined,
+      services: formData.get("services") as string || undefined,
       sortOrder: parseInt(formData.get("sortOrder") as string) || 0,
     };
 
@@ -481,6 +483,20 @@ export default function MemberAdmin() {
                         />
                       </div>
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="services">提供サービス・商品</Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      カンマ区切りで複数入力できます（例：税務相談,経営コンサルティング,記帳代行）
+                    </p>
+                    <Textarea
+                      id="services"
+                      name="services"
+                      placeholder="例：税務相談,経営コンサルティング,記帳代行"
+                      rows={3}
+                      defaultValue={editingMember?.services}
+                    />
                   </div>
 
                   <div className="space-y-2">

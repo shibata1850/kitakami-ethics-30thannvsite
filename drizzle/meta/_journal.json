@@ -50,6 +50,13 @@
       "when": 1766185579408,
       "tag": "0006_lethal_otto_octavius",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1766186258598,
+      "tag": "0007_tired_lucky_pierre",
+      "breakpoints": true
     }
   ]
 }

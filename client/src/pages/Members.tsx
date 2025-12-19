@@ -255,6 +255,23 @@ export default function Members() {
                                 </span>
                               </div>
                               
+                              {/* 提供サービス・商品 */}
+                              {member.services && (
+                                <div className="mt-3">
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1.5">提供サービス・商品</p>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {member.services.split(',').map((service: string, index: number) => (
+                                      <span
+                                        key={index}
+                                        className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-md border border-primary/20"
+                                      >
+                                        {service.trim()}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
                               {/* SNSリンクと公式ホームページ */}
                               <div className="mt-4 flex flex-wrap items-center gap-2">
                                 {member.websiteUrl && (

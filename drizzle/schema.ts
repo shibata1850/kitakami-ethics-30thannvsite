@@ -43,6 +43,7 @@ export const members = mysqlTable("members", {
   tiktokUrl: varchar("tiktokUrl", { length: 500 }), // TikTok URL
   instagramUrl: varchar("instagramUrl", { length: 500 }), // Instagram URL
   lineUrl: varchar("lineUrl", { length: 500 }), // LINE URL
+  services: text("services"), // 提供サービス・商品（カンマ区切り）
   sortOrder: int("sortOrder").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
