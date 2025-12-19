@@ -82,3 +82,25 @@ export const seminars = mysqlTable("seminars", {
 
 export type Seminar = typeof seminars.$inferSelect;
 export type InsertSeminar = typeof seminars.$inferInsert;
+/**
+ * Blog posts table for storing blog articles
+ */
+export const blogPosts = mysqlTable("blogPosts", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 300 }).notNull(),
+  slug: varchar("slug", { length: 300 }).notNull().unique(), // URL用のスラッグ
+  content: text("content").notNull(), // Markdown形式の本文
+  excerpt: text("excerpt"), // 抜粋（一覧表示用）
+  category: varchar("category", { length: 50 }).notNull(), // カテゴリー（活動報告、お知らせ、イベント、その他）
+  tags: text("tags"), // タグ（カンマ区切り）
+  thumbnailUrl: varchar("thumbnailUrl", { length: 500 }), // サムネイル画像URL
+  status: mysqlEnum("status", ["draft", "published"]).default("draft").notNull(), // 公開ステータス
+  publishedAt: timestamp("publishedAt"), // 公開日時
+  authorId: int("authorId"), // 投稿者ID（usersテーブルへの参照）
+  viewCount: int("viewCount").default(0).notNull(), // 閲覧数
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = typeof blogPosts.$inferInsert;

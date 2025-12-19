@@ -358,5 +358,125 @@ export const appRouter = router({
         return db.deleteSeminar(input.id);
       }),
   }),
+
+  blogPosts: router({
+    // Public: Get all published blog posts with optional filters
+    list: publicProcedure
+      .input(
+        z.object({
+          category: z.string().optional(),
+          searchQuery: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return db.getFilteredBlogPosts({ ...input, status: "published" });
+      }),
+    // Public: Get blog post by ID
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const post = await db.getBlogPostById(input.id);
+        if (post && post.status === "published") {
+          // Increment view count
+          await db.incrementBlogPostViewCount(input.id);
+        }
+        return post;
+      }),
+    // Public: Get blog post by slug
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const post = await db.getBlogPostBySlug(input.slug);
+        if (post && post.status === "published") {
+          // Increment view count
+          await db.incrementBlogPostViewCount(post.id);
+        }
+        return post;
+      }),
+    // Protected: Get all blog posts (including drafts) for admin
+    adminList: protectedProcedure
+      .input(
+        z.object({
+          category: z.string().optional(),
+          searchQuery: z.string().optional(),
+          status: z.enum(["draft", "published"]).optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return db.getFilteredBlogPosts(input);
+      }),
+    // Protected: Create new blog post (admin only)
+    create: protectedProcedure
+      .input(
+        z.object({
+          title: z.string().min(1),
+          slug: z.string().min(1),
+          content: z.string().min(1),
+          excerpt: z.string().optional(),
+          category: z.string().min(1),
+          tags: z.string().optional(),
+          thumbnailUrl: z.string().optional(),
+          status: z.enum(["draft", "published"]).default("draft"),
+          publishedAt: z.date().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const postData = {
+          ...input,
+          authorId: ctx.user?.id,
+          publishedAt: input.status === "published" && !input.publishedAt ? new Date() : input.publishedAt,
+        };
+        return db.createBlogPost(postData);
+      }),
+    // Protected: Update blog post (admin only)
+    update: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          title: z.string().min(1).optional(),
+          slug: z.string().min(1).optional(),
+          content: z.string().min(1).optional(),
+          excerpt: z.string().optional(),
+          category: z.string().min(1).optional(),
+          tags: z.string().optional(),
+          thumbnailUrl: z.string().optional(),
+          status: z.enum(["draft", "published"]).optional(),
+          publishedAt: z.date().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        // If status is being changed to published and publishedAt is not set, set it to now
+        if (data.status === "published" && !data.publishedAt) {
+          const currentPost = await db.getBlogPostById(id);
+          if (currentPost && currentPost.status === "draft") {
+            data.publishedAt = new Date();
+          }
+        }
+        return db.updateBlogPost(id, data);
+      }),
+    // Protected: Delete blog post (admin only)
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return db.deleteBlogPost(input.id);
+      }),
+    // Protected: Upload thumbnail image
+    uploadThumbnail: protectedProcedure
+      .input(
+        z.object({
+          filename: z.string(),
+          contentType: z.string(),
+          data: z.string(), // base64 encoded
+        })
+      )
+      .mutation(async ({ input }) => {
+        const buffer = Buffer.from(input.data, "base64");
+        const timestamp = Date.now();
+        const key = `blog-thumbnails/${timestamp}-${input.filename}`;
+        const result = await storagePut(key, buffer, input.contentType);
+        return { url: result.url };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

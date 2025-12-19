@@ -1,50 +1,28 @@
+import { useState } from "react";
+import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, User, Tag } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Calendar, Eye, Tag } from "lucide-react";
+
+const CATEGORIES = ["活動報告", "お知らせ", "イベント", "その他"];
 
 export default function Blog() {
-  const blogPosts = [
-    {
-      id: 1,
-      title: "新年特別講演会を開催しました",
-      date: "2026年1月10日",
-      author: "事務局",
-      category: "イベント報告",
-      excerpt: "2026年1月6日、新年特別講演会を開催いたしました。多数の会員・ゲストの皆様にご参加いただき、盛会のうちに終了することができました...",
-      image: "/images/seminar_lecture.png",
-    },
-    {
-      id: 2,
-      title: "年末感謝の集いを開催しました",
-      date: "2025年12月20日",
-      author: "事務局",
-      category: "イベント報告",
-      excerpt: "2025年12月17日、年末感謝の集いを開催いたしました。今年1年の活動を振り返り、会員同士の親睦を深める有意義な時間となりました...",
-      image: "/images/networking_event.png",
-    },
-    {
-      id: 3,
-      title: "清掃活動を実施しました",
-      date: "2025年11月25日",
-      author: "事務局",
-      category: "社会貢献活動",
-      excerpt: "11月23日、北上駅周辺の清掃活動を実施しました。会員20名が参加し、地域の美化に貢献することができました...",
-      image: "/images/cleaning_activity.png",
-    },
-    {
-      id: 4,
-      title: "活力朝礼研修会を開催しました",
-      date: "2025年10月15日",
-      author: "事務局",
-      category: "研修会",
-      excerpt: "活力朝礼の実践方法を学ぶ研修会を開催しました。参加企業からは「すぐに実践したい」との声が多数寄せられました...",
-      image: "/images/morning_assembly.png",
-    },
-  ];
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: posts, isLoading } = trpc.blogPosts.list.useQuery({
+    category: filterCategory === "all" ? undefined : filterCategory,
+    searchQuery: searchQuery || undefined,
+  });
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background font-sans">
       <Header />
       
       <main className="flex-1">
@@ -60,65 +38,134 @@ export default function Blog() {
           </div>
         </section>
 
+        {/* 検索・絞り込み */}
+        <section className="py-8 bg-white border-b">
+          <div className="container">
+            <div className="max-w-5xl mx-auto">
+              <Card className="border-pink-200">
+                <CardContent className="pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>検索</Label>
+                      <Input
+                        placeholder="タイトル・本文で検索"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label>カテゴリー</Label>
+                      <Select value={filterCategory} onValueChange={setFilterCategory}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="すべて" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">すべて</SelectItem>
+                          {CATEGORIES.map((cat) => (
+                            <SelectItem key={cat} value={cat}>
+                              {cat}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setFilterCategory("all");
+                    }}
+                  >
+                    リセット
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* ブログ記事一覧 */}
         <section className="py-16 bg-white">
           <div className="container">
             <div className="max-w-5xl mx-auto space-y-8">
-              {blogPosts.map((post) => (
-                <Card key={post.id} className="hover:shadow-lg transition-shadow overflow-hidden">
-                  <div className="md:flex">
-                    <div className="md:w-1/3">
-                      <img 
-                        src={post.image} 
-                        alt={post.title}
-                        className="w-full h-64 md:h-full object-cover"
-                      />
-                    </div>
-                    <div className="md:w-2/3">
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-4 mb-3 text-sm text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{post.date}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            <span>{post.author}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Tag className="w-4 h-4" />
-                            <span className="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">
-                              {post.category}
-                            </span>
-                          </div>
+              {isLoading && (
+                <div className="text-center py-12 text-muted-foreground">
+                  読み込み中...
+                </div>
+              )}
+              {posts?.map((post: any) => (
+                <Link key={post.id} href={`/blog/${post.slug}`}>
+                  <Card className="hover:shadow-lg transition-shadow overflow-hidden border-pink-200 cursor-pointer">
+                    <div className="md:flex">
+                      {post.thumbnailUrl && (
+                        <div className="md:w-1/3">
+                          <img 
+                            src={post.thumbnailUrl} 
+                            alt={post.title}
+                            className="w-full h-64 md:h-full object-cover"
+                          />
                         </div>
-                        <h2 className="text-2xl font-bold mb-3 text-gray-900 hover:text-pink-600 transition-colors">
-                          {post.title}
-                        </h2>
-                        <p className="text-gray-700 mb-4 leading-relaxed">
-                          {post.excerpt}
-                        </p>
-                        <button className="text-pink-600 font-bold hover:text-pink-700 transition-colors">
-                          続きを読む →
-                        </button>
-                      </CardContent>
+                      )}
+                      <div className={post.thumbnailUrl ? "md:w-2/3" : "w-full"}>
+                        <CardContent className="p-6">
+                          <div className="flex items-center gap-4 mb-3 text-sm text-gray-600">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              <span>
+                                {post.publishedAt 
+                                  ? new Date(post.publishedAt).toLocaleDateString("ja-JP")
+                                  : "未公開"}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Eye className="w-4 h-4" />
+                              <span>{post.viewCount} 閲覧</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Tag className="w-4 h-4" />
+                              <span className="bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs">
+                                {post.category}
+                              </span>
+                            </div>
+                          </div>
+                          <h2 className="text-2xl font-bold mb-3 text-gray-900 hover:text-pink-600 transition-colors">
+                            {post.title}
+                          </h2>
+                          {post.excerpt && (
+                            <p className="text-gray-700 mb-4 leading-relaxed">
+                              {post.excerpt}
+                            </p>
+                          )}
+                          {post.tags && (
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {post.tags.split(",").map((tag: string, index: number) => (
+                                <span
+                                  key={index}
+                                  className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                                >
+                                  {tag.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <span className="text-pink-600 font-bold hover:text-pink-700 transition-colors">
+                            続きを読む →
+                          </span>
+                        </CardContent>
+                      </div>
                     </div>
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               ))}
-            </div>
-
-            {/* ページネーション */}
-            <div className="flex justify-center gap-2 mt-12">
-              <button className="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700 transition-colors">
-                1
-              </button>
-              <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
-                2
-              </button>
-              <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
-                3
-              </button>
+              {posts?.length === 0 && !isLoading && (
+                <Card className="border-pink-200">
+                  <CardContent className="p-12 text-center text-muted-foreground">
+                    ブログ記事がありません
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         </section>
@@ -131,30 +178,21 @@ export default function Blog() {
             </h2>
             <div className="max-w-4xl mx-auto">
               <div className="grid md:grid-cols-4 gap-4">
-                <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
-                    <p className="font-bold text-gray-900">イベント報告</p>
-                    <p className="text-sm text-gray-600 mt-1">12件</p>
-                  </CardContent>
-                </Card>
-                <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
-                    <p className="font-bold text-gray-900">社会貢献活動</p>
-                    <p className="text-sm text-gray-600 mt-1">8件</p>
-                  </CardContent>
-                </Card>
-                <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
-                    <p className="font-bold text-gray-900">研修会</p>
-                    <p className="text-sm text-gray-600 mt-1">6件</p>
-                  </CardContent>
-                </Card>
-                <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
-                    <p className="font-bold text-gray-900">お知らせ</p>
-                    <p className="text-sm text-gray-600 mt-1">15件</p>
-                  </CardContent>
-                </Card>
+                {CATEGORIES.map((cat) => {
+                  const count = posts?.filter((p: any) => p.category === cat).length || 0;
+                  return (
+                    <Card
+                      key={cat}
+                      className="text-center hover:shadow-lg transition-shadow cursor-pointer border-pink-200"
+                      onClick={() => setFilterCategory(cat)}
+                    >
+                      <CardContent className="p-4">
+                        <p className="font-bold text-gray-900">{cat}</p>
+                        <p className="text-sm text-gray-600 mt-1">{count}件</p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -170,11 +208,11 @@ export default function Blog() {
               経営者モーニングセミナーは、どなたでもゲストとして参加いただけます。
               お気軽にお申し込みください。
             </p>
-            <a href="/contact">
-              <button className="bg-white text-pink-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors">
+            <Link href="/contact">
+              <Button size="lg" variant="secondary" className="text-pink-600 font-bold">
                 ゲスト参加を申し込む
-              </button>
-            </a>
+              </Button>
+            </Link>
           </div>
         </section>
       </main>

@@ -17,6 +17,8 @@ import OfficerAdmin from "./pages/OfficerAdmin";
 import Officers from "./pages/Officers";
 import SeminarAdmin from "./pages/SeminarAdmin";
 import SeminarArchive from "./pages/SeminarArchive";
+import BlogManagement from "./pages/admin/BlogManagement";
+import BlogDetail from "./pages/BlogDetail";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -30,11 +32,13 @@ function Router() {
       <Route path="/admin/members" component={MemberAdmin} />
       <Route path="/admin/officers" component={OfficerAdmin} />
       <Route path="/admin/seminars" component={SeminarAdmin} />
+      <Route path="/admin/blog" component={BlogManagement} />
       <Route path="/seminars/archive" component={SeminarArchive} />
       <Route path={"/schedule"} component={Schedule} />
       <Route path={"/overview"} component={Overview} />
       <Route path={"/members"} component={Members} />
       <Route path={"/blog"} component={Blog} />
+      <Route path="/blog/:slug" component={BlogDetail} />
       <Route path={"/contact"} component={Contact} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
