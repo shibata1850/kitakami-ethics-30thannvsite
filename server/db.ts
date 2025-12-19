@@ -96,7 +96,7 @@ export async function getUserByOpenId(openId: string) {
 export async function getAllMembers() {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(members).orderBy(desc(members.createdAt));
+  return db.select().from(members).orderBy(asc(members.sortOrder), desc(members.createdAt));
 }
 
 export async function getMemberById(id: number) {
@@ -491,3 +491,4 @@ export async function getFilteredContacts(options: ContactFilterOptions) {
 
   return query;
 }
+
