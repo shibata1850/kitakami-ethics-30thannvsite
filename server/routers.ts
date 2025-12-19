@@ -103,6 +103,126 @@ export const appRouter = router({
         const result = await storagePut(fileKey, buffer, input.mimeType);
         return { url: result.url };
       }),
+
+    // Protected: Export members to CSV
+    exportCSV: protectedProcedure.query(async () => {
+      const members = await db.getAllMembers();
+      
+      // CSV header
+      const header = "氏名,会社名,タイトル,メッセージ,写真URL,カテゴリー,所属委員会,表示順序";
+      
+      // CSV rows
+      const rows = members.map(member => {
+        const escapeCsv = (str: string | null | undefined) => {
+          if (!str) return "";
+          // Escape double quotes and wrap in quotes if contains comma, newline, or quote
+          if (str.includes(",") || str.includes("\n") || str.includes('"')) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        };
+        
+        return [
+          escapeCsv(member.name),
+          escapeCsv(member.companyName),
+          escapeCsv(member.title),
+          escapeCsv(member.message),
+          escapeCsv(member.photoUrl || ""),
+          escapeCsv(member.category),
+          escapeCsv(member.committee || ""),
+          member.sortOrder.toString(),
+        ].join(",");
+      });
+      
+      const csv = [header, ...rows].join("\n");
+      return { csv };
+    }),
+
+    // Protected: Import members from CSV
+    importCSV: protectedProcedure
+      .input(
+        z.object({
+          csvContent: z.string(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const lines = input.csvContent.split("\n").filter(line => line.trim());
+        
+        if (lines.length < 2) {
+          throw new Error("CSVファイルが空です");
+        }
+        
+        // Skip header
+        const dataLines = lines.slice(1);
+        
+        const parseCsvLine = (line: string): string[] => {
+          const result: string[] = [];
+          let current = "";
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+            
+            if (char === '"' && inQuotes && nextChar === '"') {
+              current += '"';
+              i++; // Skip next quote
+            } else if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === "," && !inQuotes) {
+              result.push(current);
+              current = "";
+            } else {
+              current += char;
+            }
+          }
+          result.push(current);
+          return result;
+        };
+        
+        const imported: any[] = [];
+        const errors: string[] = [];
+        
+        for (let i = 0; i < dataLines.length; i++) {
+          try {
+            const fields = parseCsvLine(dataLines[i]);
+            
+            if (fields.length < 6) {
+              errors.push(`行 ${i + 2}: フィールド数が不足しています`);
+              continue;
+            }
+            
+            const [name, companyName, title, message, photoUrl, category, committee, sortOrder] = fields;
+            
+            if (!name || !companyName || !title || !message || !category) {
+              errors.push(`行 ${i + 2}: 必須フィールドが空です`);
+              continue;
+            }
+            
+            const memberData = {
+              name: name.trim(),
+              companyName: companyName.trim(),
+              title: title.trim(),
+              message: message.trim(),
+              photoUrl: photoUrl?.trim() || undefined,
+              category: category.trim(),
+              committee: committee?.trim() || undefined,
+              sortOrder: parseInt(sortOrder || "0") || 0,
+            };
+            
+            await db.createMember(memberData);
+            imported.push(memberData);
+          } catch (error: any) {
+            errors.push(`行 ${i + 2}: ${error.message}`);
+          }
+        }
+        
+        return {
+          success: imported.length,
+          errors,
+          total: dataLines.length,
+        };
+      }),
   }),
 });
 

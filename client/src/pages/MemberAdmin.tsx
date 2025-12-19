@@ -26,7 +26,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Pencil, Trash2, Plus, Upload } from "lucide-react";
+import { Pencil, Trash2, Plus, Upload, Download, FileUp } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -107,11 +107,63 @@ export default function MemberAdmin() {
   });
 
   const uploadPhoto = trpc.members.uploadPhoto.useMutation();
+  const exportCSV = trpc.members.exportCSV.useQuery(undefined, { enabled: false });
+  const importCSV = trpc.members.importCSV.useMutation({
+    onSuccess: (result) => {
+      toast.success(`${result.success}件の会員をインポートしました`);
+      if (result.errors.length > 0) {
+        toast.error(`${result.errors.length}件のエラーがありました`);
+        console.error("Import errors:", result.errors);
+      }
+      utils.members.list.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`エラー: ${error.message}`);
+    },
+  });
 
   const resetForm = () => {
     setEditingMember(null);
     setPhotoFile(null);
     setPhotoPreview(null);
+  };
+
+  const handleExportCSV = async () => {
+    try {
+      const result = await exportCSV.refetch();
+      if (result.data?.csv) {
+        const blob = new Blob(["\uFEFF" + result.data.csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `会員一覧_${new Date().toISOString().split("T")[0]}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success("CSVファイルをダウンロードしました");
+      }
+    } catch (error: any) {
+      toast.error(`エラー: ${error.message}`);
+    }
+  };
+
+  const handleImportCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const csvContent = event.target?.result as string;
+          await importCSV.mutateAsync({ csvContent });
+        } catch (error: any) {
+          toast.error(`エラー: ${error.message}`);
+        }
+      };
+      reader.readAsText(file, "UTF-8");
+      // Reset input
+      e.target.value = "";
+    }
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,14 +250,31 @@ export default function MemberAdmin() {
                 会員情報の登録・編集・削除ができます
               </p>
             </div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={() => resetForm()}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  新規登録
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleExportCSV}>
+                <Download className="mr-2 h-4 w-4" />
+                CSVエクスポート
+              </Button>
+              <Button variant="outline" asChild>
+                <label className="cursor-pointer">
+                  <FileUp className="mr-2 h-4 w-4" />
+                  CSVインポート
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={handleImportCSV}
+                    className="hidden"
+                  />
+                </label>
+              </Button>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button onClick={() => resetForm()}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    新規登録
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>
                     {editingMember ? "会員情報を編集" : "新しい会員を登録"}
@@ -341,6 +410,7 @@ export default function MemberAdmin() {
                 </form>
               </DialogContent>
             </Dialog>
+            </div>
           </div>
 
           {isLoading ? (
