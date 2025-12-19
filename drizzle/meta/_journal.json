@@ -15,6 +15,13 @@
       "when": 1766133830388,
       "tag": "0001_typical_jetstream",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1766135820400,
+      "tag": "0002_secret_switch",
+      "breakpoints": true
     }
   ]
 }

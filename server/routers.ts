@@ -223,7 +223,80 @@ export const appRouter = router({
           total: dataLines.length,
         };
       }),
+   }),
+
+  officers: router({
+    // Public: Get all officers
+    list: publicProcedure.query(async () => {
+      return db.getAllOfficers();
+    }),
+
+    // Public: Get officer by ID
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return db.getOfficerById(input.id);
+      }),
+
+    // Protected: Create new officer (admin only)
+    create: protectedProcedure
+      .input(
+        z.object({
+          name: z.string().min(1),
+          companyName: z.string().min(1),
+          position: z.string().min(1),
+          committee: z.string().optional(),
+          message: z.string().optional(),
+          photoUrl: z.string().optional(),
+          sortOrder: z.number().default(0),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return db.createOfficer(input);
+      }),
+
+    // Protected: Update officer (admin only)
+    update: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          name: z.string().min(1).optional(),
+          companyName: z.string().min(1).optional(),
+          position: z.string().min(1).optional(),
+          committee: z.string().optional(),
+          message: z.string().optional(),
+          photoUrl: z.string().optional(),
+          sortOrder: z.number().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        return db.updateOfficer(id, data);
+      }),
+
+    // Protected: Delete officer (admin only)
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return db.deleteOfficer(input.id);
+      }),
+
+    // Protected: Upload photo
+    uploadPhoto: protectedProcedure
+      .input(
+        z.object({
+          fileName: z.string(),
+          fileData: z.string(), // base64
+          mimeType: z.string(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const buffer = Buffer.from(input.fileData, "base64");
+        const ext = input.fileName.split(".").pop() || "jpg";
+        const key = `officers/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+        const result = await storagePut(key, buffer, input.mimeType);
+        return result;
+      }),
   }),
 });
-
 export type AppRouter = typeof appRouter;

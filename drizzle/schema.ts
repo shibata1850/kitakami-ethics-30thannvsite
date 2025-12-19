@@ -44,3 +44,22 @@ export const members = mysqlTable("members", {
 
 export type Member = typeof members.$inferSelect;
 export type InsertMember = typeof members.$inferInsert;
+
+/**
+ * Officers table for storing officer information
+ */
+export const officers = mysqlTable("officers", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  companyName: varchar("companyName", { length: 200 }).notNull(),
+  position: varchar("position", { length: 100 }).notNull(), // 役職（会長、専任幹事、事務長、理事、相談役、委員長、副委員長、各委員会委員長）
+  committee: varchar("committee", { length: 50 }), // 所属委員会（委員会委員長の場合のみ）
+  message: text("message"),
+  photoUrl: varchar("photoUrl", { length: 500 }),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Officer = typeof officers.$inferSelect;
+export type InsertOfficer = typeof officers.$inferInsert;

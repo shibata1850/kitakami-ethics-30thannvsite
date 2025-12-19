@@ -1,6 +1,6 @@
 import { eq, like, or, and, desc, asc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, members, type InsertMember } from "../drizzle/schema";
+import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -188,4 +188,40 @@ export async function getFilteredMembers(options: MemberFilterOptions) {
   }
 
   return query;
+}
+
+// ========== Officers CRUD ==========
+
+export async function createOfficer(officer: InsertOfficer) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(officers).values(officer);
+  return { id: Number((result as any).insertId) };
+}
+
+export async function getAllOfficers() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.select().from(officers).orderBy(asc(officers.sortOrder));
+}
+
+export async function getOfficerById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(officers).where(eq(officers.id, id));
+  return result[0] || null;
+}
+
+export async function updateOfficer(id: number, data: Partial<InsertOfficer>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(officers).set(data).where(eq(officers.id, id));
+  return { id };
+}
+
+export async function deleteOfficer(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(officers).where(eq(officers.id, id));
+  return { id };
 }

@@ -13,6 +13,8 @@ import Members from "./pages/Members";
 import Blog from "./pages/Blog";
 import Greeting from "./pages/Greeting";
 import MemberAdmin from "./pages/MemberAdmin";
+import OfficerAdmin from "./pages/OfficerAdmin";
+import Officers from "./pages/Officers";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -21,7 +23,9 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path="/about" component={About} />
       <Route path="/about/greeting" component={Greeting} />
+      <Route path="/about/officers" component={Officers} />
       <Route path="/admin/members" component={MemberAdmin} />
+      <Route path="/admin/officers" component={OfficerAdmin} />
       <Route path={"/schedule"} component={Schedule} />
       <Route path={"/overview"} component={Overview} />
       <Route path={"/members"} component={Members} />
