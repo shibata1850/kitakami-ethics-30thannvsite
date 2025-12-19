@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM members WHERE name LIKE '%テスト%' OR name LIKE '%クリア%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user SeKPyXzqnCJkWyS.257b9219d84c --database 6wEjUUtpZZxtduZT5pe4tU --execute DELETE FROM members WHERE name LIKE '%テスト%' OR name LIKE '%クリア%';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1900
+}
