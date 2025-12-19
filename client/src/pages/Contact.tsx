@@ -5,6 +5,7 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Calendar as CalendarIcon, CheckCircle2, Loader2 } from "lucide-react";
+import emailjs from '@emailjs/browser';
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -69,19 +70,57 @@ export default function Contact() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log(values);
-      setIsSubmitting(false);
+    try {
+      const dateStr = format(values.date, 'yyyy年M月d日(E)', { locale: ja });
+      
+      // EmailJS configuration - these will be set via environment variables
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '';
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
+      
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error('EmailJSの設定が完了していません。管理者にお問い合わせください。');
+      }
+      
+      const templateParams = {
+        to_email: values.email,
+        to_name: values.name,
+        from_name: '北上市倫理法人会',
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        company: values.company || '（未記入）',
+        date: dateStr,
+        message: values.message || '（未記入）',
+      };
+      
+      await emailjs.send(
+        serviceId,
+        templateId,
+        templateParams,
+        publicKey
+      );
+      
       setIsSuccess(true);
       toast({
         title: "送信完了",
-        description: "お申し込みありがとうございます。担当者よりご連絡いたします。",
+        description: "お申し込みありがとうございます。確認メールをお送りしましたのでご確認ください。",
       });
-    }, 1500);
+      
+      // Reset form
+      form.reset();
+    } catch (error) {
+      console.error('Email send error:', error);
+      toast({
+        title: "送信エラー",
+        description: error instanceof Error ? error.message : "送信に失敗しました。しばらくしてから再度お試しください。",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -99,91 +138,92 @@ export default function Contact() {
           </div>
 
           {isSuccess ? (
-            <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg border border-primary/10 text-center animate-in fade-in zoom-in duration-500">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="h-10 w-10 text-green-600" />
+            <div className="bg-white rounded-2xl shadow-lg p-12 text-center border border-primary/20">
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="h-10 w-10 text-primary" />
               </div>
               <h2 className="text-2xl font-bold mb-4 text-primary">お申し込みありがとうございます</h2>
               <p className="text-muted-foreground mb-8 leading-relaxed">
-                送信が完了いたしました。<br />
-                ご入力いただいたメールアドレス宛に確認メールをお送りしております。<br />
-                当日お会いできることを楽しみにしております。
+                ご入力いただいたメールアドレス宛に確認メールをお送りしました。<br />
+                当日は開始時刻の10分前までにお越しください。<br />
+                皆様のご参加を心よりお待ちしております。
               </p>
-              <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-                <a href="/">トップページへ戻る</a>
+              <Button onClick={() => setIsSuccess(false)} variant="outline">
+                続けて申し込む
               </Button>
             </div>
           ) : (
-            <div className="bg-white p-6 md:p-10 rounded-2xl shadow-lg border border-border">
+            <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-border">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>お名前 <span className="text-red-500">*</span></FormLabel>
-                          <FormControl>
-                            <Input placeholder="山田 太郎" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="company"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>会社名</FormLabel>
-                          <FormControl>
-                            <Input placeholder="株式会社〇〇" {...field} />
-                          </FormControl>
-                          <FormDescription>法人会員でない方もご参加いただけます</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>お名前 <span className="text-destructive">*</span></FormLabel>
+                        <FormControl>
+                          <Input placeholder="山田 太郎" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>メールアドレス <span className="text-red-500">*</span></FormLabel>
-                          <FormControl>
-                            <Input placeholder="example@email.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>電話番号 <span className="text-red-500">*</span></FormLabel>
-                          <FormControl>
-                            <Input placeholder="090-1234-5678" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="company"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>会社名</FormLabel>
+                        <FormControl>
+                          <Input placeholder="株式会社〇〇" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          任意項目です
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>メールアドレス <span className="text-destructive">*</span></FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="example@example.com" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          確認メールをお送りします
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>電話番号 <span className="text-destructive">*</span></FormLabel>
+                        <FormControl>
+                          <Input type="tel" placeholder="090-1234-5678" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}
                     name="date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>参加希望日 <span className="text-red-500">*</span></FormLabel>
+                        <FormLabel>参加希望日 <span className="text-destructive">*</span></FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -209,14 +249,15 @@ export default function Contact() {
                               selected={field.value}
                               onSelect={field.onChange}
                               disabled={(date) =>
-                                date < new Date() || date < new Date("1900-01-01")
+                                date < new Date() || date.getDay() !== 2
                               }
                               initialFocus
+                              locale={ja}
                             />
                           </PopoverContent>
                         </Popover>
                         <FormDescription>
-                          毎週火曜日の朝6:00より開催しております。
+                          毎週火曜日に開催しています
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -245,7 +286,7 @@ export default function Contact() {
                     <h3 className="font-bold text-sm">個人情報の取り扱いについて</h3>
                     <ScrollArea className="h-[150px] w-full rounded-md border p-4 bg-white text-sm text-muted-foreground">
                       <p className="mb-2">
-                        北上市倫理法人会（以下「当会」）は、以下のとおり個人情報保護方針を定め、個人情報保護の仕組みを構築し、全会員に個人情報保護の重要性の認識と取組みを徹底させることにより、個人情報の保護を推進致します。
+                        北上市倫理法人会(以下「当会」)は、以下のとおり個人情報保護方針を定め、個人情報保護の仕組みを構築し、全会員に個人情報保護の重要性の認識と取組みを徹底させることにより、個人情報の保護を推進致します。
                       </p>
                       <p className="font-bold mb-1">個人情報の管理</p>
                       <p className="mb-2">
@@ -289,16 +330,16 @@ export default function Contact() {
                     <Button 
                       type="submit" 
                       size="lg" 
-                      className="w-full md:w-auto px-12 py-6 text-lg font-bold shadow-lg"
+                      className="w-full md:w-auto px-12"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
                         <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           送信中...
                         </>
                       ) : (
-                        "この内容で申し込む"
+                        "申し込む"
                       )}
                     </Button>
                     <p className="mt-4 text-xs text-muted-foreground">
@@ -311,7 +352,7 @@ export default function Contact() {
           )}
         </div>
       </main>
-
+      
       <Footer />
     </div>
   );
