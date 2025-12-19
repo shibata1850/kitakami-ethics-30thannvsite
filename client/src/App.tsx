@@ -11,13 +11,15 @@ import Schedule from "./pages/Schedule";
 import Overview from "./pages/Overview";
 import Members from "./pages/Members";
 import Blog from "./pages/Blog";
+import Greeting from "./pages/Greeting";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path={"/about"} component={About} />
+      <Route path="/about" component={About} />
+      <Route path="/about/greeting" component={Greeting} />
       <Route path={"/schedule"} component={Schedule} />
       <Route path={"/overview"} component={Overview} />
       <Route path={"/members"} component={Members} />

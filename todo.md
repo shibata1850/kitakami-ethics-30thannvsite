@@ -33,3 +33,7 @@
 ## バグ修正
 - [x] Header.tsxのネストされた<a>タグエラーを修正
 - [x] Home.tsxや他のページのネストされた<a>タグエラーを修正
+
+## 新規追加機能
+- [x] /about/greeting - 会長挨拶ページの作成
+- [x] App.tsxに/about/greetingルートを追加
