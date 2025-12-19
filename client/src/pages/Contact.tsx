@@ -7,6 +7,7 @@ import { ja } from "date-fns/locale";
 import { Calendar as CalendarIcon, CheckCircle2, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -19,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Popover,
   PopoverContent,
@@ -45,6 +47,9 @@ const formSchema = z.object({
     invalid_type_error: "参加希望日を選択してください。",
   } as any),
   message: z.string().optional(),
+  privacy: z.boolean().refine((val) => val === true, {
+    message: "プライバシーポリシーへの同意が必要です。",
+  }),
 });
 
 export default function Contact() {
@@ -60,6 +65,7 @@ export default function Contact() {
       phone: "",
       company: "",
       message: "",
+      privacy: false,
     },
   });
 
@@ -234,6 +240,50 @@ export default function Contact() {
                       </FormItem>
                     )}
                   />
+
+                  <div className="space-y-4 border rounded-lg p-4 bg-muted/30">
+                    <h3 className="font-bold text-sm">個人情報の取り扱いについて</h3>
+                    <ScrollArea className="h-[150px] w-full rounded-md border p-4 bg-white text-sm text-muted-foreground">
+                      <p className="mb-2">
+                        北上市倫理法人会（以下「当会」）は、以下のとおり個人情報保護方針を定め、個人情報保護の仕組みを構築し、全会員に個人情報保護の重要性の認識と取組みを徹底させることにより、個人情報の保護を推進致します。
+                      </p>
+                      <p className="font-bold mb-1">個人情報の管理</p>
+                      <p className="mb-2">
+                        当会は、参加者の個人情報を正確かつ最新の状態に保ち、個人情報への不正アクセス・紛失・破損・改ざん・漏洩などを防止するため、セキュリティシステムの維持・管理体制の整備・社員教育の徹底等の必要な措置を講じ、安全対策を実施し個人情報の厳重な管理を行ないます。
+                      </p>
+                      <p className="font-bold mb-1">個人情報の利用目的</p>
+                      <p className="mb-2">
+                        お預かりした個人情報は、当会からのご連絡や業務のご案内やご質問に対する回答として、電子メールや資料のご送付に利用いたします。
+                      </p>
+                      <p className="font-bold mb-1">個人情報の第三者への開示・提供の禁止</p>
+                      <p className="mb-2">
+                        当会は、お預かりした個人情報を適切に管理し、次のいずれかに該当する場合を除き、個人情報を第三者に開示いたしません。
+                        <br/>・参加者の同意がある場合
+                        <br/>・法令に基づき開示することが必要である場合
+                      </p>
+                    </ScrollArea>
+                    
+                    <FormField
+                      control={form.control}
+                      name="privacy"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>
+                              個人情報の取り扱いについて同意する
+                            </FormLabel>
+                            <FormMessage />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <div className="text-center pt-4">
                     <Button 
