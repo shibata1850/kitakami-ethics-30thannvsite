@@ -43,7 +43,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center justify-between">
         <Link href="/">
-          <a className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 cursor-pointer">
             <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">
               北
             </div>
@@ -51,7 +51,7 @@ export default function Header() {
               <span className="text-xs text-muted-foreground">一般社団法人倫理研究所</span>
               <span className="text-lg font-bold text-primary leading-tight">北上市倫理法人会</span>
             </div>
-          </a>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
@@ -72,9 +72,9 @@ export default function Header() {
               </DropdownMenu>
             ) : (
               <Link key={index} href={item.href}>
-                <a className="text-sm font-medium hover:text-primary transition-colors">
+                <span className="text-sm font-medium hover:text-primary transition-colors cursor-pointer">
                   {item.label}
-                </a>
+                </span>
               </Link>
             )
           ))}
@@ -104,24 +104,24 @@ export default function Header() {
                     <div className="pl-4 flex flex-col space-y-2 border-l-2 border-muted ml-1">
                       {item.items.map((subItem, subIndex) => (
                         <Link key={subIndex} href={subItem.href}>
-                          <a 
-                            className="text-sm hover:text-primary"
+                          <span 
+                            className="text-sm hover:text-primary cursor-pointer"
                             onClick={() => setIsMobileMenuOpen(false)}
                           >
                             {subItem.label}
-                          </a>
+                          </span>
                         </Link>
                       ))}
                     </div>
                   </>
                 ) : (
                   <Link href={item.href}>
-                    <a 
-                      className="font-medium hover:text-primary"
+                    <span 
+                      className="font-medium hover:text-primary cursor-pointer"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.label}
-                    </a>
+                    </span>
                   </Link>
                 )}
               </div>
