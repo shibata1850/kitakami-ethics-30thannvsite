@@ -60,15 +60,30 @@ export default function About() {
                   {officers.map((officer) => (
                     <Card key={officer.id} className="hover:shadow-lg transition-shadow">
                       <CardContent className="p-6">
-                        {officer.photoUrl && (
-                          <div className="mb-4">
-                            <img
-                              src={officer.photoUrl}
-                              alt={officer.name}
-                              className="w-full h-48 object-cover rounded-lg"
-                            />
+                        <div className="mb-4 flex justify-center">
+                          <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center">
+                            {officer.photoUrl ? (
+                              <img
+                                src={officer.photoUrl}
+                                alt={officer.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <svg
+                                className="w-16 h-16 text-pink-400"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
                           </div>
-                        )}
+                        </div>
                         <div className="text-center">
                           <p className="text-sm text-pink-600 font-semibold mb-1">
                             {officer.position}
