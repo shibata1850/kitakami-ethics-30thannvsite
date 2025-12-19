@@ -43,10 +43,12 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2 cursor-pointer">
-          <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">
-            北
-          </div>
+        <Link href="/" className="flex items-center space-x-3 cursor-pointer">
+          <img 
+            src="/logo.png" 
+            alt="北上市倫理法人会ロゴ" 
+            className="h-12 w-12 object-contain"
+          />
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">一般社団法人倫理研究所</span>
             <span className="text-lg font-bold text-primary leading-tight">北上市倫理法人会</span>
