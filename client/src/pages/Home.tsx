@@ -183,6 +183,16 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            <div className="mt-16 text-center">
+              <h3 className="text-2xl font-bold mb-6 text-primary font-serif">倫理法人会に参加する</h3>
+              <Button size="lg" className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-full animate-pulse hover:animate-none transition-all duration-300 transform hover:scale-105">
+                <Link href="/contact">ゲスト参加を申し込む</Link>
+              </Button>
+              <p className="mt-4 text-sm text-muted-foreground">
+                ※無理な勧誘は一切ございません。安心してお越しください。
+              </p>
+            </div>
           </div>
         </section>
 
