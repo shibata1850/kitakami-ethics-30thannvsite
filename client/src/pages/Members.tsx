@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Search, RotateCcw } from "lucide-react";
+import { getCommitteeColor } from "@/lib/committeeColors";
 
 const CATEGORIES = [
   { value: "専門サービス（士業,保険,デザイン,議員等）", label: "専門サービス（士業,保険,デザイン,議員等）" },
@@ -231,7 +232,7 @@ export default function Members() {
                             )}
                             <div className="flex-1 min-w-0">
                               {member.committee && (
-                                <Badge className="mb-2 bg-primary/90">
+                                <Badge className={`mb-2 ${getCommitteeColor(member.committee)}`}>
                                   {member.committee}
                                 </Badge>
                               )}

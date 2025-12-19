@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { Pencil, Trash2, Plus, Upload, Download, FileUp } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getCommitteeColor } from "@/lib/committeeColors";
 
 const CATEGORIES = [
   "専門サービス（士業,保険,デザイン,議員等）",
@@ -466,7 +467,7 @@ export default function MemberAdmin() {
                         {member.category}
                       </span>
                       {member.committee && (
-                        <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">
+                        <span className={`text-xs px-2 py-1 rounded ${getCommitteeColor(member.committee)}`}>
                           {member.committee}
                         </span>
                       )}
