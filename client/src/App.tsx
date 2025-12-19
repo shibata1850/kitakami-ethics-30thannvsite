@@ -16,6 +16,7 @@ import MemberAdmin from "./pages/MemberAdmin";
 import OfficerAdmin from "./pages/OfficerAdmin";
 import Officers from "./pages/Officers";
 import SeminarAdmin from "./pages/SeminarAdmin";
+import SeminarArchive from "./pages/SeminarArchive";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -29,6 +30,7 @@ function Router() {
       <Route path="/admin/members" component={MemberAdmin} />
       <Route path="/admin/officers" component={OfficerAdmin} />
       <Route path="/admin/seminars" component={SeminarAdmin} />
+      <Route path="/seminars/archive" component={SeminarArchive} />
       <Route path={"/schedule"} component={Schedule} />
       <Route path={"/overview"} component={Overview} />
       <Route path={"/members"} component={Members} />

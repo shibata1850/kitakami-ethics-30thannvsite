@@ -251,6 +251,15 @@ export async function getUpcomingSeminars() {
     .orderBy(asc(seminars.date), asc(seminars.sortOrder));
 }
 
+export async function getPastSeminars() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  return db.select().from(seminars)
+    .where(sql`${seminars.date} < ${today}`)
+    .orderBy(desc(seminars.date), asc(seminars.sortOrder));
+}
+
 export async function getSeminarById(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

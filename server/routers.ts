@@ -307,6 +307,10 @@ export const appRouter = router({
     upcoming: publicProcedure.query(async () => {
       return db.getUpcomingSeminars();
     }),
+    // Public: Get past seminars
+    past: publicProcedure.query(async () => {
+      return db.getPastSeminars();
+    }),
     // Public: Get seminar by ID
     getById: publicProcedure
       .input(z.object({ id: z.number() }))
