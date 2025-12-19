@@ -1,25 +1,167 @@
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, MapPin, Users, Heart, Sun, ArrowRight } from "lucide-react";
+import { Link } from "wouter";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Best Practices, Design Guide and Common Pitfalls
- */
 export default function Home() {
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
+    <div className="min-h-screen flex flex-col bg-background font-sans">
+      <Header />
+      
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="relative h-[600px] flex items-center justify-center overflow-hidden bg-sakura-pattern">
+          <div className="absolute inset-0 bg-gradient-to-r from-white/80 to-white/40 z-10"></div>
+          
+          {/* Decorative Sakura Elements (CSS generated) */}
+          <div className="absolute top-10 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 right-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          
+          <div className="container relative z-20 text-center">
+            <Badge className="mb-6 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 px-4 py-1 text-base">
+              一般社団法人倫理研究所 北上市倫理法人会
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-foreground">
+              <span className="block text-primary mb-2 font-serif">「心の経営」</span>
+              を学び、実践する
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+              家庭・企業・地域・日本の活路を拓く<br/>
+              全国約7万社の経営者の会へようこそ
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
+                <Link href="/schedule/morning">モーニングセミナーに参加する</Link>
+              </Button>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-primary text-primary hover:bg-primary/5">
+                <Link href="/about">倫理法人会について</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Next Seminar Info */}
+        <section className="py-12 bg-white border-b">
+          <div className="container">
+            <div className="bg-secondary/30 rounded-2xl p-8 border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2 text-primary font-bold">
+                  <Sun className="h-5 w-5" />
+                  <span>次回の経営者モーニングセミナー</span>
+                </div>
+                <h2 className="text-2xl font-bold mb-2">毎週火曜日 朝6:00開催</h2>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
+                  <span>㈱南部家敷 本社 研修所八光館（北上市常盤台４丁目１－１２１）</span>
+                </div>
+              </div>
+              <Button asChild className="shrink-0">
+                <Link href="/schedule/morning">詳細を見る <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* About Section */}
+        <section className="py-20 bg-white">
+          <div className="container">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold mb-4 text-primary font-serif">倫理法人会とは？</h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                倫理法人会は、「心の経営」を学び、実践する人々の集まりです。<br/>
+                「企業に倫理を、職場に心を、家庭に愛を」のスローガンの元、生き方や会社のあり方を学んでいます。
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
+                <div className="h-2 bg-primary/80"></div>
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Heart className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">本質的＆実践的な学び</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    ノウハウ以前に大切な【人としてのあり方】を学び、実践力を身につけられます。
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
+                <div className="h-2 bg-chart-2"></div>
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-chart-2/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Users className="h-8 w-8 text-chart-2" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">多彩で豊富な機会</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    モーニングセミナー以外にも、様々な学び、研修、交流の機会があります。
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
+                <div className="h-2 bg-chart-3"></div>
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-chart-3/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Calendar className="h-8 w-8 text-chart-3" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">人生の幅が広がる</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    経営者以外にも多様な職種の方が在籍。共に学ぶ仲間として親交を深められます。
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Activities Section */}
+        <section className="py-20 bg-secondary/30">
+          <div className="container">
+            <h2 className="text-3xl font-bold mb-12 text-center font-serif">主な活動内容</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                { title: "経営者モーニングセミナー", color: "bg-yellow-500", desc: "朝は経営者のゴールデンタイム！週に一度の朝活で自己革新。" },
+                { title: "経営者のつどい", color: "bg-blue-500", desc: "夕方に開催されるセミナー。経営体験報告などを通じて学びます。" },
+                { title: "活力朝礼", color: "bg-orange-500", desc: "朝から元気な職場づくり。「職場の教養」を用いた朝礼を推進。" },
+                { title: "富士研", color: "bg-cyan-500", desc: "富士山麓での宿泊研修。日常を離れ、自己を見つめ直す時間。" },
+                { title: "倫理指導", color: "bg-purple-500", desc: "経営や家庭の悩みを、倫理の観点から個別相談できます。" },
+                { title: "清掃活動", color: "bg-green-500", desc: "地域社会への貢献として、定期的な清掃活動を行っています。" },
+              ].map((item, index) => (
+                <div key={index} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border">
+                  <div className={`h-3 ${item.color}`}></div>
+                  <div className="p-6">
+                    <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 bg-primary text-primary-foreground relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/images/pattern.png')] opacity-10"></div>
+          <div className="container relative z-10 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 font-serif">まずはゲストとして参加してみませんか？</h2>
+            <p className="text-xl mb-10 opacity-90">
+              モーニングセミナーは無料で見学いただけます。<br/>
+              活気ある朝の雰囲気をぜひ体験してください。
+            </p>
+            <Button size="lg" variant="secondary" className="text-primary font-bold text-lg px-10 py-6 shadow-xl">
+              <Link href="/contact">お申し込み・お問い合わせ</Link>
+            </Button>
+          </div>
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
 }
