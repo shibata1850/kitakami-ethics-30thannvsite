@@ -39,15 +39,31 @@ export default function Schedule() {
             <h1 className="text-4xl md:text-5xl font-bold text-center mb-6 text-gray-900">
               スケジュール
             </h1>
-            <p className="text-lg text-center text-gray-700 max-w-3xl mx-auto">
+            <p className="text-lg text-center text-gray-700 max-w-3xl mx-auto mb-8">
               北上市倫理法人会の活動スケジュールをご案内します。
               経営者モーニングセミナーは毎週火曜日の朝6時から開催しています。
             </p>
+            
+            {/* 目次（アンカーリンク） */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <a
+                href="#morning-seminar"
+                className="inline-flex items-center px-6 py-3 bg-white border-2 border-pink-300 text-pink-700 font-semibold rounded-lg hover:bg-pink-50 transition-colors"
+              >
+                モーニングセミナー
+              </a>
+              <a
+                href="#keieisha-tsudoi"
+                className="inline-flex items-center px-6 py-3 bg-white border-2 border-pink-300 text-pink-700 font-semibold rounded-lg hover:bg-pink-50 transition-colors"
+              >
+                経営者のつどい
+              </a>
+            </div>
           </div>
         </section>
 
         {/* 定例活動 */}
-        <section className="py-16 bg-white">
+        <section id="morning-seminar" className="py-16 bg-white scroll-mt-20">
           <div className="container">
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
               定例活動
@@ -92,7 +108,7 @@ export default function Schedule() {
                 </CardContent>
               </Card>
 
-              <Card className="border-pink-200 hover:shadow-lg transition-shadow">
+              <Card id="keieisha-tsudoi" className="border-pink-200 hover:shadow-lg transition-shadow scroll-mt-20">
                 <CardHeader className="bg-pink-50">
                   <CardTitle className="text-2xl text-pink-700">
                     経営者のつどい
