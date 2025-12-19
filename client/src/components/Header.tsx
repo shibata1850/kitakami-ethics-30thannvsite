@@ -23,8 +23,9 @@ export default function Header() {
     {
       label: "スケジュール",
       items: [
-        { label: "モーニングセミナー", href: "/schedule/morning" },
-        { label: "経営者のつどい", href: "/schedule/gathering" },
+        { label: "モーニングセミナー", href: "/schedule#morning-seminar" },
+        { label: "経営者のつどい", href: "/schedule#keieisha-tsudoi" },
+        { label: "セミナーアーカイブ", href: "/seminars/archive" },
       ],
     },
     {
