@@ -104,3 +104,25 @@ export const blogPosts = mysqlTable("blogPosts", {
 
 export type BlogPost = typeof blogPosts.$inferSelect;
 export type InsertBlogPost = typeof blogPosts.$inferInsert;
+
+/**
+ * Contacts table for storing contact form submissions
+ */
+export const contacts = mysqlTable("contacts", {
+  id: int("id").autoincrement().primaryKey(),
+  type: mysqlEnum("type", ["contact", "seminar_application"]).notNull(), // 問い合わせ種別（一般問い合わせ、セミナー申込）
+  name: varchar("name", { length: 100 }).notNull(), // 氏名
+  email: varchar("email", { length: 320 }).notNull(), // メールアドレス
+  phone: varchar("phone", { length: 20 }), // 電話番号
+  companyName: varchar("companyName", { length: 200 }), // 会社名
+  message: text("message").notNull(), // メッセージ内容
+  status: mysqlEnum("status", ["pending", "in_progress", "completed"]).default("pending").notNull(), // ステータス（未対応、対応中、完了）
+  reply: text("reply"), // 返信内容
+  repliedAt: timestamp("repliedAt"), // 返信日時
+  repliedBy: int("repliedBy"), // 返信者ID（usersテーブルへの参照）
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = typeof contacts.$inferInsert;

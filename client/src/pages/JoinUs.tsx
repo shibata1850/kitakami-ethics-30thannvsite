@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 export default function JoinUs() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,24 @@ export default function JoinUs() {
     agreedToPrivacy: false,
   });
 
+  const createContact = trpc.contacts.create.useMutation({
+    onSuccess: () => {
+      toast.success("お申し込みありがとうございます。担当者より折り返しご連絡いたします。");
+      // フォームをリセット
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        phone: "",
+        message: "",
+        agreedToPrivacy: false,
+      });
+    },
+    onError: (error) => {
+      toast.error(`送信に失敗しました: ${error.message}`);
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -28,17 +47,13 @@ export default function JoinUs() {
       return;
     }
 
-    // TODO: フォーム送信処理を実装
-    toast.success("お申し込みありがとうございます。担当者より折り返しご連絡いたします。");
-    
-    // フォームをリセット
-    setFormData({
-      name: "",
-      email: "",
-      company: "",
-      phone: "",
-      message: "",
-      agreedToPrivacy: false,
+    createContact.mutate({
+      type: "seminar_application",
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone || undefined,
+      companyName: formData.company || undefined,
+      message: formData.message || "モーニングセミナーの無料体験を希望します。",
     });
   };
 

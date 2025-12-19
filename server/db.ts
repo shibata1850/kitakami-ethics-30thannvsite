@@ -1,6 +1,6 @@
 import { eq, like, or, and, desc, asc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost } from "../drizzle/schema";
+import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -386,4 +386,108 @@ export async function incrementBlogPostViewCount(id: number) {
     .set({ viewCount: sql`${blogPosts.viewCount} + 1` })
     .where(eq(blogPosts.id, id));
   return { id };
+}
+
+
+// ============================================
+// Contact Management Functions
+// ============================================
+
+export async function createContact(contact: InsertContact) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(contacts).values(contact);
+  return { id: Number(result[0].insertId) };
+}
+
+export async function getAllContacts() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(contacts).orderBy(desc(contacts.createdAt));
+}
+
+export async function getContactById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(contacts).where(eq(contacts.id, id));
+  return result[0] || null;
+}
+
+export async function updateContactStatus(id: number, status: "pending" | "in_progress" | "completed") {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(contacts)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(contacts.id, id));
+  return { id };
+}
+
+export async function updateContactReply(id: number, reply: string, repliedBy: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(contacts)
+    .set({ 
+      reply, 
+      repliedBy, 
+      repliedAt: new Date(),
+      status: "completed",
+      updatedAt: new Date() 
+    })
+    .where(eq(contacts.id, id));
+  return { id };
+}
+
+export async function deleteContact(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(contacts).where(eq(contacts.id, id));
+  return { id };
+}
+
+export type ContactFilterOptions = {
+  type?: "contact" | "seminar_application";
+  status?: "pending" | "in_progress" | "completed";
+  searchQuery?: string;
+};
+
+export async function getFilteredContacts(options: ContactFilterOptions) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  let query = db.select().from(contacts);
+
+  const conditions = [];
+
+  // Type filter
+  if (options.type) {
+    conditions.push(eq(contacts.type, options.type));
+  }
+
+  // Status filter
+  if (options.status) {
+    conditions.push(eq(contacts.status, options.status));
+  }
+
+  // Search query (name, email, company, or message)
+  if (options.searchQuery && options.searchQuery.trim()) {
+    const searchTerm = `%${options.searchQuery.trim()}%`;
+    conditions.push(
+      or(
+        like(contacts.name, searchTerm),
+        like(contacts.email, searchTerm),
+        like(contacts.companyName, searchTerm),
+        like(contacts.message, searchTerm)
+      )!
+    );
+  }
+
+  // Apply all conditions
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions)!) as any;
+  }
+
+  // Sort by created date (newest first)
+  query = query.orderBy(desc(contacts.createdAt)) as any;
+
+  return query;
 }

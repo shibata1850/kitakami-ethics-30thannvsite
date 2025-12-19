@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { trpc } from "@/lib/trpc";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -70,57 +71,39 @@ export default function Contact() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-    
-    try {
-      const dateStr = format(values.date, 'yyyy年M月d日(E)', { locale: ja });
-      
-      // EmailJS configuration - these will be set via environment variables
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '';
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
-      
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error('EmailJSの設定が完了していません。管理者にお問い合わせください。');
-      }
-      
-      const templateParams = {
-        to_email: values.email,
-        to_name: values.name,
-        from_name: '北上市倫理法人会',
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-        company: values.company || '（未記入）',
-        date: dateStr,
-        message: values.message || '（未記入）',
-      };
-      
-      await emailjs.send(
-        serviceId,
-        templateId,
-        templateParams,
-        publicKey
-      );
-      
+  const createContact = trpc.contacts.create.useMutation({
+    onSuccess: () => {
       setIsSuccess(true);
       toast({
         title: "送信完了",
-        description: "お申し込みありがとうございます。確認メールをお送りしましたのでご確認ください。",
+        description: "お申し込みありがとうございます。担当者より折り返しご連絡いたします。",
       });
-      
-      // Reset form
       form.reset();
-    } catch (error) {
-      console.error('Email send error:', error);
+      setIsSubmitting(false);
+    },
+    onError: (error) => {
       toast({
         title: "送信エラー",
-        description: error instanceof Error ? error.message : "送信に失敗しました。しばらくしてから再度お試しください。",
+        description: error.message || "送信に失敗しました。しばらくしてから再度お試しください。",
       });
-    } finally {
       setIsSubmitting(false);
-    }
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
+    
+    const dateStr = format(values.date, 'yyyy年M月d日(E)', { locale: ja });
+    const messageText = `参加希望日: ${dateStr}\n\n${values.message || ''}`;
+    
+    createContact.mutate({
+      type: "seminar_application",
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      companyName: values.company || undefined,
+      message: messageText,
+    });
   }
 
   return (

@@ -478,5 +478,80 @@ export const appRouter = router({
         return { url: result.url };
       }),
   }),
+
+  contacts: router({
+    // Public: Create new contact submission
+    create: publicProcedure
+      .input(
+        z.object({
+          type: z.enum(["contact", "seminar_application"]),
+          name: z.string().min(1),
+          email: z.string().email(),
+          phone: z.string().optional(),
+          companyName: z.string().optional(),
+          message: z.string().min(1),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return db.createContact({
+          ...input,
+          status: "pending",
+        });
+      }),
+
+    // Protected: Get all contacts with optional filters (admin only)
+    list: protectedProcedure
+      .input(
+        z.object({
+          type: z.enum(["contact", "seminar_application"]).optional(),
+          status: z.enum(["pending", "in_progress", "completed"]).optional(),
+          searchQuery: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return db.getFilteredContacts(input);
+      }),
+
+    // Protected: Get contact by ID (admin only)
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return db.getContactById(input.id);
+      }),
+
+    // Protected: Update contact status (admin only)
+    updateStatus: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          status: z.enum(["pending", "in_progress", "completed"]),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return db.updateContactStatus(input.id, input.status);
+      }),
+
+    // Protected: Reply to contact (admin only)
+    reply: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          reply: z.string().min(1),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user?.id) {
+          throw new Error("User ID not found");
+        }
+        return db.updateContactReply(input.id, input.reply, ctx.user.id);
+      }),
+
+    // Protected: Delete contact (admin only)
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return db.deleteContact(input.id);
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;
