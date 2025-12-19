@@ -21,3 +21,11 @@
   - [x] Resend関連のコードを削除
   - [x] EmailJS SDKのインストール
   - [x] フロントエンドでEmailJS統合
+
+## サブページ作成（404エラー解消）
+- [x] /about - 倫理法人会とは
+- [x] /schedule - スケジュール
+- [x] /overview - 北上市倫理法人会概要
+- [x] /members - 会員紹介
+- [x] /blog - ブログ/お知らせ
+- [x] App.tsxにルート追加
