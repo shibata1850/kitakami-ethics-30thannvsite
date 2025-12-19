@@ -553,5 +553,12 @@ export const appRouter = router({
         return db.deleteContact(input.id);
       }),
   }),
+
+  dashboard: router({
+    // Protected: Get dashboard statistics (admin only)
+    getStats: protectedProcedure.query(async () => {
+      return db.getDashboardStats();
+    }),
+  }),
 });
 export type AppRouter = typeof appRouter;

@@ -1,4 +1,4 @@
-import { eq, like, or, and, desc, asc, sql } from "drizzle-orm";
+import { eq, like, or, and, desc, asc, sql, gte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -493,3 +493,70 @@ export async function getFilteredContacts(options: ContactFilterOptions) {
   return query;
 }
 
+
+// ===== Dashboard Stats =====
+
+export async function getDashboardStats() {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const now = new Date();
+
+  // 会員数
+  const memberCount = await db.select({ count: sql<number>`count(*)` }).from(members);
+
+  // 問い合わせ件数
+  const contactCount = await db.select({ count: sql<number>`count(*)` }).from(contacts);
+  const pendingContactCount = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(contacts)
+    .where(eq(contacts.status, "pending"));
+
+  // 今後のセミナー数
+  const upcomingSeminarCount = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(seminars)
+    .where(gte(seminars.date, now.toISOString().split("T")[0]));
+
+  // ブログ記事数
+  const blogPostCount = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(blogPosts)
+    .where(eq(blogPosts.status, "published"));
+
+  // 今後のセミナー（最大5件）
+  const upcomingSeminars = await db
+    .select()
+    .from(seminars)
+    .where(gte(seminars.date, now.toISOString().split("T")[0]))
+    .orderBy(asc(seminars.date))
+    .limit(5);
+
+  // 最近のブログ投稿（最大5件）
+  const recentBlogPosts = await db
+    .select()
+    .from(blogPosts)
+    .orderBy(desc(blogPosts.publishedAt))
+    .limit(5);
+
+  // 未対応の問い合わせ（最大5件）
+  const pendingContacts = await db
+    .select()
+    .from(contacts)
+    .where(eq(contacts.status, "pending"))
+    .orderBy(desc(contacts.createdAt))
+    .limit(5);
+
+  return {
+    memberCount: memberCount[0]?.count || 0,
+    contactCount: contactCount[0]?.count || 0,
+    pendingContactCount: pendingContactCount[0]?.count || 0,
+    upcomingSeminarCount: upcomingSeminarCount[0]?.count || 0,
+    blogPostCount: blogPostCount[0]?.count || 0,
+    upcomingSeminars,
+    recentBlogPosts,
+    pendingContacts,
+  };
+}

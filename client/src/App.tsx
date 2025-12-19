@@ -21,6 +21,7 @@ import BlogManagement from "./pages/admin/BlogManagement";
 import BlogDetail from "./pages/BlogDetail";
 import JoinUs from "./pages/JoinUs";
 import ContactManagement from "./pages/admin/ContactManagement";
+import Dashboard from "./pages/admin/Dashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/about/greeting" component={Greeting} />
       <Route path="/about/officers" component={Officers} />
       <Route path="/overview/officers" component={Officers} />
+      <Route path="/admin/dashboard" component={Dashboard} />
       <Route path="/admin/members" component={MemberAdmin} />
       <Route path="/admin/officers" component={OfficerAdmin} />
       <Route path="/admin/seminars" component={SeminarAdmin} />
