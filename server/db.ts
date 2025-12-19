@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, like, or, and, desc, asc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, members, type InsertMember } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,103 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+/**
+ * Member database helpers
+ */
+
+export async function getAllMembers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(members).orderBy(desc(members.createdAt));
+}
+
+export async function getMemberById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(members).where(eq(members.id, id)).limit(1);
+  return result[0] || null;
+}
+
+export async function createMember(data: InsertMember) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(members).values(data);
+  return result;
+}
+
+export async function updateMember(id: number, data: Partial<InsertMember>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.update(members).set(data).where(eq(members.id, id));
+  return result;
+}
+
+export async function deleteMember(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.delete(members).where(eq(members.id, id));
+  return result;
+}
+
+export interface MemberFilterOptions {
+  categories?: string[];
+  committees?: string[];
+  searchQuery?: string;
+  sortBy?: "random" | "date_desc" | "date_asc";
+}
+
+export async function getFilteredMembers(options: MemberFilterOptions) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  let query = db.select().from(members);
+
+  const conditions = [];
+
+  // Category filter
+  if (options.categories && options.categories.length > 0) {
+    conditions.push(
+      or(...options.categories.map(cat => eq(members.category, cat)))!
+    );
+  }
+
+  // Committee filter
+  if (options.committees && options.committees.length > 0) {
+    conditions.push(
+      or(...options.committees.map(com => eq(members.committee, com)))!
+    );
+  }
+
+  // Search query (name or company name)
+  if (options.searchQuery && options.searchQuery.trim()) {
+    const searchTerm = `%${options.searchQuery.trim()}%`;
+    conditions.push(
+      or(
+        like(members.name, searchTerm),
+        like(members.companyName, searchTerm)
+      )!
+    );
+  }
+
+  // Apply all conditions
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions)!) as any;
+  }
+
+  // Sorting
+  switch (options.sortBy) {
+    case "date_desc":
+      query = query.orderBy(desc(members.createdAt)) as any;
+      break;
+    case "date_asc":
+      query = query.orderBy(asc(members.createdAt)) as any;
+      break;
+    case "random":
+      query = query.orderBy(sql`RAND()`) as any;
+      break;
+    default:
+      query = query.orderBy(desc(members.createdAt)) as any;
+  }
+
+  return query;
+}
