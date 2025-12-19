@@ -14,11 +14,19 @@ export default function Home() {
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="relative h-[600px] flex items-center justify-center overflow-hidden bg-sakura-pattern">
-          <div className="absolute inset-0 bg-gradient-to-r from-white/80 to-white/40 z-10"></div>
+          {/* Background Image with Overlay */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/images/seminar_lecture.png" 
+              alt="経営者モーニングセミナーの様子" 
+              className="w-full h-full object-cover opacity-20"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/80 to-white/60 z-10"></div>
           
           {/* Decorative Sakura Elements (CSS generated) */}
-          <div className="absolute top-10 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-10 right-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-10 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-pulse z-10"></div>
+          <div className="absolute bottom-10 right-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse delay-1000 z-10"></div>
           
           <div className="container relative z-20 text-center">
             <Badge className="mb-6 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 px-4 py-1 text-base">
@@ -126,18 +134,34 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { title: "経営者モーニングセミナー", color: "bg-yellow-500", desc: "朝は経営者のゴールデンタイム！週に一度の朝活で自己革新。" },
-                { title: "経営者のつどい", color: "bg-blue-500", desc: "夕方に開催されるセミナー。経営体験報告などを通じて学びます。" },
-                { title: "活力朝礼", color: "bg-orange-500", desc: "朝から元気な職場づくり。「職場の教養」を用いた朝礼を推進。" },
-                { title: "富士研", color: "bg-cyan-500", desc: "富士山麓での宿泊研修。日常を離れ、自己を見つめ直す時間。" },
-                { title: "倫理指導", color: "bg-purple-500", desc: "経営や家庭の悩みを、倫理の観点から個別相談できます。" },
-                { title: "清掃活動", color: "bg-green-500", desc: "地域社会への貢献として、定期的な清掃活動を行っています。" },
+                { title: "経営者モーニングセミナー", color: "bg-yellow-500", desc: "朝は経営者のゴールデンタイム！週に一度の朝活で自己革新。", image: "/images/seminar_lecture.png" },
+                { title: "経営者のつどい", color: "bg-blue-500", desc: "夕方に開催されるセミナー。経営体験報告などを通じて学びます。", image: "/images/networking_event.png" },
+                { title: "活力朝礼", color: "bg-orange-500", desc: "朝から元気な職場づくり。「職場の教養」を用いた朝礼を推進。", image: "/images/morning_assembly.png" },
+                { title: "富士研", color: "bg-cyan-500", desc: "富士山麓での宿泊研修。日常を離れ、自己を見つめ直す時間。", image: null },
+                { title: "倫理指導", color: "bg-purple-500", desc: "経営や家庭の悩みを、倫理の観点から個別相談できます。", image: null },
+                { title: "清掃活動", color: "bg-green-500", desc: "地域社会への貢献として、定期的な清掃活動を行っています。", image: "/images/cleaning_activity.png" },
               ].map((item, index) => (
-                <div key={index} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border">
+                <div key={index} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border group flex flex-col h-full">
                   <div className={`h-3 ${item.color}`}></div>
-                  <div className="p-6">
-                    <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  {item.image ? (
+                    <div className="h-48 overflow-hidden relative">
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10"></div>
+                      <img 
+                        src={item.image} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-48 bg-muted flex items-center justify-center text-muted-foreground">
+                      <span className="text-sm">画像準備中</span>
+                    </div>
+                  )}
+                  <div className="p-6 flex-grow">
+                    <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
