@@ -46,10 +46,10 @@ export default function Home() {
               全国約7万社の経営者の会へようこそ
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
+              <Button asChild size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
                 <Link href="/schedule/morning">モーニングセミナーに参加する</Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-primary text-primary hover:bg-primary/5">
+              <Button asChild size="lg" variant="outline" className="text-lg px-8 py-6 border-primary text-primary hover:bg-primary/5">
                 <Link href="/about">倫理法人会について</Link>
               </Button>
             </div>
@@ -191,7 +191,7 @@ export default function Home() {
 
             <div className="mt-16 text-center">
               <h3 className="text-2xl font-bold mb-6 text-primary font-serif">倫理法人会に参加する</h3>
-              <Button size="lg" className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-full animate-pulse hover:animate-none transition-all duration-300 transform hover:scale-105">
+              <Button asChild size="lg" className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-full animate-pulse hover:animate-none transition-all duration-300 transform hover:scale-105">
                 <Link href="/contact">ゲスト参加を申し込む</Link>
               </Button>
               <p className="mt-4 text-sm text-muted-foreground">
@@ -252,7 +252,7 @@ export default function Home() {
               モーニングセミナーは無料で見学いただけます。<br/>
               活気ある朝の雰囲気をぜひ体験してください。
             </p>
-            <Button size="lg" variant="secondary" className="text-primary font-bold text-lg px-10 py-6 shadow-xl">
+            <Button asChild size="lg" variant="secondary" className="text-primary font-bold text-lg px-10 py-6 shadow-xl">
               <Link href="/contact">お申し込み・お問い合わせ</Link>
             </Button>
           </div>
