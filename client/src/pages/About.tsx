@@ -2,8 +2,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Users, TrendingUp, BookOpen } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 export default function About() {
+  const { data: officers = [] } = trpc.officers.list.useQuery();
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -45,8 +48,55 @@ export default function About() {
           </div>
         </section>
 
+        {/* 役員紹介 */}
+        {officers.length > 0 && (
+          <section className="py-16 bg-gray-50">
+            <div className="container">
+              <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+                役員紹介
+              </h2>
+              <div className="max-w-5xl mx-auto">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {officers.map((officer) => (
+                    <Card key={officer.id} className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        {officer.photoUrl && (
+                          <div className="mb-4">
+                            <img
+                              src={officer.photoUrl}
+                              alt={officer.name}
+                              className="w-full h-48 object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+                        <div className="text-center">
+                          <p className="text-sm text-pink-600 font-semibold mb-1">
+                            {officer.position}
+                            {officer.committee && ` / ${officer.committee}`}
+                          </p>
+                          <h3 className="text-xl font-bold mb-1 text-gray-900">
+                            {officer.name}
+                          </h3>
+                          <p className="text-sm text-gray-600 mb-3">
+                            {officer.companyName}
+                          </p>
+                          {officer.message && (
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {officer.message}
+                            </p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* 4つの特徴 */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-white">
           <div className="container">
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
               倫理法人会の4つの特徴
@@ -104,7 +154,7 @@ export default function About() {
         </section>
 
         {/* 活動内容 */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-gray-50">
           <div className="container">
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
               主な活動内容

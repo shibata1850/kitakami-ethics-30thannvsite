@@ -196,7 +196,8 @@ export async function createOfficer(officer: InsertOfficer) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const result = await db.insert(officers).values(officer);
-  return { id: Number((result as any).insertId) };
+  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
+  return { id: Number(insertId) };
 }
 
 export async function getAllOfficers() {
