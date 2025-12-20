@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaPhone, FaGlobe, FaDollarSign, FaHome, FaFacebookF, FaTwitter, FaLine, FaShareAlt } from "react-icons/fa";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const timelineYears = [
   { year: 1995, label: "1995年", title: "設立記念式典" },
@@ -18,6 +18,37 @@ const timelineYears = [
 export default function Event30thAnniversary() {
   const [activeYear, setActiveYear] = useState<number | null>(null);
   const galleryRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  
+  // Countdown Timer State
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+  
+  // Calculate time left until event date (2026-04-19 15:00)
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const eventDate = new Date('2026-04-19T15:00:00+09:00').getTime();
+      const now = new Date().getTime();
+      const difference = eventDate - now;
+      
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((difference % (1000 * 60)) / 1000)
+        });
+      }
+    };
+    
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+    
+    return () => clearInterval(timer);
+  }, []);
 
   const scrollToYear = (year: number) => {
     const element = galleryRefs.current[year];
@@ -107,6 +138,41 @@ export default function Event30thAnniversary() {
               設立30周年記念式典・懇親会
             </span>
           </h1>
+          
+          {/* Countdown Timer */}
+          <div className="my-10 animate-in fade-in duration-1000 delay-700">
+            <div className="inline-block bg-white/90 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-2xl border-2 border-[#F8BBD0]/40">
+              <p className="text-sm md:text-base text-[#C48B9F] font-semibold mb-4 text-center tracking-wide">
+                式典まであと
+              </p>
+              <div className="flex gap-3 md:gap-6">
+                <div className="text-center">
+                  <div className="bg-gradient-to-br from-[#FFB7C5] to-[#E8B4B8] text-white rounded-xl px-4 py-3 md:px-6 md:py-4 shadow-lg">
+                    <div className="text-3xl md:text-5xl font-bold tabular-nums">{timeLeft.days}</div>
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-600 mt-2 font-medium">日</div>
+                </div>
+                <div className="text-center">
+                  <div className="bg-gradient-to-br from-[#FFB7C5] to-[#E8B4B8] text-white rounded-xl px-4 py-3 md:px-6 md:py-4 shadow-lg">
+                    <div className="text-3xl md:text-5xl font-bold tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</div>
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-600 mt-2 font-medium">時間</div>
+                </div>
+                <div className="text-center">
+                  <div className="bg-gradient-to-br from-[#FFB7C5] to-[#E8B4B8] text-white rounded-xl px-4 py-3 md:px-6 md:py-4 shadow-lg">
+                    <div className="text-3xl md:text-5xl font-bold tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</div>
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-600 mt-2 font-medium">分</div>
+                </div>
+                <div className="text-center">
+                  <div className="bg-gradient-to-br from-[#FFB7C5] to-[#E8B4B8] text-white rounded-xl px-4 py-3 md:px-6 md:py-4 shadow-lg">
+                    <div className="text-3xl md:text-5xl font-bold tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</div>
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-600 mt-2 font-medium">秒</div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           {/* Decorative Line */}
           <div className="flex items-center justify-center gap-4 my-8 animate-in fade-in duration-1000 delay-500">
