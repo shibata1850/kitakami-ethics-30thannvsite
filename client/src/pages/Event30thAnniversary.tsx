@@ -1,134 +1,220 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaPhone, FaGlobe, FaDollarSign } from "react-icons/fa";
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaPhone, FaGlobe, FaDollarSign, FaHome } from "react-icons/fa";
 
 export default function Event30thAnniversary() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sakura-50 to-white">
-      {/* Hero Section */}
-      <section className="relative h-[400px] bg-sakura-pattern flex items-center justify-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20" />
-        <div className="relative z-10 text-center text-white px-4">
-          <img 
-            src="/rinri30th-2.jpg" 
-            alt="30周年記念ロゴ" 
-            className="w-64 h-64 mx-auto mb-6 drop-shadow-2xl"
-          />
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            北上市倫理法人会設立30周年記念式典・懇親会
+    <div className="min-h-screen bg-gradient-to-b from-[#FFF8F0] via-white to-[#FFF8F0]">
+      {/* Hero Section - Premium Design */}
+      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+        {/* Background with Elegant Gradient */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: 'url(/images/30th-hero-bg.png)' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-transparent" />
+        
+        {/* Decorative Sakura Ornaments */}
+        <div 
+          className="absolute left-0 top-1/4 w-64 h-96 bg-contain bg-no-repeat opacity-40 pointer-events-none"
+          style={{ backgroundImage: 'url(/images/30th-ornament-left.png)' }}
+        />
+        <div 
+          className="absolute right-0 top-1/3 w-64 h-96 bg-contain bg-no-repeat opacity-40 pointer-events-none"
+          style={{ backgroundImage: 'url(/images/30th-ornament-right.png)' }}
+        />
+        
+        {/* Floating Sakura Petals Animation */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-10 left-[10%] w-3 h-3 bg-[#FFB7C5]/40 rounded-full animate-float" style={{ animationDelay: '0s', animationDuration: '8s' }} />
+          <div className="absolute top-20 left-[30%] w-2 h-2 bg-[#F8BBD0]/50 rounded-full animate-float" style={{ animationDelay: '2s', animationDuration: '10s' }} />
+          <div className="absolute top-32 right-[20%] w-4 h-4 bg-[#FFB7C5]/30 rounded-full animate-float" style={{ animationDelay: '4s', animationDuration: '12s' }} />
+          <div className="absolute top-16 right-[40%] w-3 h-3 bg-[#F8BBD0]/40 rounded-full animate-float" style={{ animationDelay: '1s', animationDuration: '9s' }} />
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 text-center px-4 py-16">
+          {/* Home Button - Premium Style */}
+          <Link href="/">
+            <Button 
+              variant="outline" 
+              className="absolute top-4 left-4 gap-2 bg-white/95 hover:bg-white border-2 border-[#E8B4B8] text-[#C48B9F] hover:text-[#B07A8E] shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105"
+            >
+              <FaHome className="text-lg" />
+              <span className="font-semibold">ホームへ戻る</span>
+            </Button>
+          </Link>
+          
+          {/* Logo with Premium Shadow */}
+          <div className="mb-10 relative">
+            <div className="absolute inset-0 bg-white/60 blur-3xl rounded-full" />
+            <img 
+              src="/images/rinri30th.png" 
+              alt="30周年記念ロゴ" 
+              className="w-72 h-72 md:w-96 md:h-96 mx-auto relative drop-shadow-2xl animate-in fade-in zoom-in duration-1000"
+            />
+          </div>
+          
+          {/* Title with Elegant Typography */}
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] via-[#E8B4B8] to-[#C48B9F] font-serif">
+              北上市倫理法人会
+            </span>
+            <span className="block mt-3 text-gray-800 text-3xl md:text-5xl">
+              設立30周年記念式典・懇親会
+            </span>
           </h1>
+          
+          {/* Decorative Line */}
+          <div className="flex items-center justify-center gap-4 my-8 animate-in fade-in duration-1000 delay-500">
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#E8B4B8]" />
+            <div className="w-2 h-2 rounded-full bg-[#E8B4B8]" />
+            <div className="h-px w-32 bg-[#E8B4B8]" />
+            <div className="w-2 h-2 rounded-full bg-[#E8B4B8]" />
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#E8B4B8]" />
+          </div>
         </div>
       </section>
 
-      {/* Message Section */}
-      <section className="container py-16">
-        <Card className="p-8 md:p-12 bg-white shadow-lg">
-          <div className="prose prose-lg max-w-none">
-            <p className="text-right mb-8">謹啓</p>
+      {/* Message Section - Refined Layout */}
+      <section className="container py-20 md:py-28">
+        <div className="max-w-4xl mx-auto">
+          <Card className="p-10 md:p-16 bg-white/80 backdrop-blur-sm shadow-2xl border-2 border-[#F8BBD0]/30 relative overflow-hidden">
+            {/* Decorative Corner Elements */}
+            <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-[#FFB7C5]/10 to-transparent rounded-br-full" />
+            <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-[#FFB7C5]/10 to-transparent rounded-tl-full" />
             
-            <p className="mb-6">
-              早春の候　時下ますますご清栄のこととお喜び申し上げます。
-            </p>
-            
-            <p className="mb-6">
-              平素は格別のお引き立てを賜り深謝申し上げます。
-            </p>
-            
-            <p className="mb-6">
-              さて北上市倫理法人会は、令和8年度をもちまして設立30周年を迎えることとなりました。
-            </p>
-            
-            <p className="mb-6">
-              これもひとえに皆様方のご支援ご鞭撻の賜物と深く感謝いたしております。
-            </p>
-            
-            <p className="mb-6">
-              つきましては北上市倫理法人会会員および岩手県内の倫友の皆様と30年の振り返りとこれからの発展を祈念して、
-            </p>
-            
-            <p className="mb-6">
-              設立30周年記念式典・懇親会を催したいと存じます。
-            </p>
-            
-            <p className="mb-6">
-              皆様におかれましてはご多忙のところ誠に恐縮ではございますが、何卒ご来駕賜りますようご案内申し上げます。
-            </p>
-            
-            <p className="text-right mb-8">謹白</p>
-            
-            <p className="text-right mb-2">令和8年3月</p>
-            <p className="text-right font-bold">北上市倫理法人会　会長　伊藤正治</p>
-          </div>
-        </Card>
+            <div className="prose prose-lg max-w-none relative z-10">
+              <p className="text-right mb-10 text-xl font-serif text-gray-700">謹啓</p>
+              
+              <div className="space-y-6 text-gray-800 leading-relaxed text-lg">
+                <p className="first-letter:text-5xl first-letter:font-serif first-letter:text-[#C48B9F] first-letter:float-left first-letter:mr-2 first-letter:mt-1">
+                  早春の候　時下ますますご清栄のこととお喜び申し上げます。
+                </p>
+                
+                <p>
+                  平素は格別のお引き立てを賜り深謝申し上げます。
+                </p>
+                
+                <p className="font-semibold text-[#C48B9F]">
+                  さて北上市倫理法人会は、令和8年度をもちまして設立30周年を迎えることとなりました。
+                </p>
+                
+                <p>
+                  これもひとえに皆様方のご支援ご鞭撻の賜物と深く感謝いたしております。
+                </p>
+                
+                <p>
+                  つきましては北上市倫理法人会会員および岩手県内の倫友の皆様と30年の振り返りとこれからの発展を祈念して、
+                </p>
+                
+                <p className="font-semibold">
+                  設立30周年記念式典・懇親会を催したいと存じます。
+                </p>
+                
+                <p>
+                  皆様におかれましてはご多忙のところ誠に恐縮ではございますが、何卒ご来駕賜りますようご案内申し上げます。
+                </p>
+              </div>
+              
+              <div className="mt-12 pt-8 border-t border-[#F8BBD0]/30">
+                <p className="text-right mb-3 text-xl font-serif text-gray-700">謹白</p>
+                <p className="text-right mb-2 text-gray-600">令和8年3月</p>
+                <p className="text-right font-bold text-xl text-[#C48B9F]">北上市倫理法人会　会長　伊藤正治</p>
+              </div>
+            </div>
+          </Card>
+        </div>
       </section>
 
-      {/* Event Details Section */}
-      <section className="container py-16">
-        <h2 className="text-3xl font-bold text-center mb-12 text-sakura-600">
-          イベント詳細
-        </h2>
+      {/* Event Details Section - Premium Card Design */}
+      <section className="container py-20 md:py-28 bg-gradient-to-b from-transparent via-[#FFF8F0]/50 to-transparent">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] font-serif">
+            イベント詳細
+          </h2>
+          <div className="flex items-center justify-center gap-3 mt-6">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#E8B4B8]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#E8B4B8]" />
+            <div className="h-px w-24 bg-[#E8B4B8]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#E8B4B8]" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#E8B4B8]" />
+          </div>
+        </div>
         
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Date & Time */}
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-start gap-4">
-              <FaCalendar className="text-sakura-500 text-2xl mt-1" />
-              <div>
-                <h3 className="font-bold text-lg mb-2">日時</h3>
-                <p className="text-gray-700">2026年4月19日（日）</p>
-                <p className="text-gray-700">15:00 - 19:00</p>
-                <p className="text-sm text-gray-500 mt-1">受付時間: 14:30 -</p>
+          <Card className="p-8 hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="flex items-start gap-6">
+              <div className="p-4 bg-gradient-to-br from-[#FFB7C5]/20 to-[#F8BBD0]/20 rounded-2xl group-hover:from-[#FFB7C5]/30 group-hover:to-[#F8BBD0]/30 transition-all duration-500">
+                <FaCalendar className="text-[#C48B9F] text-3xl" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-xl mb-3 text-gray-800">日時</h3>
+                <p className="text-gray-700 text-lg font-semibold mb-1">2026年4月19日（日）</p>
+                <p className="text-gray-700 text-lg mb-2">15:00 - 19:00</p>
+                <p className="text-sm text-gray-500 bg-[#FFF8F0] px-3 py-1 rounded-full inline-block">受付時間: 14:30 -</p>
               </div>
             </div>
           </Card>
 
           {/* Venue */}
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-start gap-4">
-              <FaMapMarkerAlt className="text-sakura-500 text-2xl mt-1" />
-              <div>
-                <h3 className="font-bold text-lg mb-2">会場</h3>
-                <p className="font-semibold text-gray-800">ブランニュー北上</p>
+          <Card className="p-8 hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="flex items-start gap-6">
+              <div className="p-4 bg-gradient-to-br from-[#FFB7C5]/20 to-[#F8BBD0]/20 rounded-2xl group-hover:from-[#FFB7C5]/30 group-hover:to-[#F8BBD0]/30 transition-all duration-500">
+                <FaMapMarkerAlt className="text-[#C48B9F] text-3xl" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-xl mb-3 text-gray-800">会場</h3>
+                <p className="font-bold text-gray-800 text-lg mb-1">ブランニュー北上</p>
                 <p className="text-gray-700">岩手県北上市大通り1丁目10-1</p>
               </div>
             </div>
           </Card>
 
           {/* Contact */}
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-start gap-4">
-              <FaPhone className="text-sakura-500 text-2xl mt-1" />
-              <div>
-                <h3 className="font-bold text-lg mb-2">お問い合わせ</h3>
-                <p className="text-gray-700">0197-72-7075</p>
+          <Card className="p-8 hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="flex items-start gap-6">
+              <div className="p-4 bg-gradient-to-br from-[#FFB7C5]/20 to-[#F8BBD0]/20 rounded-2xl group-hover:from-[#FFB7C5]/30 group-hover:to-[#F8BBD0]/30 transition-all duration-500">
+                <FaPhone className="text-[#C48B9F] text-3xl" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-xl mb-3 text-gray-800">お問い合わせ</h3>
+                <p className="text-gray-700 text-2xl font-semibold">0197-72-7075</p>
               </div>
             </div>
           </Card>
 
           {/* Fee */}
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-start gap-4">
-              <FaDollarSign className="text-sakura-500 text-2xl mt-1" />
-              <div>
-                <h3 className="font-bold text-lg mb-2">会費</h3>
-                <p className="text-2xl font-bold text-sakura-600">10,000円</p>
+          <Card className="p-8 hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-gradient-to-br from-[#FFB7C5]/10 to-[#F8BBD0]/10 backdrop-blur-sm border-2 border-[#E8B4B8]/50 group">
+            <div className="flex items-start gap-6">
+              <div className="p-4 bg-gradient-to-br from-[#C48B9F]/20 to-[#E8B4B8]/20 rounded-2xl group-hover:from-[#C48B9F]/30 group-hover:to-[#E8B4B8]/30 transition-all duration-500">
+                <FaDollarSign className="text-[#C48B9F] text-3xl" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-xl mb-3 text-gray-800">会費</h3>
+                <p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8]">
+                  10,000円
+                </p>
               </div>
             </div>
           </Card>
         </div>
 
         {/* Website Link */}
-        <Card className="p-6 hover:shadow-lg transition-shadow max-w-4xl mx-auto mt-8">
-          <div className="flex items-start gap-4">
-            <FaGlobe className="text-sakura-500 text-2xl mt-1" />
+        <Card className="p-8 hover:shadow-2xl transition-all duration-500 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 max-w-5xl mx-auto mt-8">
+          <div className="flex items-start gap-6">
+            <div className="p-4 bg-gradient-to-br from-[#FFB7C5]/20 to-[#F8BBD0]/20 rounded-2xl">
+              <FaGlobe className="text-[#C48B9F] text-3xl" />
+            </div>
             <div className="flex-1">
-              <h3 className="font-bold text-lg mb-2">会場ウェブサイト</h3>
+              <h3 className="font-bold text-xl mb-3 text-gray-800">会場ウェブサイト</h3>
               <a 
                 href="https://www.brandnew-k.com/index.html" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-sakura-600 hover:text-sakura-700 underline"
+                className="text-[#C48B9F] hover:text-[#B07A8E] underline text-lg transition-colors duration-300"
               >
                 https://www.brandnew-k.com/index.html
               </a>
@@ -137,52 +223,91 @@ export default function Event30thAnniversary() {
         </Card>
       </section>
 
-      {/* Access Section */}
-      <section className="container py-16 bg-gray-50">
-        <h2 className="text-3xl font-bold text-center mb-8 text-sakura-600">
-          会場へのアクセス
-        </h2>
-        <Card className="p-8 max-w-3xl mx-auto">
-          <p className="text-lg text-gray-700 leading-relaxed">
-            ブランニュー北上は、JR北上駅西口から徒歩３分の距離にございます。<br />
-            お車でお越しの際は、当館裏手に専用駐車場（50台）がございますのでそちらをご利用下さいませ。
-          </p>
-          <div className="mt-6">
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=岩手県北上市大通り1丁目10-1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block"
-            >
-              <Button variant="outline" className="gap-2">
-                <FaMapMarkerAlt className="text-lg" />
-                GoogleMapで見る
-              </Button>
-            </a>
+      {/* Access Section - Elegant Design */}
+      <section className="container py-20 md:py-28">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] font-serif">
+              会場へのアクセス
+            </h2>
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#E8B4B8]" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#E8B4B8]" />
+              <div className="h-px w-24 bg-[#E8B4B8]" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#E8B4B8]" />
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#E8B4B8]" />
+            </div>
           </div>
-        </Card>
+          
+          <Card className="p-10 md:p-12 bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-[#F8BBD0]/30">
+            <p className="text-lg text-gray-700 leading-relaxed mb-8">
+              ブランニュー北上は、<span className="font-semibold text-[#C48B9F]">JR北上駅西口から徒歩３分</span>の距離にございます。<br />
+              お車でお越しの際は、当館裏手に<span className="font-semibold text-[#C48B9F]">専用駐車場（50台）</span>がございますのでそちらをご利用下さいませ。
+            </p>
+            <div className="flex justify-center">
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=岩手県北上市大通り1丁目10-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button 
+                  variant="outline" 
+                  className="gap-3 px-8 py-6 text-lg border-2 border-[#E8B4B8] text-[#C48B9F] hover:bg-[#FFF8F0] hover:border-[#C48B9F] transition-all duration-300 hover:scale-105 shadow-lg"
+                >
+                  <FaMapMarkerAlt className="text-xl" />
+                  GoogleMapで見る
+                </Button>
+              </a>
+            </div>
+          </Card>
+        </div>
       </section>
 
-      {/* RSVP Section */}
-      <section className="container py-16">
-        <Card className="p-8 md:p-12 bg-sakura-50 max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6 text-sakura-600">
-            回答フォーム
-          </h2>
-          <p className="text-lg mb-4">
-            2026年4月10日までにご返信をお願いいたします
-          </p>
-          <p className="text-gray-600 mb-8">
-            この度はお会いできますことを心より楽しみにしております。<br />
-            お手数をおかけいたしますが、下記ボタンより回答フォームへのご回答をお願い申し上げます。
-          </p>
-          <Link href="/events/30th-anniversary/rsvp">
-            <Button size="lg" className="bg-sakura-500 hover:bg-sakura-600 text-white px-8 py-6 text-lg">
-              回答フォームへ
-            </Button>
-          </Link>
-        </Card>
+      {/* RSVP Section - Premium CTA */}
+      <section className="container py-20 md:py-28 bg-gradient-to-b from-transparent via-[#FFF8F0]/50 to-transparent">
+        <div className="max-w-3xl mx-auto">
+          <Card className="p-12 md:p-16 bg-gradient-to-br from-[#FFB7C5]/10 via-white to-[#F8BBD0]/10 backdrop-blur-sm shadow-2xl border-2 border-[#E8B4B8]/50 text-center relative overflow-hidden">
+            {/* Decorative Background Elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#FFB7C5]/10 to-transparent rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#F8BBD0]/10 to-transparent rounded-full blur-3xl" />
+            
+            <div className="relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] font-serif">
+                回答フォーム
+              </h2>
+              
+              <div className="flex items-center justify-center gap-3 mb-8">
+                <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#E8B4B8]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#E8B4B8]" />
+                <div className="h-px w-24 bg-[#E8B4B8]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#E8B4B8]" />
+                <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#E8B4B8]" />
+              </div>
+              
+              <p className="text-2xl mb-6 font-semibold text-[#C48B9F]">
+                2026年4月10日までにご返信をお願いいたします
+              </p>
+              
+              <p className="text-lg text-gray-700 mb-10 leading-relaxed max-w-xl mx-auto">
+                この度はお会いできますことを心より楽しみにしております。<br />
+                お手数をおかけいたしますが、下記ボタンより回答フォームへのご回答をお願い申し上げます。
+              </p>
+              
+              <Link href="/events/30th-anniversary/rsvp">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] hover:from-[#B07A8E] hover:to-[#D6A3A7] text-white px-12 py-7 text-xl font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 border-2 border-white/50"
+                >
+                  回答フォームへ進む
+                </Button>
+              </Link>
+            </div>
+          </Card>
+        </div>
       </section>
+      
+      {/* Bottom Spacing */}
+      <div className="h-16" />
     </div>
   );
 }
