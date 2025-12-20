@@ -6,6 +6,7 @@ import { Calendar, MapPin, Users, Heart, Sun, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import HeroSlider from "@/components/HeroSlider";
 
 export default function Home() {
   // The userAuth hooks provides authentication state
@@ -17,44 +18,8 @@ export default function Home() {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="relative h-[600px] flex items-center justify-center overflow-hidden bg-sakura-pattern">
-          {/* Background Image with Overlay */}
-          <div className="absolute inset-0 z-0">
-            <img 
-              src="/images/seminar_lecture.png" 
-              alt="経営者モーニングセミナーの様子" 
-              className="w-full h-full object-cover opacity-20"
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/80 to-white/60 z-10"></div>
-          
-          {/* Decorative Sakura Elements (CSS generated) */}
-          <div className="absolute top-10 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-pulse z-10"></div>
-          <div className="absolute bottom-10 right-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse delay-1000 z-10"></div>
-          
-          <div className="container relative z-20 text-center">
-            <Badge className="mb-6 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 px-4 py-1 text-base">
-              一般社団法人倫理研究所 北上市倫理法人会
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-foreground">
-              <span className="block text-primary mb-2 font-serif">「心の経営」</span>
-              を学び、実践する
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-              家庭・企業・地域・日本の活路を拓く<br/>
-              全国約7万社の経営者の会へようこそ
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
-                <Link href="/schedule/morning">モーニングセミナーに参加する</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="text-lg px-8 py-6 border-primary text-primary hover:bg-primary/5">
-                <Link href="/about">倫理法人会について</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
+        {/* Hero Slider */}
+        <HeroSlider />
 
         {/* Next Seminar Info */}
         <section className="py-12 bg-white border-b">
