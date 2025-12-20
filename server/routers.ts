@@ -42,6 +42,13 @@ export const appRouter = router({
         return db.getMemberById(input.id);
       }),
 
+    // Public: Get related members (same category)
+    getRelated: publicProcedure
+      .input(z.object({ id: z.number(), limit: z.number().default(4) }))
+      .query(async ({ input }) => {
+        return db.getRelatedMembers(input.id, input.limit);
+      }),
+
     // Protected: Create new member (admin only)
     create: protectedProcedure
       .input(

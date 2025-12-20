@@ -1,0 +1,82 @@
+{
+  "query": "SELECT id, name, companyName, category FROM members ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user SeKPyXzqnCJkWyS.257b9219d84c --database 6wEjUUtpZZxtduZT5pe4tU --execute SELECT id, name, companyName, category FROM members ORDER BY id;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "佐藤 健一",
+      "companyName": "株式会社北上製作所",
+      "category": "製造・ものづくり"
+    },
+    {
+      "id": "30002",
+      "name": "鈴木 美咲",
+      "companyName": "鈴木税理士事務所",
+      "category": "専門サービス（士業,保険,デザイン,議員等）"
+    },
+    {
+      "id": "30003",
+      "name": "田中 誠",
+      "companyName": "田中建設株式会社",
+      "category": "建築・不動産"
+    },
+    {
+      "id": "120020",
+      "name": "山田 太郎",
+      "companyName": "山田税理士事務所",
+      "category": "専門サービス（士業,保険,デザイン,議員等）"
+    },
+    {
+      "id": "120021",
+      "name": "佐藤 花子",
+      "companyName": "さくらカフェ",
+      "category": "飲食・食品"
+    },
+    {
+      "id": "120022",
+      "name": "鈴木 誠",
+      "companyName": "鈴木建設株式会社",
+      "category": "建築・不動産"
+    },
+    {
+      "id": "120023",
+      "name": "田中 美咲",
+      "companyName": "ビューティーサロン TANAKA",
+      "category": "美容・健康"
+    },
+    {
+      "id": "120024",
+      "name": "高橋 健一",
+      "companyName": "高橋電気工業株式会社",
+      "category": "電気・通信・IT"
+    },
+    {
+      "id": "150001",
+      "name": "テスト太郎",
+      "companyName": "テスト株式会社",
+      "category": "製造業"
+    },
+    {
+      "id": "150002",
+      "name": "テスト花子",
+      "companyName": "テスト工業",
+      "category": "製造業"
+    },
+    {
+      "id": "150003",
+      "name": "テスト次郎",
+      "companyName": "テストサービス",
+      "category": "サービス業"
+    },
+    {
+      "id": "150004",
+      "name": "ユニーク太郎",
+      "companyName": "ユニーク株式会社",
+      "category": "ユニークカテゴリー"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcompanyName\tcategory\n30001\t佐藤 健一\t株式会社北上製作所\t製造・ものづくり\n30002\t鈴木 美咲\t鈴木税理士事務所\t専門サービス（士業,保険,デザイン,議員等）\n30003\t田中 誠\t田中建設株式会社\t建築・不動産\n120020\t山田 太郎\t山田税理士事務所\t専門サービス（士業,保険,デザイン,議員等）\n120021\t佐藤 花子\tさくらカフェ\t飲食・食品\n120022\t鈴木 誠\t鈴木建設株式会社\t建築・不動産\n120023\t田中 美咲\tビューティーサロン TANAKA\t美容・健康\n120024\t高橋 健一\t高橋電気工業株式会社\t電気・通信・IT\n150001\tテスト太郎\tテスト株式会社\t製造業\n150002\tテスト花子\tテスト工業\t製造業\n150003\tテスト次郎\tテストサービス\tサービス業\n150004\tユニーク太郎\tユニーク株式会社\tユニークカテゴリー\n",
+  "stderr": "",
+  "execution_time_ms": 1535
+}

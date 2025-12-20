@@ -1,4 +1,4 @@
-import { eq, like, or, and, desc, asc, sql, gte } from "drizzle-orm";
+import { eq, like, or, and, desc, asc, sql, gte, not } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -104,6 +104,24 @@ export async function getMemberById(id: number) {
   if (!db) return null;
   const result = await db.select().from(members).where(eq(members.id, id)).limit(1);
   return result[0] || null;
+}
+
+export async function getRelatedMembers(id: number, limit: number = 4) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // First get the current member's category
+  const currentMember = await getMemberById(id);
+  if (!currentMember) return [];
+  
+  // Get other members in the same category
+  const result = await db
+    .select()
+    .from(members)
+    .where(and(eq(members.category, currentMember.category), not(eq(members.id, id))))
+    .limit(limit);
+  
+  return result;
 }
 
 export async function createMember(data: InsertMember) {

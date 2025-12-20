@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, name, companyName, category FROM members WHERE category = '製造業' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user SeKPyXzqnCJkWyS.257b9219d84c --database 6wEjUUtpZZxtduZT5pe4tU --execute SELECT id, name, companyName, category FROM members WHERE category = '製造業' LIMIT 5;",
+  "rows": [
+    {
+      "id": "150001",
+      "name": "テスト太郎",
+      "companyName": "テスト株式会社",
+      "category": "製造業"
+    },
+    {
+      "id": "150002",
+      "name": "テスト花子",
+      "companyName": "テスト工業",
+      "category": "製造業"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcompanyName\tcategory\n150001\tテスト太郎\tテスト株式会社\t製造業\n150002\tテスト花子\tテスト工業\t製造業\n",
+  "stderr": "",
+  "execution_time_ms": 1508
+}

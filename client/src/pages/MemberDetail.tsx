@@ -18,6 +18,11 @@ export default function MemberDetail() {
     { id: parseInt(id || "0") }
   );
 
+  const { data: relatedMembers } = trpc.members.getRelated.useQuery(
+    { id: parseInt(id || "0"), limit: 4 },
+    { enabled: !!member }
+  );
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -236,6 +241,64 @@ export default function MemberDetail() {
               )}
             </div>
           </div>
+
+          {/* 関連会員 */}
+          {relatedMembers && relatedMembers.length > 0 && (
+            <div className="mt-16">
+              <h2 className="text-2xl font-bold text-foreground mb-6">
+                関連する会員
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {relatedMembers.map((relatedMember) => (
+                  <div
+                    key={relatedMember.id}
+                    onClick={() => setLocation(`/members/${relatedMember.id}`)}
+                    className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                  >
+                    {/* 写真 */}
+                    <div className="aspect-square overflow-hidden bg-muted">
+                      {relatedMember.photoUrl ? (
+                        <img
+                          src={relatedMember.photoUrl}
+                          alt={relatedMember.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                          <span className="text-4xl">👤</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 情報 */}
+                    <div className="p-4">
+                      {/* 委員会ラベル */}
+                      {relatedMember.committee && (
+                        <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary mb-2">
+                          {relatedMember.committee}
+                        </span>
+                      )}
+
+                      {/* 会社名 */}
+                      <h3 className="font-bold text-lg text-foreground mb-1">
+                        {relatedMember.companyName}
+                      </h3>
+
+                      {/* 名前 */}
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {relatedMember.name}
+                      </p>
+
+                      {/* カテゴリ */}
+                      <span className="inline-block px-2 py-1 rounded text-xs bg-muted text-muted-foreground">
+                        {relatedMember.category}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* 戻るボタン（下部） */}
           <div className="mt-8 text-center">
