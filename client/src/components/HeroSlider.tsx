@@ -29,7 +29,7 @@ const slides = [
   {
     id: 2,
     type: "anniversary" as const,
-    logo: "/rinri30th-2.jpg",
+    logo: "/images/rinri30th.png",
     catchphrase: "北上の地に根を張り、倫理（こころ）の花を咲かせて",
     buttons: [
       { text: "30周年式典・懇親会のご案内", href: "/events/30th-anniversary", variant: "default" as const },
