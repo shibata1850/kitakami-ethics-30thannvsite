@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaPhone, FaGlobe, FaDollarSign, FaHome } from "react-icons/fa";
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaPhone, FaGlobe, FaDollarSign, FaHome, FaFacebookF, FaTwitter, FaLine, FaShareAlt } from "react-icons/fa";
 import { useRef, useState } from "react";
 
 const timelineYears = [
@@ -27,6 +27,23 @@ export default function Event30thAnniversary() {
       window.scrollTo({ top: y, behavior: 'smooth' });
       setActiveYear(year);
     }
+  };
+
+  const shareToFacebook = (imageUrl: string, title: string) => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+  };
+
+  const shareToTwitter = (imageUrl: string, title: string) => {
+    const text = encodeURIComponent(`北上市倫理法人会 30年の歩み - ${title}`);
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=600,height=400');
+  };
+
+  const shareToLine = (imageUrl: string, title: string) => {
+    const text = encodeURIComponent(`北上市倫理法人会 30年の歩み - ${title}`);
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://social-plugins.line.me/lineit/share?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
   };
 
   return (
@@ -344,6 +361,30 @@ export default function Event30thAnniversary() {
                 <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">1995年</p>
                 <h3 className="text-xl font-bold">設立記念式典</h3>
               </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button
+                  onClick={() => shareToFacebook('/images/gallery/1995-founding.jpg', '設立記念式典')}
+                  className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
+                  aria-label="Facebookでシェア"
+                >
+                  <FaFacebookF className="text-sm" />
+                </button>
+                <button
+                  onClick={() => shareToTwitter('/images/gallery/1995-founding.jpg', '設立記念式典')}
+                  className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
+                  aria-label="Xでシェア"
+                >
+                  <FaTwitter className="text-sm" />
+                </button>
+                <button
+                  onClick={() => shareToLine('/images/gallery/1995-founding.jpg', '設立記念式典')}
+                  className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
+                  aria-label="LINEでシェア"
+                >
+                  <FaLine className="text-sm" />
+                </button>
+              </div>
             </div>
           </Card>
 
@@ -362,6 +403,12 @@ export default function Event30thAnniversary() {
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                 <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2000年</p>
                 <h3 className="text-xl font-bold">成長と学び</h3>
+              </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button onClick={() => shareToFacebook('/images/gallery/2000-morning-seminar.jpg', '成長と学び')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('/images/gallery/2000-morning-seminar.jpg', '成長と学び')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('/images/gallery/2000-morning-seminar.jpg', '成長と学び')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
               </div>
             </div>
           </Card>
@@ -382,6 +429,12 @@ export default function Event30thAnniversary() {
                 <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2005年</p>
                 <h3 className="text-xl font-bold">地域貢献活動</h3>
               </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button onClick={() => shareToFacebook('/images/gallery/2005-community-service.jpg', '地域貢献活動')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('/images/gallery/2005-community-service.jpg', '地域貢献活動')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('/images/gallery/2005-community-service.jpg', '地域貢献活動')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
+              </div>
             </div>
           </Card>
 
@@ -400,6 +453,12 @@ export default function Event30thAnniversary() {
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                 <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2010年</p>
                 <h3 className="text-xl font-bold">富士研修合宿</h3>
+              </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button onClick={() => shareToFacebook('/images/gallery/2010-training-retreat.jpg', '富士研修合宿')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('/images/gallery/2010-training-retreat.jpg', '富士研修合宿')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('/images/gallery/2010-training-retreat.jpg', '富士研修合宿')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
               </div>
             </div>
           </Card>
@@ -420,6 +479,12 @@ export default function Event30thAnniversary() {
                 <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2015年</p>
                 <h3 className="text-xl font-bold">20周年記念式典</h3>
               </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button onClick={() => shareToFacebook('/images/gallery/2015-anniversary.jpg', '20周年記念式典')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('/images/gallery/2015-anniversary.jpg', '20周年記念式典')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('/images/gallery/2015-anniversary.jpg', '20周年記念式典')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
+              </div>
             </div>
           </Card>
 
@@ -438,6 +503,12 @@ export default function Event30thAnniversary() {
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                 <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2020年</p>
                 <h3 className="text-xl font-bold">新しい時代への適応</h3>
+              </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button onClick={() => shareToFacebook('/images/gallery/2020-virtual-meeting.jpg', '新しい時代への適応')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('/images/gallery/2020-virtual-meeting.jpg', '新しい時代への適応')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('/images/gallery/2020-virtual-meeting.jpg', '新しい時代への適応')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
               </div>
             </div>
           </Card>
@@ -458,6 +529,12 @@ export default function Event30thAnniversary() {
                 <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2024年</p>
                 <h3 className="text-xl font-bold">継続と進化</h3>
               </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button onClick={() => shareToFacebook('/images/gallery/2024-recent-seminar.jpg', '継続と進化')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('/images/gallery/2024-recent-seminar.jpg', '継続と進化')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('/images/gallery/2024-recent-seminar.jpg', '継続と進化')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
+              </div>
             </div>
           </Card>
 
@@ -476,6 +553,12 @@ export default function Event30thAnniversary() {
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                 <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2024年</p>
                 <h3 className="text-xl font-bold">次世代への継承</h3>
+              </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button onClick={() => shareToFacebook('/images/gallery/2024-youth-program.jpg', '次世代への継承')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('/images/gallery/2024-youth-program.jpg', '次世代への継承')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('/images/gallery/2024-youth-program.jpg', '次世代への継承')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
               </div>
             </div>
           </Card>
