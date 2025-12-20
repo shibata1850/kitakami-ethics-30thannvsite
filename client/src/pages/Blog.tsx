@@ -29,10 +29,10 @@ export default function Blog() {
         {/* ヒーローセクション */}
         <section className="bg-gradient-to-r from-pink-50 to-pink-100 py-20">
           <div className="container">
-            <h1 className="text-4xl md:text-5xl font-bold text-center mb-6 text-gray-900">
+            <h1 className="text-4xl md:text-5xl font-bold text-left md:text-center mb-6 text-gray-900">
               ブログ・お知らせ
             </h1>
-            <p className="text-lg text-center text-gray-700 max-w-3xl mx-auto">
+            <p className="text-lg text-left md:text-center text-gray-700 max-w-3xl mx-auto">
               北上市倫理法人会の最新情報や活動報告をお届けします。
             </p>
           </div>
@@ -91,7 +91,7 @@ export default function Blog() {
           <div className="container">
             <div className="max-w-5xl mx-auto space-y-8">
               {isLoading && (
-                <div className="text-center py-12 text-muted-foreground">
+                <div className="text-left md:text-center py-12 text-muted-foreground">
                   読み込み中...
                 </div>
               )}
@@ -161,7 +161,7 @@ export default function Blog() {
               ))}
               {posts?.length === 0 && !isLoading && (
                 <Card className="border-pink-200">
-                  <CardContent className="p-12 text-center text-muted-foreground">
+                  <CardContent className="p-12 text-left md:text-center text-muted-foreground">
                     ブログ記事がありません
                   </CardContent>
                 </Card>
@@ -173,7 +173,7 @@ export default function Blog() {
         {/* カテゴリー */}
         <section className="py-16 bg-gray-50">
           <div className="container">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
               カテゴリー
             </h2>
             <div className="max-w-4xl mx-auto">
@@ -183,7 +183,7 @@ export default function Blog() {
                   return (
                     <Card
                       key={cat}
-                      className="text-center hover:shadow-lg transition-shadow cursor-pointer border-pink-200"
+                      className="text-left md:text-center hover:shadow-lg transition-shadow cursor-pointer border-pink-200"
                       onClick={() => setFilterCategory(cat)}
                     >
                       <CardContent className="p-4">
@@ -200,7 +200,7 @@ export default function Blog() {
 
         {/* CTA */}
         <section className="py-16 bg-gradient-to-r from-pink-500 to-pink-600 text-white">
-          <div className="container text-center">
+          <div className="container text-left md:text-center">
             <h2 className="text-3xl font-bold mb-6">
               活動の様子を実際に体験してみませんか？
             </h2>

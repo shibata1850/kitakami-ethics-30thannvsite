@@ -15,10 +15,10 @@ export default function About() {
         {/* ヒーローセクション */}
         <section className="bg-gradient-to-r from-pink-50 to-pink-100 py-20">
           <div className="container">
-            <h1 className="text-4xl md:text-5xl font-bold text-center mb-6 text-gray-900">
+            <h1 className="text-4xl md:text-5xl font-bold text-left md:text-center mb-6 text-gray-900">
               倫理法人会とは
             </h1>
-            <p className="text-lg text-center text-gray-700 max-w-3xl mx-auto">
+            <p className="text-lg text-left md:text-center text-gray-700 max-w-3xl mx-auto">
               一般社団法人倫理研究所が主催する、経営者のための自己啓発団体です。
               「純粋倫理」を学び、実践することで、企業の繁栄と社会の発展に貢献します。
             </p>
@@ -28,7 +28,7 @@ export default function About() {
         {/* 倫理法人会の理念 */}
         <section className="py-16 bg-white">
           <div className="container">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
               倫理法人会の理念
             </h2>
             <div className="max-w-4xl mx-auto">
@@ -52,7 +52,7 @@ export default function About() {
         {officers.length > 0 && (
           <section className="py-16 bg-gray-50">
             <div className="container">
-              <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+              <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
                 役員紹介
               </h2>
               <div className="max-w-5xl mx-auto">
@@ -84,7 +84,7 @@ export default function About() {
                             )}
                           </div>
                         </div>
-                        <div className="text-center">
+                        <div className="text-left md:text-center">
                           <p className="text-sm text-pink-600 font-semibold mb-1">
                             {officer.position}
                             {officer.committee && ` / ${officer.committee}`}
@@ -113,11 +113,11 @@ export default function About() {
         {/* 4つの特徴 */}
         <section className="py-16 bg-white">
           <div className="container">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
               倫理法人会の4つの特徴
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <Card className="text-center hover:shadow-lg transition-shadow">
+              <Card className="text-left md:text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Heart className="w-8 h-8 text-pink-600" />
@@ -129,7 +129,7 @@ export default function About() {
                 </CardContent>
               </Card>
 
-              <Card className="text-center hover:shadow-lg transition-shadow">
+              <Card className="text-left md:text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Users className="w-8 h-8 text-pink-600" />
@@ -141,7 +141,7 @@ export default function About() {
                 </CardContent>
               </Card>
 
-              <Card className="text-center hover:shadow-lg transition-shadow">
+              <Card className="text-left md:text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <TrendingUp className="w-8 h-8 text-pink-600" />
@@ -153,7 +153,7 @@ export default function About() {
                 </CardContent>
               </Card>
 
-              <Card className="text-center hover:shadow-lg transition-shadow">
+              <Card className="text-left md:text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <BookOpen className="w-8 h-8 text-pink-600" />
@@ -171,7 +171,7 @@ export default function About() {
         {/* 活動内容 */}
         <section className="py-16 bg-gray-50">
           <div className="container">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
               主な活動内容
             </h2>
             <div className="max-w-4xl mx-auto space-y-6">
@@ -220,7 +220,7 @@ export default function About() {
 
         {/* CTA */}
         <section className="py-16 bg-gradient-to-r from-pink-500 to-pink-600 text-white">
-          <div className="container text-center">
+          <div className="container text-left md:text-center">
             <h2 className="text-3xl font-bold mb-6">
               まずはゲストとして参加してみませんか？
             </h2>

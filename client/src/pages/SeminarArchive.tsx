@@ -46,7 +46,7 @@ export default function SeminarArchive() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
-        <div className="container py-20 text-center">
+        <div className="container py-20 text-left md:text-center">
           <p className="text-lg text-gray-600">読み込み中...</p>
         </div>
       </div>
@@ -58,10 +58,10 @@ export default function SeminarArchive() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-pink-100 to-pink-50 py-16">
         <div className="container">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-left md:text-center">
             セミナーアーカイブ
           </h1>
-          <p className="text-lg text-gray-700 text-center max-w-2xl mx-auto">
+          <p className="text-lg text-gray-700 text-left md:text-center max-w-2xl mx-auto">
             過去に開催された経営者モーニングセミナーの記録です。
           </p>
         </div>
@@ -134,7 +134,7 @@ export default function SeminarArchive() {
             )}
 
             {/* Results Count */}
-            <div className="text-center text-sm text-gray-600">
+            <div className="text-left md:text-center text-sm text-gray-600">
               {filteredSeminars.length}件のセミナーが見つかりました
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function SeminarArchive() {
       <section className="py-12">
         <div className="container">
           {filteredSeminars.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-left md:text-center py-12">
               <p className="text-lg text-gray-600">
                 {seminars.length === 0
                   ? "まだ過去のセミナーがありません"

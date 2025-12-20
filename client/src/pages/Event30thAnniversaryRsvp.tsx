@@ -143,7 +143,7 @@ export default function Event30thAnniversaryRsvp() {
         </Link>
 
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-left md:text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 text-sakura-600">
             回答フォーム
           </h1>
