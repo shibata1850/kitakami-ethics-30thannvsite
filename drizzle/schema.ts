@@ -44,6 +44,7 @@ export const members = mysqlTable("members", {
   instagramUrl: varchar("instagramUrl", { length: 500 }), // Instagram URL
   lineUrl: varchar("lineUrl", { length: 500 }), // LINE URL
   services: text("services"), // 提供サービス・商品（カンマ区切り）
+  achievements: text("achievements"), // 活動実績（受賞歴、メディア掲載履歴など）
   sortOrder: int("sortOrder").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

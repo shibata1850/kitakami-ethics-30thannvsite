@@ -1,0 +1,31 @@
+{
+  "query": "SELECT * FROM members WHERE name = '田中 美咲';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user SeKPyXzqnCJkWyS.257b9219d84c --database 6wEjUUtpZZxtduZT5pe4tU --execute SELECT * FROM members WHERE name = '田中 美咲';",
+  "rows": [
+    {
+      "id": "120004",
+      "name": "田中 美咲",
+      "companyName": "ビューティーサロン TANAKA",
+      "title": "「活力朝礼」で店舗の雰囲気が一変",
+      "message": "倫理法人会で学んだ「活力朝礼」を店舗に導入したところ、スタッフの表情が明るくなり、お客様からも「スタッフの雰囲気が良くなった」と言われるようになりました。モーニングセミナーで学んだことを実践することで、リピート率も向上し、売上も20%アップしました。経営者同士の交流も刺激になっています。",
+      "photoUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop",
+      "category": "美容・健康",
+      "committee": "活力朝礼委員会",
+      "sortOrder": "4",
+      "createdAt": "2025-12-19 23:35:51",
+      "updatedAt": "2025-12-19 23:35:51",
+      "websiteUrl": "https://beauty-tanaka.example.com",
+      "twitterUrl": "https://twitter.com/beauty_tanaka",
+      "youtubeUrl": "NULL",
+      "tiktokUrl": "NULL",
+      "instagramUrl": "https://instagram.com/beauty_tanaka",
+      "lineUrl": "https://line.me/R/ti/p/@beautytanaka",
+      "services": "ヘアカット,カラーリング,パーマ,ヘッドスパ,着付け",
+      "achievements": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcompanyName\ttitle\tmessage\tphotoUrl\tcategory\tcommittee\tsortOrder\tcreatedAt\tupdatedAt\twebsiteUrl\ttwitterUrl\tyoutubeUrl\ttiktokUrl\tinstagramUrl\tlineUrl\tservices\tachievements\n120004\t田中 美咲\tビューティーサロン TANAKA\t「活力朝礼」で店舗の雰囲気が一変\t倫理法人会で学んだ「活力朝礼」を店舗に導入したところ、スタッフの表情が明るくなり、お客様からも「スタッフの雰囲気が良くなった」と言われるようになりました。モーニングセミナーで学んだことを実践することで、リピート率も向上し、売上も20%アップしました。経営者同士の交流も刺激になっています。\thttps://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop\t美容・健康\t活力朝礼委員会\t4\t2025-12-19 23:35:51\t2025-12-19 23:35:51\thttps://beauty-tanaka.example.com\thttps://twitter.com/beauty_tanaka\tNULL\tNULL\thttps://instagram.com/beauty_tanaka\thttps://line.me/R/ti/p/@beautytanaka\tヘアカット,カラーリング,パーマ,ヘッドスパ,着付け\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1717
+}

@@ -68,6 +68,7 @@ interface MemberFormData {
   instagramUrl?: string;
   lineUrl?: string;
   services?: string;
+  achievements?: string;
   sortOrder: number;
 }
 
@@ -230,6 +231,7 @@ export default function MemberAdmin() {
       instagramUrl: formData.get("instagramUrl") as string || undefined,
       lineUrl: formData.get("lineUrl") as string || undefined,
       services: formData.get("services") as string || undefined,
+      achievements: formData.get("achievements") as string || undefined,
       sortOrder: parseInt(formData.get("sortOrder") as string) || 0,
     };
 
@@ -496,6 +498,20 @@ export default function MemberAdmin() {
                       placeholder="例：税務相談,経営コンサルティング,記帳代行"
                       rows={3}
                       defaultValue={editingMember?.services}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="achievements">活動実績</Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      受賞歴、メディア掲載履歴、講演実績などを入力してください
+                    </p>
+                    <Textarea
+                      id="achievements"
+                      name="achievements"
+                      placeholder="例：2023年 岩手県優良企業賞受賞\n2024年 地元テレビ局「経営者インタビュー」出演"
+                      rows={5}
+                      defaultValue={editingMember?.achievements}
                     />
                   </div>
 

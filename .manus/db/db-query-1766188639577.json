@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, name, companyName, achievements FROM members WHERE name = '田中 美咲';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user SeKPyXzqnCJkWyS.257b9219d84c --database 6wEjUUtpZZxtduZT5pe4tU --execute SELECT id, name, companyName, achievements FROM members WHERE name = '田中 美咲';",
+  "rows": [
+    {
+      "id": "120004",
+      "name": "田中 美咲",
+      "companyName": "ビューティーサロン TANAKA",
+      "achievements": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcompanyName\tachievements\n120004\t田中 美咲\tビューティーサロン TANAKA\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1668
+}

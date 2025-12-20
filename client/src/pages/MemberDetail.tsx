@@ -218,6 +218,22 @@ export default function MemberDetail() {
                   </div>
                 </div>
               )}
+
+              {/* 活動実績 */}
+              {member.achievements && (
+                <div className="mt-12">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">
+                    活動実績
+                  </h3>
+                  <div className="bg-primary/5 rounded-lg p-6 border border-primary/10">
+                    <div className="prose prose-sm max-w-none">
+                      <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">
+                        {member.achievements}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

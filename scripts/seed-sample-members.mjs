@@ -14,6 +14,7 @@ const sampleMembers = [
     youtubeUrl: "https://youtube.com/@yamada_tax",
     instagramUrl: "https://instagram.com/yamada_tax",
     services: "税務相談,経営コンサルティング,記帳代行,確定申告",
+    achievements: "2022年 岩手県優良税理士事務所表彰\n2023年 地元経済誌「経営者インタビュー」掲載\n2024年 倫理法人会全国大会にて事例発表",
     sortOrder: 1,
   },
   {
@@ -29,6 +30,7 @@ const sampleMembers = [
     instagramUrl: "https://instagram.com/sakura_cafe",
     lineUrl: "https://line.me/R/ti/p/@sakuracafe",
     services: "カフェ営業,ケータリング,貸切パーティー,テイクアウト",
+    achievements: "2023年 北上市優良飲食店認定\n2024年 地元テレビ局「地域の名店」特集出演\n2024年 岩手県カフェコンテスト入賞",
     sortOrder: 2,
   },
   {
@@ -44,6 +46,7 @@ const sampleMembers = [
     youtubeUrl: "https://youtube.com/@suzuki_construction",
     tiktokUrl: "https://tiktok.com/@suzuki_const",
     services: "住宅建築,リフォーム,外構工事,耐震診断",
+    achievements: "2022年 岩手県優良建設業者表彰\n2023年 無事故表彰（3年連続）\n2024年 地域貢献活動賞受賞",
     sortOrder: 3,
   },
   {
@@ -59,6 +62,7 @@ const sampleMembers = [
     instagramUrl: "https://instagram.com/beauty_tanaka",
     lineUrl: "https://line.me/R/ti/p/@beautytanaka",
     services: "ヘアカット,カラーリング,パーマ,ヘッドスパ,着付け",
+    achievements: "2023年 岩手県優良美容サロン賞受賞\n2024年 地元テレビ局「経営者インタビュー」出演\n2024年 倫理法人会全国大会にて事例発表",
     sortOrder: 4,
   },
   {
@@ -74,6 +78,7 @@ const sampleMembers = [
     youtubeUrl: "https://youtube.com/@takahashi_electric",
     instagramUrl: "https://instagram.com/takahashi_electric",
     services: "電気工事,太陽光発電設置,LED照明工事,オール電化",
+    achievements: "2022年 岩手県優良電気工事業者表彰\n2023年 地元経済誌「注目企業特集」掲載\n2024年 環境配慮型企業認定",
     sortOrder: 5,
   },
 ];
