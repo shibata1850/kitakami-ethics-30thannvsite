@@ -25,24 +25,60 @@ export default function Event30thAnniversaryRsvp() {
     message: "",
   });
 
+  const [errors, setErrors] = useState({
+    attendance: "",
+    affiliation: "",
+    lastName: "",
+    firstName: "",
+    email: "",
+  });
+
+  const validateForm = () => {
+    const newErrors = {
+      attendance: "",
+      affiliation: "",
+      lastName: "",
+      firstName: "",
+      email: "",
+    };
+
+    if (!formData.attendance) {
+      newErrors.attendance = "出欠を選択してください。";
+    }
+
+    if (!formData.affiliation) {
+      newErrors.affiliation = "所属単会を選択してください。";
+    }
+
+    if (!formData.lastName) {
+      newErrors.lastName = "姓を入力してください。";
+    }
+
+    if (!formData.firstName) {
+      newErrors.firstName = "名を入力してください。";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "メールアドレスを入力してください。";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = "有効なメールアドレスを入力してください。";
+      }
+    }
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error !== "");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validation
-    if (!formData.affiliation || !formData.lastName || !formData.firstName || !formData.email) {
+    if (!validateForm()) {
       toast({
         title: "入力エラー",
-        description: "必須項目をすべて入力してください。",
-      });
-      return;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast({
-        title: "入力エラー",
-        description: "有効なメールアドレスを入力してください。",
+        description: "必須項目をすべて正しく入力してください。",
       });
       return;
     }
@@ -121,7 +157,10 @@ export default function Event30thAnniversaryRsvp() {
               </Label>
               <RadioGroup
                 value={formData.attendance}
-                onValueChange={(value) => setFormData({ ...formData, attendance: value })}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, attendance: value });
+                  setErrors({ ...errors, attendance: "" });
+                }}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="attend" id="attend" />
@@ -132,6 +171,9 @@ export default function Event30thAnniversaryRsvp() {
                   <Label htmlFor="decline" className="cursor-pointer">欠席 (decline)</Label>
                 </div>
               </RadioGroup>
+              {errors.attendance && (
+                <p className="text-sm text-red-500 mt-1">{errors.attendance}</p>
+              )}
             </div>
 
             {/* Affiliation */}
@@ -141,7 +183,10 @@ export default function Event30thAnniversaryRsvp() {
               </Label>
               <Select
                 value={formData.affiliation}
-                onValueChange={(value) => setFormData({ ...formData, affiliation: value })}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, affiliation: value });
+                  setErrors({ ...errors, affiliation: "" });
+                }}
               >
                 <SelectTrigger id="affiliation">
                   <SelectValue placeholder="所属単会を選択してください" />
@@ -162,6 +207,9 @@ export default function Event30thAnniversaryRsvp() {
                   <SelectItem value="一関市倫理法人会">一関市倫理法人会</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.affiliation && (
+                <p className="text-sm text-red-500 mt-1">{errors.affiliation}</p>
+              )}
             </div>
 
             {/* Position */}
@@ -188,20 +236,32 @@ export default function Event30thAnniversaryRsvp() {
                   <Input
                     id="lastName"
                     value={formData.lastName}
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, lastName: e.target.value });
+                      setErrors({ ...errors, lastName: "" });
+                    }}
                     placeholder="姓"
                     required
                   />
+                  {errors.lastName && (
+                    <p className="text-sm text-red-500 mt-1">{errors.lastName}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="firstName" className="sr-only">名</Label>
                   <Input
                     id="firstName"
                     value={formData.firstName}
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, firstName: e.target.value });
+                      setErrors({ ...errors, firstName: "" });
+                    }}
                     placeholder="名"
                     required
                   />
+                  {errors.firstName && (
+                    <p className="text-sm text-red-500 mt-1">{errors.firstName}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -215,10 +275,16 @@ export default function Event30thAnniversaryRsvp() {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                  setErrors({ ...errors, email: "" });
+                }}
                 placeholder="メールアドレス"
                 required
               />
+              {errors.email && (
+                <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+              )}
             </div>
 
             {/* Message */}
