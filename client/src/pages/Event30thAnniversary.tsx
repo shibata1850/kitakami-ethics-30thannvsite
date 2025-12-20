@@ -59,20 +59,20 @@ export default function Event30thAnniversary() {
         
         {/* Decorative Sakura Ornaments */}
         <div 
-          className="absolute left-0 top-1/4 w-64 h-96 bg-contain bg-no-repeat opacity-40 pointer-events-none"
+          className="absolute left-0 top-1/4 w-64 h-96 bg-contain bg-no-repeat opacity-0 pointer-events-none"
           style={{ backgroundImage: 'url(/images/30th-ornament-left.png)' }}
         />
         <div 
-          className="absolute right-0 top-1/3 w-64 h-96 bg-contain bg-no-repeat opacity-40 pointer-events-none"
+          className="absolute right-0 top-1/3 w-64 h-96 bg-contain bg-no-repeat opacity-0 pointer-events-none"
           style={{ backgroundImage: 'url(/images/30th-ornament-right.png)' }}
         />
         
         {/* Floating Sakura Petals Animation */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-10 left-[10%] w-3 h-3 bg-[#FFB7C5]/40 rounded-full animate-float" style={{ animationDelay: '0s', animationDuration: '8s' }} />
-          <div className="absolute top-20 left-[30%] w-2 h-2 bg-[#F8BBD0]/50 rounded-full animate-float" style={{ animationDelay: '2s', animationDuration: '10s' }} />
-          <div className="absolute top-32 right-[20%] w-4 h-4 bg-[#FFB7C5]/30 rounded-full animate-float" style={{ animationDelay: '4s', animationDuration: '12s' }} />
-          <div className="absolute top-16 right-[40%] w-3 h-3 bg-[#F8BBD0]/40 rounded-full animate-float" style={{ animationDelay: '1s', animationDuration: '9s' }} />
+          <div className="absolute top-10 left-[10%] w-8 h-8 bg-[#FFB7C5]/40 rounded-full animate-float" style={{ animationDelay: '0s', animationDuration: '8s' }} />
+          <div className="absolute top-20 left-[30%] w-6 h-6 bg-[#F8BBD0]/50 rounded-full animate-float" style={{ animationDelay: '2s', animationDuration: '10s' }} />
+          <div className="absolute top-32 right-[20%] w-10 h-10 bg-[#FFB7C5]/30 rounded-full animate-float" style={{ animationDelay: '4s', animationDuration: '12s' }} />
+          <div className="absolute top-16 right-[40%] w-8 h-8 bg-[#F8BBD0]/40 rounded-full animate-float" style={{ animationDelay: '1s', animationDuration: '9s' }} />
         </div>
         
         {/* Content */}
@@ -100,7 +100,7 @@ export default function Event30thAnniversary() {
           
           {/* Title with Elegant Typography */}
           <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] via-[#E8B4B8] to-[#C48B9F] font-serif">
+            <span className="block text-gray-900 font-serif">
               北上市倫理法人会
             </span>
             <span className="block mt-3 text-gray-800 text-3xl md:text-5xl">
