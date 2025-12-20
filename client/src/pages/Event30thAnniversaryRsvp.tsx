@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -138,13 +139,29 @@ export default function Event30thAnniversaryRsvp() {
               <Label htmlFor="affiliation" className="text-lg font-bold">
                 所属単会 <span className="text-red-500">*</span>
               </Label>
-              <Input
-                id="affiliation"
+              <Select
                 value={formData.affiliation}
-                onChange={(e) => setFormData({ ...formData, affiliation: e.target.value })}
-                placeholder="例: 北上市倫理法人会"
-                required
-              />
+                onValueChange={(value) => setFormData({ ...formData, affiliation: value })}
+              >
+                <SelectTrigger id="affiliation">
+                  <SelectValue placeholder="所属単会を選択してください" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="二戸市倫理法人会">二戸市倫理法人会</SelectItem>
+                  <SelectItem value="盛岡市倫理法人会">盛岡市倫理法人会</SelectItem>
+                  <SelectItem value="盛岡みなみ倫理法人会">盛岡みなみ倫理法人会</SelectItem>
+                  <SelectItem value="紫波・矢巾倫理法人会">紫波・矢巾倫理法人会</SelectItem>
+                  <SelectItem value="花巻市倫理法人会">花巻市倫理法人会</SelectItem>
+                  <SelectItem value="北上市倫理法人会">北上市倫理法人会</SelectItem>
+                  <SelectItem value="奥州市倫理法人会">奥州市倫理法人会</SelectItem>
+                  <SelectItem value="久慈市倫理法人会">久慈市倫理法人会</SelectItem>
+                  <SelectItem value="宮古市倫理法人会">宮古市倫理法人会</SelectItem>
+                  <SelectItem value="遠野市倫理法人会">遠野市倫理法人会</SelectItem>
+                  <SelectItem value="釜石市準倫理法人会">釜石市準倫理法人会</SelectItem>
+                  <SelectItem value="けせん倫理法人会">けせん倫理法人会</SelectItem>
+                  <SelectItem value="一関市倫理法人会">一関市倫理法人会</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Position */}
