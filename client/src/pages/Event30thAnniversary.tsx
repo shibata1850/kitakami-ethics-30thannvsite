@@ -2,8 +2,33 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaPhone, FaGlobe, FaDollarSign, FaHome } from "react-icons/fa";
+import { useRef, useState } from "react";
+
+const timelineYears = [
+  { year: 1995, label: "1995年", title: "設立記念式典" },
+  { year: 2000, label: "2000年", title: "成長と学び" },
+  { year: 2005, label: "2005年", title: "地域貢献活動" },
+  { year: 2010, label: "2010年", title: "富士研修合宿" },
+  { year: 2015, label: "2015年", title: "20周年記念式典" },
+  { year: 2020, label: "2020年", title: "新しい時代への適応" },
+  { year: 2024, label: "2024年", title: "継続と進化" },
+  { year: 2024.5, label: "2024年", title: "次世代への継承" },
+];
 
 export default function Event30thAnniversary() {
+  const [activeYear, setActiveYear] = useState<number | null>(null);
+  const galleryRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+
+  const scrollToYear = (year: number) => {
+    const element = galleryRefs.current[year];
+    if (element) {
+      const yOffset = -100; // Offset for fixed header
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+      setActiveYear(year);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF8F0] via-white to-[#FFF8F0]">
       {/* Hero Section - Premium Design */}
@@ -281,9 +306,33 @@ export default function Event30thAnniversary() {
           </p>
         </div>
         
+        {/* Timeline Bar */}
+        <div className="max-w-6xl mx-auto mb-12">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border-2 border-[#F8BBD0]/30">
+            <div className="flex flex-wrap justify-center gap-3">
+              {timelineYears.map((item) => (
+                <button
+                  key={item.year}
+                  onClick={() => scrollToYear(item.year)}
+                  className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                    activeYear === item.year
+                      ? 'bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] text-white shadow-lg scale-110'
+                      : 'bg-white text-[#C48B9F] border-2 border-[#E8B4B8] hover:bg-[#FFF8F0] hover:scale-105'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* 1995 - Founding */}
-          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+          <Card 
+            ref={(el) => { galleryRefs.current[1995] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/1995-founding.jpg" 
@@ -299,7 +348,10 @@ export default function Event30thAnniversary() {
           </Card>
 
           {/* 2000 - Morning Seminar */}
-          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+          <Card 
+            ref={(el) => { galleryRefs.current[2000] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/2000-morning-seminar.jpg" 
@@ -315,7 +367,10 @@ export default function Event30thAnniversary() {
           </Card>
 
           {/* 2005 - Community Service */}
-          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+          <Card 
+            ref={(el) => { galleryRefs.current[2005] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/2005-community-service.jpg" 
@@ -331,7 +386,10 @@ export default function Event30thAnniversary() {
           </Card>
 
           {/* 2010 - Training Retreat */}
-          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+          <Card 
+            ref={(el) => { galleryRefs.current[2010] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/2010-training-retreat.jpg" 
@@ -347,7 +405,10 @@ export default function Event30thAnniversary() {
           </Card>
 
           {/* 2015 - 20th Anniversary */}
-          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+          <Card 
+            ref={(el) => { galleryRefs.current[2015] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/2015-anniversary.jpg" 
@@ -363,7 +424,10 @@ export default function Event30thAnniversary() {
           </Card>
 
           {/* 2020 - Virtual Meeting */}
-          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+          <Card 
+            ref={(el) => { galleryRefs.current[2020] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/2020-virtual-meeting.jpg" 
@@ -379,7 +443,10 @@ export default function Event30thAnniversary() {
           </Card>
 
           {/* 2024 - Recent Seminar */}
-          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+          <Card 
+            ref={(el) => { galleryRefs.current[2024] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/2024-recent-seminar.jpg" 
@@ -395,7 +462,10 @@ export default function Event30thAnniversary() {
           </Card>
 
           {/* 2024 - Youth Program */}
-          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+          <Card 
+            ref={(el) => { galleryRefs.current[2024.5] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/2024-youth-program.jpg" 
