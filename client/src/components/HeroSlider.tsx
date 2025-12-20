@@ -22,7 +22,7 @@ const slides = [
       </>
     ),
     buttons: [
-      { text: "モーニングセミナーに参加する", href: "/schedule/morning", variant: "default" as const },
+      { text: "モーニングセミナーに参加する", href: "/schedule#morning-seminar", variant: "default" as const },
       { text: "倫理法人会について", href: "/about", variant: "outline" as const },
     ],
   },
