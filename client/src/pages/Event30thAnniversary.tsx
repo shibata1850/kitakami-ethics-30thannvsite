@@ -263,6 +263,155 @@ export default function Event30thAnniversary() {
         </div>
       </section>
 
+      {/* Gallery Section - 30 Years History */}
+      <section className="container py-20 md:py-28">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] font-serif">
+            30年の歩み
+          </h2>
+          <div className="flex items-center justify-center gap-3 mt-6">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#E8B4B8]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#E8B4B8]" />
+            <div className="h-px w-24 bg-[#E8B4B8]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#E8B4B8]" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#E8B4B8]" />
+          </div>
+          <p className="text-lg text-gray-600 mt-6 max-w-2xl mx-auto">
+            1995年の設立から現在まで、北上市倫理法人会の歴史を写真で振り返ります。
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {/* 1995 - Founding */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="/images/gallery/1995-founding.jpg" 
+                alt="1995年 設立記念式典" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">1995年</p>
+                <h3 className="text-xl font-bold">設立記念式典</h3>
+              </div>
+            </div>
+          </Card>
+
+          {/* 2000 - Morning Seminar */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="/images/gallery/2000-morning-seminar.jpg" 
+                alt="2000年 朝活セミナー" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2000年</p>
+                <h3 className="text-xl font-bold">成長と学び</h3>
+              </div>
+            </div>
+          </Card>
+
+          {/* 2005 - Community Service */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="/images/gallery/2005-community-service.jpg" 
+                alt="2005年 地域清掃活動" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2005年</p>
+                <h3 className="text-xl font-bold">地域貢献活動</h3>
+              </div>
+            </div>
+          </Card>
+
+          {/* 2010 - Training Retreat */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="/images/gallery/2010-training-retreat.jpg" 
+                alt="2010年 富士研修合宿" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2010年</p>
+                <h3 className="text-xl font-bold">富士研修合宿</h3>
+              </div>
+            </div>
+          </Card>
+
+          {/* 2015 - 20th Anniversary */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="/images/gallery/2015-anniversary.jpg" 
+                alt="2015年 20周年記念式典" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2015年</p>
+                <h3 className="text-xl font-bold">20周年記念式典</h3>
+              </div>
+            </div>
+          </Card>
+
+          {/* 2020 - Virtual Meeting */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="/images/gallery/2020-virtual-meeting.jpg" 
+                alt="2020年 ハイブリッド会議" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2020年</p>
+                <h3 className="text-xl font-bold">新しい時代への適応</h3>
+              </div>
+            </div>
+          </Card>
+
+          {/* 2024 - Recent Seminar */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="/images/gallery/2024-recent-seminar.jpg" 
+                alt="2024年 最新セミナー" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2024年</p>
+                <h3 className="text-xl font-bold">継続と進化</h3>
+              </div>
+            </div>
+          </Card>
+
+          {/* 2024 - Youth Program */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group">
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="/images/gallery/2024-youth-program.jpg" 
+                alt="2024年 次世代育成プログラム" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2024年</p>
+                <h3 className="text-xl font-bold">次世代への継承</h3>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
       {/* RSVP Section - Premium CTA */}
       <section className="container py-20 md:py-28 bg-gradient-to-b from-transparent via-[#FFF8F0]/50 to-transparent">
         <div className="max-w-3xl mx-auto">
