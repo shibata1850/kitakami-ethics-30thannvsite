@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -71,25 +72,8 @@ export default function Event30thAnniversaryRsvp() {
     return !Object.values(newErrors).some(error => error !== "");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validation
-    if (!validateForm()) {
-      toast({
-        title: "入力エラー",
-        description: "必須項目をすべて正しく入力してください。",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // TODO: Implement actual API call to save RSVP data
-      // For now, just simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+  const createRsvp = trpc.eventRsvps.create.useMutation({
+    onSuccess: () => {
       toast({
         title: "ご回答ありがとうございます",
         description: "30周年記念式典・懇親会の出欠情報を受け付けました。当日お会いできることを楽しみにしております。",
@@ -106,18 +90,45 @@ export default function Event30thAnniversaryRsvp() {
         message: "",
       });
       
+      setIsSubmitting(false);
+      
       // Redirect to event page after 2 seconds
       setTimeout(() => {
         setLocation("/events/30th-anniversary");
       }, 2000);
-    } catch (error) {
+    },
+    onError: (error) => {
       toast({
         title: "送信エラー",
-        description: "回答内容の送信に失敗しました。ページを再読込して再度お試しいただくか、別のブラウザでお試しください。",
+        description: error.message || "回答内容の送信に失敗しました。ページを再読込して再度お試しいただくか、別のブラウザでお試しください。",
       });
-    } finally {
       setIsSubmitting(false);
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!validateForm()) {
+      toast({
+        title: "入力エラー",
+        description: "必須項目をすべて正しく入力してください。",
+      });
+      return;
     }
+
+    setIsSubmitting(true);
+
+    createRsvp.mutate({
+      attendance: formData.attendance as "attend" | "decline",
+      affiliation: formData.affiliation,
+      position: formData.position || undefined,
+      lastName: formData.lastName,
+      firstName: formData.firstName,
+      email: formData.email,
+      message: formData.message || undefined,
+    });
   };
 
   return (

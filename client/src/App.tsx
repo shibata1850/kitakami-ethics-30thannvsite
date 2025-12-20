@@ -25,6 +25,7 @@ import ContactManagement from "./pages/admin/ContactManagement";
 import Dashboard from "./pages/admin/Dashboard";
 import Event30thAnniversary from "./pages/Event30thAnniversary";
 import Event30thAnniversaryRsvp from "./pages/Event30thAnniversaryRsvp";
+import EventRsvpAdmin from "./pages/EventRsvpAdmin";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -41,6 +42,7 @@ function Router() {
       <Route path="/admin/seminars" component={SeminarAdmin} />
       <Route path="/admin/blog" component={BlogManagement} />
       <Route path="/admin/contacts" component={ContactManagement} />
+      <Route path="/admin/event-rsvps" component={EventRsvpAdmin} />
       <Route path="/seminars/archive" component={SeminarArchive} />
       <Route path={"/schedule"} component={Schedule} />
       <Route path={"/overview"} component={Overview} />

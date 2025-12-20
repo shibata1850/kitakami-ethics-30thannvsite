@@ -567,5 +567,54 @@ export const appRouter = router({
       return db.getDashboardStats();
     }),
   }),
+
+  eventRsvps: router({
+    // Public: Create a new RSVP (for form submission)
+    create: publicProcedure
+      .input(
+        z.object({
+          attendance: z.enum(["attend", "decline"]),
+          affiliation: z.string().min(1),
+          position: z.string().optional(),
+          lastName: z.string().min(1),
+          firstName: z.string().min(1),
+          email: z.string().email(),
+          message: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return db.createEventRsvp(input);
+      }),
+
+    // Protected: Get all RSVPs with filtering (admin only)
+    getAll: protectedProcedure
+      .input(
+        z.object({
+          attendance: z.enum(["attend", "decline", "all"]).optional(),
+          affiliation: z.string().optional(),
+          search: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return db.getFilteredEventRsvps(input);
+      }),
+
+    // Protected: Get statistics (admin only)
+    getStats: protectedProcedure.query(async () => {
+      return db.getEventRsvpStats();
+    }),
+
+    // Protected: Get unique affiliations (admin only)
+    getAffiliations: protectedProcedure.query(async () => {
+      return db.getEventRsvpAffiliations();
+    }),
+
+    // Protected: Delete an RSVP (admin only)
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return db.deleteEventRsvp(input.id);
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

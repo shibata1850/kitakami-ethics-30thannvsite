@@ -134,3 +134,22 @@ export const contacts = mysqlTable("contacts", {
 
 export type Contact = typeof contacts.$inferSelect;
 export type InsertContact = typeof contacts.$inferInsert;
+
+/**
+ * Event RSVPs table for storing 30th anniversary event responses
+ */
+export const eventRsvps = mysqlTable("eventRsvps", {
+  id: int("id").autoincrement().primaryKey(),
+  attendance: mysqlEnum("attendance", ["attend", "decline"]).notNull(), // 出欠（出席、欠席）
+  affiliation: varchar("affiliation", { length: 100 }).notNull(), // 所属単会
+  position: varchar("position", { length: 100 }), // 役職
+  lastName: varchar("lastName", { length: 50 }).notNull(), // 姓
+  firstName: varchar("firstName", { length: 50 }).notNull(), // 名
+  email: varchar("email", { length: 320 }).notNull(), // メールアドレス
+  message: text("message"), // メッセージ
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EventRsvp = typeof eventRsvps.$inferSelect;
+export type InsertEventRsvp = typeof eventRsvps.$inferInsert;

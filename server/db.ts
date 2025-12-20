@@ -1,6 +1,6 @@
 import { eq, like, or, and, desc, asc, sql, gte, not } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact } from "../drizzle/schema";
+import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact, eventRsvps } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -580,4 +580,132 @@ export async function getDashboardStats() {
     recentBlogPosts,
     pendingContacts,
   };
+}
+
+
+// ===== Event RSVPs =====
+
+export async function createEventRsvp(data: {
+  attendance: "attend" | "decline";
+  affiliation: string;
+  position?: string;
+  lastName: string;
+  firstName: string;
+  email: string;
+  message?: string;
+}) {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const [rsvp] = await db.insert(eventRsvps).values({
+    attendance: data.attendance,
+    affiliation: data.affiliation,
+    position: data.position || null,
+    lastName: data.lastName,
+    firstName: data.firstName,
+    email: data.email,
+    message: data.message || null,
+  });
+
+  return rsvp;
+}
+
+export async function getFilteredEventRsvps(options: {
+  attendance?: "attend" | "decline" | "all";
+  affiliation?: string;
+  search?: string;
+}) {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const conditions = [];
+
+  if (options.attendance && options.attendance !== "all") {
+    conditions.push(eq(eventRsvps.attendance, options.attendance));
+  }
+
+  if (options.affiliation) {
+    conditions.push(eq(eventRsvps.affiliation, options.affiliation));
+  }
+
+  if (options.search && options.search.trim()) {
+    const searchTerm = `%${options.search.trim()}%`;
+    conditions.push(
+      or(
+        like(eventRsvps.lastName, searchTerm),
+        like(eventRsvps.firstName, searchTerm),
+        like(eventRsvps.email, searchTerm)
+      )!
+    );
+  }
+
+  let query = db.select().from(eventRsvps);
+
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions)!) as any;
+  }
+
+  query = query.orderBy(desc(eventRsvps.createdAt)) as any;
+
+  return query;
+}
+
+export async function getEventRsvpStats() {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const allRsvps = await db.select().from(eventRsvps);
+
+  const attendCount = allRsvps.filter((r) => r.attendance === "attend").length;
+  const declineCount = allRsvps.filter((r) => r.attendance === "decline").length;
+
+  // Count by affiliation
+  const affiliationCounts: Record<string, { attend: number; decline: number }> = {};
+  allRsvps.forEach((rsvp) => {
+    if (!affiliationCounts[rsvp.affiliation]) {
+      affiliationCounts[rsvp.affiliation] = { attend: 0, decline: 0 };
+    }
+    if (rsvp.attendance === "attend") {
+      affiliationCounts[rsvp.affiliation].attend++;
+    } else {
+      affiliationCounts[rsvp.affiliation].decline++;
+    }
+  });
+
+  return {
+    total: allRsvps.length,
+    attendCount,
+    declineCount,
+    affiliationCounts,
+  };
+}
+
+export async function getEventRsvpAffiliations() {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const rsvps = await db
+    .selectDistinct({ affiliation: eventRsvps.affiliation })
+    .from(eventRsvps)
+    .orderBy(eventRsvps.affiliation);
+
+  return rsvps.map((r) => r.affiliation);
+}
+
+export async function deleteEventRsvp(id: number) {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  await db.delete(eventRsvps).where(eq(eventRsvps.id, id));
+  return { success: true };
 }
