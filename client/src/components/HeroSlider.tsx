@@ -29,10 +29,10 @@ const slides = [
   {
     id: 2,
     type: "anniversary" as const,
-    logo: "/rinri30th.jpg",
+    logo: "/rinri30th-2.jpg",
     catchphrase: "北上の地に根を張り、倫理（こころ）の花を咲かせて",
     buttons: [
-      { text: "北上市倫理法人会設立30周年記念式典・懇親会のご案内", href: "/events/30th-anniversary", variant: "default" as const },
+      { text: "30周年式典・懇親会のご案内", href: "/events/30th-anniversary", variant: "default" as const },
     ],
   },
 ];
