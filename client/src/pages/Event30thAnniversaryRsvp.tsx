@@ -251,7 +251,7 @@ export default function Event30thAnniversaryRsvp() {
               <Button
                 type="submit"
                 size="lg"
-                className="bg-sakura-500 hover:bg-sakura-600 text-white px-12 py-6 text-lg"
+                className="bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white px-12 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "送信中..." : "送信する"}
