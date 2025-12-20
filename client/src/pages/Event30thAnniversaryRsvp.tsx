@@ -91,8 +91,8 @@ export default function Event30thAnniversaryRsvp() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
-        title: "送信完了",
-        description: "出欠情報を受け付けました。",
+        title: "ご回答ありがとうございます",
+        description: "30周年記念式典・懇親会の出欠情報を受け付けました。当日お会いできることを楽しみにしております。",
       });
       
       // Reset form
