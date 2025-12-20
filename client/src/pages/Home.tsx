@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSlider from "@/components/HeroSlider";
+import EventBanner from "@/components/EventBanner";
 
 export default function Home() {
   // The userAuth hooks provides authentication state
@@ -225,6 +226,9 @@ export default function Home() {
       </main>
 
       <Footer />
+      
+      {/* 30th Anniversary Event Banner */}
+      <EventBanner />
     </div>
   );
 }
