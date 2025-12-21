@@ -23,8 +23,8 @@ export default function EventBanner() {
         <Link href="/events/30th-anniversary">
           <a className="block rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <img
-              src="/30th-anniversary-banner.png"
-              alt="30周年記念式典 2026.4.19"
+              src="/images/30th-banner.jpg"
+              alt="30周年記念式典 2026.4.19 参加申し込み受付中"
               className="w-80 h-auto"
             />
           </a>
