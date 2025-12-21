@@ -611,7 +611,7 @@ export default function Event30thAnniversary() {
           >
             <div className="relative aspect-video overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop" 
+                src="/images/gallery/2030-ai-future-vision.jpg" 
                 alt="2030年 AI時代到来と未来" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
@@ -622,9 +622,9 @@ export default function Event30thAnniversary() {
               </div>
               {/* SNS Share Buttons */}
               <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button onClick={() => shareToFacebook('https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
-                <button onClick={() => shareToTwitter('https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
-                <button onClick={() => shareToLine('https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
+                <button onClick={() => shareToFacebook('/images/gallery/2030-ai-future-vision.jpg', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('/images/gallery/2030-ai-future-vision.jpg', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('/images/gallery/2030-ai-future-vision.jpg', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
               </div>
             </div>
           </Card>
