@@ -224,7 +224,7 @@ export default function Schedule() {
         {/* CTA */}
         <section className="py-16 bg-gradient-to-r from-pink-500 to-pink-600 text-white">
           <div className="container text-center">
-            <h2 className="text-3xl font-bold mb-6">
+            <h2 className="text-3xl font-bold mb-6 text-white">
               ゲストとしてご参加いただけます
             </h2>
             <p className="text-lg mb-8 max-w-2xl mx-auto">
