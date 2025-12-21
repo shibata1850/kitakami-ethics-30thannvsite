@@ -11,8 +11,8 @@ const timelineYears = [
   { year: 2010, label: "2010年", title: "富士研修合宿" },
   { year: 2015, label: "2015年", title: "20周年記念式典" },
   { year: 2020, label: "2020年", title: "新しい時代への適応" },
-  { year: 2024, label: "2024年", title: "継続と進化" },
-  { year: 2024.5, label: "2024年", title: "次世代への継承" },
+  { year: 2025, label: "2025年", title: "次世代への継承" },
+  { year: 2030, label: "2030年", title: "AI時代到来と未来" },
 ];
 
 export default function Event30thAnniversary() {
@@ -579,45 +579,20 @@ export default function Event30thAnniversary() {
             </div>
           </Card>
 
-          {/* 2024 - Recent Seminar */}
+          {/* 2025 - Youth Program */}
           <Card 
-            ref={(el) => { galleryRefs.current[2024] = el; }}
-            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
-          >
-            <div className="relative aspect-video overflow-hidden">
-              <img 
-                src="/images/gallery/2024-recent-seminar.jpg" 
-                alt="2024年 最新セミナー" 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2024年</p>
-                <h3 className="text-xl font-bold">継続と進化</h3>
-              </div>
-              {/* SNS Share Buttons */}
-              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button onClick={() => shareToFacebook('/images/gallery/2024-recent-seminar.jpg', '継続と進化')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
-                <button onClick={() => shareToTwitter('/images/gallery/2024-recent-seminar.jpg', '継続と進化')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
-                <button onClick={() => shareToLine('/images/gallery/2024-recent-seminar.jpg', '継続と進化')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
-              </div>
-            </div>
-          </Card>
-
-          {/* 2024 - Youth Program */}
-          <Card 
-            ref={(el) => { galleryRefs.current[2024.5] = el; }}
+            ref={(el) => { galleryRefs.current[2025] = el; }}
             className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
           >
             <div className="relative aspect-video overflow-hidden">
               <img 
                 src="/images/gallery/2024-youth-program.jpg" 
-                alt="2024年 次世代育成プログラム" 
+                alt="2025年 次世代育成プログラム" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2024年</p>
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2025年</p>
                 <h3 className="text-xl font-bold">次世代への継承</h3>
               </div>
               {/* SNS Share Buttons */}
@@ -625,6 +600,31 @@ export default function Event30thAnniversary() {
                 <button onClick={() => shareToFacebook('/images/gallery/2024-youth-program.jpg', '次世代への継承')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
                 <button onClick={() => shareToTwitter('/images/gallery/2024-youth-program.jpg', '次世代への継承')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
                 <button onClick={() => shareToLine('/images/gallery/2024-youth-program.jpg', '次世代への継承')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
+              </div>
+            </div>
+          </Card>
+
+          {/* 2030 - AI Future */}
+          <Card 
+            ref={(el) => { galleryRefs.current[2030] = el; }}
+            className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-105 bg-white/90 backdrop-blur-sm border-2 border-[#F8BBD0]/30 group"
+          >
+            <div className="relative aspect-video overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop" 
+                alt="2030年 AI時代到来と未来" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <p className="text-sm font-semibold mb-1 text-[#FFB7C5]">2030年</p>
+                <h3 className="text-xl font-bold">AI時代到来と未来</h3>
+              </div>
+              {/* SNS Share Buttons */}
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button onClick={() => shareToFacebook('https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Facebookでシェア"><FaFacebookF className="text-sm" /></button>
+                <button onClick={() => shareToTwitter('https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="Xでシェア"><FaTwitter className="text-sm" /></button>
+                <button onClick={() => shareToLine('https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop', 'AI時代到来と未来')} className="w-10 h-10 rounded-full bg-[#00B900] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg" aria-label="LINEでシェア"><FaLine className="text-sm" /></button>
               </div>
             </div>
           </Card>
