@@ -58,7 +58,7 @@ export default function Officers() {
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-pink-50 to-white py-16">
           <div className="container">
-            <div className="text-left md:text-center max-w-3xl mx-auto">
+            <div className="text-left max-w-3xl mx-auto">
               <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
                 役員紹介
               </h1>
@@ -73,16 +73,16 @@ export default function Officers() {
         <section className="py-16">
           <div className="container max-w-6xl">
             {isLoading ? (
-              <div className="text-left md:text-center py-12">読み込み中...</div>
+              <div className="text-left py-12">読み込み中...</div>
             ) : officers.length === 0 ? (
-              <div className="text-left md:text-center py-12 text-muted-foreground">
+              <div className="text-left py-12 text-muted-foreground">
                 役員情報が登録されていません
               </div>
             ) : (
               <div className="space-y-16">
                 {sortedSections.map((section) => (
                   <div key={section}>
-                    <h2 className="text-3xl font-bold text-primary mb-8 text-left md:text-center">
+                    <h2 className="text-3xl font-bold text-primary mb-8 text-left">
                       {section}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

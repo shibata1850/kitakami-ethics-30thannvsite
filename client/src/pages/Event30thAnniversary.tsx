@@ -107,7 +107,7 @@ export default function Event30thAnniversary() {
         </div>
         
         {/* Content */}
-        <div className="relative z-10 text-left md:text-center px-4 py-16">
+        <div className="relative z-10 text-left px-4 py-16">
           {/* Home Button - Premium Style */}
           <Link href="/">
             <Button 
@@ -142,29 +142,29 @@ export default function Event30thAnniversary() {
           {/* Countdown Timer */}
           <div className="my-10 animate-in fade-in duration-1000 delay-700">
             <div className="inline-block bg-white/90 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-2xl border-2 border-[#F8BBD0]/40">
-              <p className="text-sm md:text-base text-[#C48B9F] font-semibold mb-4 text-left md:text-center tracking-wide">
+              <p className="text-sm md:text-base text-[#C48B9F] font-semibold mb-4 text-left tracking-wide">
                 式典まであと
               </p>
               <div className="flex gap-3 md:gap-6">
-                <div className="text-left md:text-center">
+                <div className="text-left">
                   <div className="bg-gradient-to-br from-[#FFB7C5] to-[#E8B4B8] text-white rounded-xl px-4 py-3 md:px-6 md:py-4 shadow-lg">
                     <div className="text-3xl md:text-5xl font-bold tabular-nums">{timeLeft.days}</div>
                   </div>
                   <div className="text-xs md:text-sm text-gray-600 mt-2 font-medium">日</div>
                 </div>
-                <div className="text-left md:text-center">
+                <div className="text-left">
                   <div className="bg-gradient-to-br from-[#FFB7C5] to-[#E8B4B8] text-white rounded-xl px-4 py-3 md:px-6 md:py-4 shadow-lg">
                     <div className="text-3xl md:text-5xl font-bold tabular-nums">{String(timeLeft.hours).padStart(2, '0')}</div>
                   </div>
                   <div className="text-xs md:text-sm text-gray-600 mt-2 font-medium">時間</div>
                 </div>
-                <div className="text-left md:text-center">
+                <div className="text-left">
                   <div className="bg-gradient-to-br from-[#FFB7C5] to-[#E8B4B8] text-white rounded-xl px-4 py-3 md:px-6 md:py-4 shadow-lg">
                     <div className="text-3xl md:text-5xl font-bold tabular-nums">{String(timeLeft.minutes).padStart(2, '0')}</div>
                   </div>
                   <div className="text-xs md:text-sm text-gray-600 mt-2 font-medium">分</div>
                 </div>
-                <div className="text-left md:text-center">
+                <div className="text-left">
                   <div className="bg-gradient-to-br from-[#FFB7C5] to-[#E8B4B8] text-white rounded-xl px-4 py-3 md:px-6 md:py-4 shadow-lg">
                     <div className="text-3xl md:text-5xl font-bold tabular-nums">{String(timeLeft.seconds).padStart(2, '0')}</div>
                   </div>
@@ -238,7 +238,7 @@ export default function Event30thAnniversary() {
 
       {/* Event Details Section - Premium Card Design */}
       <section className="container py-20 md:py-28 bg-gradient-to-b from-transparent via-[#FFF8F0]/50 to-transparent">
-        <div className="text-left md:text-center mb-16">
+        <div className="text-left mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] font-serif">
             イベント詳細
           </h2>
@@ -334,7 +334,7 @@ export default function Event30thAnniversary() {
       {/* Access Section - Elegant Design */}
       <section className="container py-20 md:py-28">
         <div className="max-w-4xl mx-auto">
-          <div className="text-left md:text-center mb-12">
+          <div className="text-left mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] font-serif">
               会場へのアクセス
             </h2>
@@ -373,7 +373,7 @@ export default function Event30thAnniversary() {
 
       {/* Gallery Section - 30 Years History */}
       <section className="container py-20 md:py-28">
-        <div className="text-left md:text-center mb-16">
+        <div className="text-left mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#C48B9F] to-[#E8B4B8] font-serif">
             30年の歩み
           </h2>
@@ -634,7 +634,7 @@ export default function Event30thAnniversary() {
       {/* RSVP Section - Premium CTA */}
       <section className="container py-20 md:py-28 bg-gradient-to-b from-transparent via-[#FFF8F0]/50 to-transparent">
         <div className="max-w-3xl mx-auto">
-          <Card className="p-12 md:p-16 bg-gradient-to-br from-[#FFB7C5]/10 via-white to-[#F8BBD0]/10 backdrop-blur-sm shadow-2xl border-2 border-[#E8B4B8]/50 text-left md:text-center relative overflow-hidden">
+          <Card className="p-12 md:p-16 bg-gradient-to-br from-[#FFB7C5]/10 via-white to-[#F8BBD0]/10 backdrop-blur-sm shadow-2xl border-2 border-[#E8B4B8]/50 text-left relative overflow-hidden">
             {/* Decorative Background Elements */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#FFB7C5]/10 to-transparent rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#F8BBD0]/10 to-transparent rounded-full blur-3xl" />

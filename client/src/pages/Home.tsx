@@ -47,7 +47,7 @@ export default function Home() {
         {/* About Section */}
         <section className="py-20 bg-white">
           <div className="container">
-            <div className="text-left md:text-center mb-16">
+            <div className="text-left mb-16">
               <h2 className="text-3xl font-bold mb-4 text-primary font-serif">倫理法人会とは？</h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                 倫理法人会は、「心の経営」を学び、実践する人々の集まりです。<br/>
@@ -58,7 +58,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
                 <div className="h-2 bg-primary/80"></div>
-                <CardContent className="p-8 text-left md:text-center">
+                <CardContent className="p-8 text-left">
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                     <Heart className="h-8 w-8 text-primary" />
                   </div>
@@ -71,7 +71,7 @@ export default function Home() {
 
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
                 <div className="h-2 bg-chart-2"></div>
-                <CardContent className="p-8 text-left md:text-center">
+                <CardContent className="p-8 text-left">
                   <div className="w-16 h-16 bg-chart-2/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                     <Users className="h-8 w-8 text-chart-2" />
                   </div>
@@ -84,7 +84,7 @@ export default function Home() {
 
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
                 <div className="h-2 bg-chart-3"></div>
-                <CardContent className="p-8 text-left md:text-center">
+                <CardContent className="p-8 text-left">
                   <div className="w-16 h-16 bg-chart-3/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                     <Calendar className="h-8 w-8 text-chart-3" />
                   </div>
@@ -101,7 +101,7 @@ export default function Home() {
         {/* Video Section */}
         <section className="py-20 bg-white">
           <div className="container">
-            <div className="text-left md:text-center mb-12">
+            <div className="text-left mb-12">
               <h2 className="text-3xl font-bold mb-4 text-primary font-serif">動画で知る倫理法人会</h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                 実際の活動の様子や、会員様の生の声をご覧ください。<br/>
@@ -155,7 +155,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-16 text-left md:text-center">
+            <div className="mt-16 text-left">
               <h3 className="text-2xl font-bold mb-6 text-primary font-serif">倫理法人会に参加する</h3>
               <Button asChild size="lg" className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-full animate-pulse hover:animate-none transition-all duration-300 transform hover:scale-105">
                 <Link href="/contact">ゲスト参加を申し込む</Link>
@@ -170,7 +170,7 @@ export default function Home() {
         {/* Activities Section */}
         <section className="py-20 bg-secondary/30">
           <div className="container">
-            <h2 className="text-3xl font-bold mb-12 text-left md:text-center font-serif">主な活動内容</h2>
+            <h2 className="text-3xl font-bold mb-12 text-left font-serif">主な活動内容</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
@@ -212,7 +212,7 @@ export default function Home() {
         {/* CTA Section */}
         <section className="py-20 bg-primary text-primary-foreground relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('/images/pattern.png')] opacity-10"></div>
-          <div className="container relative z-10 text-left md:text-center">
+          <div className="container relative z-10 text-left">
             <h2 className="text-3xl md:text-4xl font-bold mb-6 font-serif">まずはゲストとして参加してみませんか？</h2>
             <p className="text-xl mb-10 opacity-90">
               モーニングセミナーは無料で見学いただけます。<br/>

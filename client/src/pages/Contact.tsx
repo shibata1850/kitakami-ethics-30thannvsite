@@ -112,7 +112,7 @@ export default function Contact() {
       
       <main className="flex-grow py-12 md:py-20">
         <div className="container max-w-3xl">
-          <div className="text-left md:text-center mb-12">
+          <div className="text-left mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-primary font-serif">ゲスト参加お申し込み</h1>
             <p className="text-muted-foreground">
               経営者モーニングセミナーへのゲスト参加は無料です。<br />
@@ -121,7 +121,7 @@ export default function Contact() {
           </div>
 
           {isSuccess ? (
-            <div className="bg-white rounded-2xl shadow-lg p-12 text-left md:text-center border border-primary/20">
+            <div className="bg-white rounded-2xl shadow-lg p-12 text-left border border-primary/20">
               <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="h-10 w-10 text-primary" />
               </div>
@@ -309,7 +309,7 @@ export default function Contact() {
                     />
                   </div>
 
-                  <div className="text-left md:text-center pt-4">
+                  <div className="text-left pt-4">
                     <Button 
                       type="submit" 
                       size="lg" 

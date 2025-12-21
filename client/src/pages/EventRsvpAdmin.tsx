@@ -184,7 +184,7 @@ export default function EventRsvpAdmin() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : !rsvps || rsvps.length === 0 ? (
-            <div className="text-left md:text-center p-12 text-muted-foreground">
+            <div className="text-left p-12 text-muted-foreground">
               回答データがありません
             </div>
           ) : (

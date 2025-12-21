@@ -20,7 +20,7 @@ export default function BlogDetail() {
         <Header />
         <main className="flex-grow py-12">
           <div className="container">
-            <div className="max-w-4xl mx-auto text-left md:text-center py-12 text-muted-foreground">
+            <div className="max-w-4xl mx-auto text-left py-12 text-muted-foreground">
               読み込み中...
             </div>
           </div>
@@ -38,7 +38,7 @@ export default function BlogDetail() {
           <div className="container">
             <div className="max-w-4xl mx-auto">
               <Card className="border-pink-200">
-                <CardContent className="p-12 text-left md:text-center">
+                <CardContent className="p-12 text-left">
                   <p className="text-muted-foreground mb-4">記事が見つかりませんでした</p>
                   <Link href="/blog">
                     <Button variant="outline">

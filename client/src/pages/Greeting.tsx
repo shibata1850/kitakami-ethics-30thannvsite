@@ -30,7 +30,7 @@ export default function Greeting() {
                       <span className="text-muted-foreground">会長写真</span>
                     </div>
                   </div>
-                  <div className="flex-grow text-left md:text-center md:text-left">
+                  <div className="flex-grow text-left md:text-left">
                     <h2 className="text-2xl font-bold mb-2">北上市倫理法人会 会長</h2>
                     <p className="text-xl text-primary font-bold mb-4">氏名</p>
                     <p className="text-muted-foreground">

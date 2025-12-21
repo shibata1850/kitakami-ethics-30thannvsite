@@ -141,7 +141,7 @@ export default function JoinUs() {
         {/* ヒーローセクション */}
         <section className="bg-gradient-to-r from-pink-50 to-pink-100 py-20">
           <div className="container">
-            <div className="max-w-3xl mx-auto text-left md:text-center">
+            <div className="max-w-3xl mx-auto text-left">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 入会案内
               </h1>
@@ -156,7 +156,7 @@ export default function JoinUs() {
         <section className="py-16 bg-white">
           <div className="container">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
+              <h2 className="text-3xl font-bold text-left mb-12 text-gray-900">
                 倫理法人会入会のメリット
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -171,7 +171,7 @@ export default function JoinUs() {
                   </div>
                 ))}
               </div>
-              <div className="mt-8 text-left md:text-center">
+              <div className="mt-8 text-left">
                 <Button asChild size="lg" className="bg-pink-500 hover:bg-pink-600">
                   <a href="/schedule">スケジュール一覧へ →</a>
                 </Button>
@@ -183,7 +183,7 @@ export default function JoinUs() {
         {/* 会員特典 */}
         <section className="py-16 bg-gradient-to-br from-yellow-50 to-orange-50">
           <div className="container">
-            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left mb-12 text-gray-900">
               会員特典
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -195,16 +195,16 @@ export default function JoinUs() {
                       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-pink-100 mb-4 mx-auto">
                         <Icon className="w-8 h-8 text-pink-600" />
                       </div>
-                      <CardTitle className="text-left md:text-center text-xl">{benefit.title}</CardTitle>
-                      <CardDescription className="text-left md:text-center text-sm">{benefit.subtitle}</CardDescription>
-                      <div className="text-left md:text-center">
+                      <CardTitle className="text-left text-xl">{benefit.title}</CardTitle>
+                      <CardDescription className="text-left text-sm">{benefit.subtitle}</CardDescription>
+                      <div className="text-left">
                         <span className="inline-block bg-pink-500 text-white text-sm font-bold px-4 py-1 rounded-full mt-2">
                           {benefit.badge}
                         </span>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-gray-600 text-left md:text-center">{benefit.description}</p>
+                      <p className="text-sm text-gray-600 text-left">{benefit.description}</p>
                     </CardContent>
                   </Card>
                 );
@@ -216,7 +216,7 @@ export default function JoinUs() {
         {/* 会費 */}
         <section className="py-16 bg-white">
           <div className="container">
-            <div className="max-w-3xl mx-auto text-left md:text-center">
+            <div className="max-w-3xl mx-auto text-left">
               <h2 className="text-3xl font-bold mb-8 text-gray-900">会費</h2>
               <div className="bg-gradient-to-r from-pink-50 to-pink-100 rounded-2xl p-8 mb-6">
                 <p className="text-5xl font-bold text-pink-600 mb-2">月額一口10,000円</p>
@@ -241,10 +241,10 @@ export default function JoinUs() {
         <section className="py-16 bg-gray-50">
           <div className="container">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-left md:text-center mb-4 text-gray-900">
+              <h2 className="text-3xl font-bold text-left mb-4 text-gray-900">
                 倫理法人会入会の流れ
               </h2>
-              <p className="text-left md:text-center text-gray-600 mb-12">
+              <p className="text-left text-gray-600 mb-12">
                 北上市倫理法人会には、ご職業、ご自宅や会社の所在地にかかわらず、どなたでもご入会いただけます。
               </p>
               <div className="space-y-6">
@@ -262,7 +262,7 @@ export default function JoinUs() {
                   </div>
                 ))}
               </div>
-              <div className="mt-12 bg-gradient-to-r from-pink-100 to-orange-100 rounded-2xl p-8 text-left md:text-center">
+              <div className="mt-12 bg-gradient-to-r from-pink-100 to-orange-100 rounded-2xl p-8 text-left">
                 <h3 className="text-2xl font-bold mb-4 text-gray-900">まずは3ヶ月お試し下さい！</h3>
                 <p className="text-gray-700">
                   実際に経験してみないとわからないことがあります。<br />
@@ -278,10 +278,10 @@ export default function JoinUs() {
         <section className="py-16 bg-white">
           <div className="container">
             <div className="max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold text-left md:text-center mb-4 text-gray-900">
+              <h2 className="text-3xl font-bold text-left mb-4 text-gray-900">
                 モーニングセミナー無料体験お申込
               </h2>
-              <p className="text-left md:text-center text-gray-600 mb-8">
+              <p className="text-left text-gray-600 mb-8">
                 まずはお気軽にモーニングセミナーをご体験ください
               </p>
               <Card>

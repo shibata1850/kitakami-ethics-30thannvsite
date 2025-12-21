@@ -12,10 +12,10 @@ export default function Overview() {
         {/* ヒーローセクション */}
         <section className="bg-gradient-to-r from-pink-50 to-pink-100 py-20">
           <div className="container">
-            <h1 className="text-4xl md:text-5xl font-bold text-left md:text-center mb-6 text-gray-900">
+            <h1 className="text-4xl md:text-5xl font-bold text-left mb-6 text-gray-900">
               北上市倫理法人会概要
             </h1>
-            <p className="text-lg text-left md:text-center text-gray-700 max-w-3xl mx-auto">
+            <p className="text-lg text-left text-gray-700 max-w-3xl mx-auto">
               岩手県北上市を拠点に、経営者の自己革新と企業の健全な発展を支援しています。
             </p>
           </div>
@@ -24,7 +24,7 @@ export default function Overview() {
         {/* 基本情報 */}
         <section className="py-16 bg-white">
           <div className="container">
-            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left mb-12 text-gray-900">
               基本情報
             </h2>
             <div className="max-w-4xl mx-auto">
@@ -89,7 +89,7 @@ export default function Overview() {
         {/* 活動内容 */}
         <section className="py-16 bg-gray-50">
           <div className="container">
-            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left mb-12 text-gray-900">
               主な活動内容
             </h2>
             <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
@@ -139,13 +139,13 @@ export default function Overview() {
         {/* 会員企業の業種 */}
         <section className="py-16 bg-white">
           <div className="container">
-            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left mb-12 text-gray-900">
               会員企業の業種
             </h2>
             <div className="max-w-4xl mx-auto">
               <Card>
                 <CardContent className="p-8">
-                  <div className="grid md:grid-cols-3 gap-4 text-left md:text-center">
+                  <div className="grid md:grid-cols-3 gap-4 text-left">
                     <div className="p-4 bg-pink-50 rounded-lg">
                       <p className="font-bold text-gray-900">製造業</p>
                     </div>
@@ -165,7 +165,7 @@ export default function Overview() {
                       <p className="font-bold text-gray-900">その他</p>
                     </div>
                   </div>
-                  <p className="text-left md:text-center text-gray-600 mt-6">
+                  <p className="text-left text-gray-600 mt-6">
                     様々な業種の経営者が集まり、業種を超えた交流が生まれています
                   </p>
                 </CardContent>
@@ -177,7 +177,7 @@ export default function Overview() {
         {/* 地図 */}
         <section className="py-16 bg-gray-50">
           <div className="container">
-            <h2 className="text-3xl font-bold text-left md:text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-left mb-12 text-gray-900">
               アクセス
             </h2>
             <div className="max-w-4xl mx-auto">
@@ -199,7 +199,7 @@ export default function Overview() {
 
         {/* CTA */}
         <section className="py-16 bg-gradient-to-r from-pink-500 to-pink-600 text-white">
-          <div className="container text-left md:text-center">
+          <div className="container text-left">
             <h2 className="text-3xl font-bold mb-6">
               ご不明な点はお気軽にお問い合わせください
             </h2>

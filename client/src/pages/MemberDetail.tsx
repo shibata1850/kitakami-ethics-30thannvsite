@@ -301,7 +301,7 @@ export default function MemberDetail() {
           )}
 
           {/* 戻るボタン（下部） */}
-          <div className="mt-8 text-left md:text-center">
+          <div className="mt-8 text-left">
             <Button
               onClick={() => setLocation("/members")}
               variant="outline"

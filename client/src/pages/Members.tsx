@@ -203,12 +203,12 @@ export default function Members() {
               {/* Right Content - Member Cards */}
               <div className="flex-1">
                 {isLoading ? (
-                  <div className="text-left md:text-center py-12">
+                  <div className="text-left py-12">
                     <p className="text-muted-foreground">読み込み中...</p>
                   </div>
                 ) : members.length === 0 ? (
                   <Card>
-                    <CardContent className="py-12 text-left md:text-center">
+                    <CardContent className="py-12 text-left">
                       <p className="text-muted-foreground">
                         該当する会員が見つかりませんでした
                       </p>
