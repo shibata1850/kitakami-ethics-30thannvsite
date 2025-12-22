@@ -27,6 +27,8 @@ import Dashboard from "./pages/admin/Dashboard";
 import Event30thAnniversary from "./pages/Event30thAnniversary";
 import Event30thAnniversaryRsvp from "./pages/Event30thAnniversaryRsvp";
 import EventRsvpAdmin from "./pages/EventRsvpAdmin";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -55,6 +57,8 @@ function Router() {
       <Route path={"/joinus"} component={JoinUs} />
       <Route path="/events/30th-anniversary" component={Event30thAnniversary} />
       <Route path="/events/30th-anniversary/rsvp" component={Event30thAnniversaryRsvp} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
