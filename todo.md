@@ -596,4 +596,14 @@
 - [x] 画像をclient/public/images/galleryに配置
 - [x] Event30thAnniversary.tsxの画像パスを更新
 - [x] ブラウザで表示確認
+- [x] チェックポイント保存
+
+## Supabaseデータベース移管
+
+- [x] Supabaseプロジェクトを確認または作成
+- [x] 現在のデータベーススキーマを確認
+- [x] Supabaseにテーブルスキーマを移行
+- [x] 環境変数を更新してSupabaseに接続
+- [x] データベース接続の動作確認
+- [x] 各管理画面の動作テスト
 - [ ] チェックポイント保存

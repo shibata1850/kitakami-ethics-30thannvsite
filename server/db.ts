@@ -1,5 +1,6 @@
 import { eq, like, or, and, desc, asc, sql, gte, not } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact, eventRsvps } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -9,7 +10,8 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      const client = postgres(process.env.DATABASE_URL);
+      _db = drizzle(client);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -68,7 +70,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
       set: updateSet,
     });
   } catch (error) {
@@ -127,11 +130,8 @@ export async function getRelatedMembers(id: number, limit: number = 4) {
 export async function createMember(data: InsertMember) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(members).values(data);
-  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
-  const member = await getMemberById(Number(insertId));
-  if (!member) throw new Error("Failed to create member");
-  return member;
+  const result = await db.insert(members).values(data).returning();
+  return result[0];
 }
 
 export async function updateMember(id: number, data: Partial<InsertMember>) {
@@ -202,7 +202,7 @@ export async function getFilteredMembers(options: MemberFilterOptions) {
       query = query.orderBy(asc(members.createdAt)) as any;
       break;
     case "random":
-      query = query.orderBy(sql`RAND()`) as any;
+      query = query.orderBy(sql`RANDOM()`) as any;
       break;
     default:
       query = query.orderBy(desc(members.createdAt)) as any;
@@ -216,9 +216,8 @@ export async function getFilteredMembers(options: MemberFilterOptions) {
 export async function createOfficer(officer: InsertOfficer) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(officers).values(officer);
-  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
-  return { id: Number(insertId) };
+  const result = await db.insert(officers).values(officer).returning({ id: officers.id });
+  return result[0];
 }
 
 export async function getAllOfficers() {
@@ -253,9 +252,8 @@ export async function deleteOfficer(id: number) {
 export async function createSeminar(seminar: InsertSeminar) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(seminars).values(seminar);
-  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
-  return { id: Number(insertId) };
+  const result = await db.insert(seminars).values(seminar).returning({ id: seminars.id });
+  return result[0];
 }
 
 export async function getAllSeminars() {
@@ -308,9 +306,8 @@ export async function deleteSeminar(id: number) {
 export async function createBlogPost(post: InsertBlogPost) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(blogPosts).values(post);
-  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
-  return { id: Number(insertId) };
+  const result = await db.insert(blogPosts).values(post).returning({ id: blogPosts.id });
+  return result[0];
 }
 
 export async function getAllBlogPosts() {
@@ -418,8 +415,8 @@ export async function incrementBlogPostViewCount(id: number) {
 export async function createContact(contact: InsertContact) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(contacts).values(contact);
-  return { id: Number(result[0].insertId) };
+  const result = await db.insert(contacts).values(contact).returning({ id: contacts.id });
+  return result[0];
 }
 
 export async function getAllContacts() {
