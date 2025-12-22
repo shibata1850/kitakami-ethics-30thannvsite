@@ -630,3 +630,11 @@
 - [ ] DATABASE_URL環境変数をSupabase PostgreSQL接続文字列に設定
 - [ ] データベーススキーマの同期（pnpm db:push）
 - [ ] ログイン機能の動作確認
+
+## Vercelデプロイ対応
+- [ ] vercel.json設定ファイルの作成
+- [ ] Express.jsサーバーをVercel Serverless Functions化
+- [ ] ビルド設定の最適化
+- [ ] .vercelignoreファイルの作成
+- [ ] GitHubへのプッシュフロー確立
+- [ ] Vercelでのデプロイ動作確認
