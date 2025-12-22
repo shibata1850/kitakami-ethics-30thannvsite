@@ -8,6 +8,7 @@ import { integer, pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/
 
 // Enums for PostgreSQL
 export const roleEnum = pgEnum("role", ["user", "admin"]);
+export const userStatusEnum = pgEnum("user_status", ["pending_approval", "active", "suspended"]);
 export const statusEnum = pgEnum("status", ["draft", "published"]);
 export const contactTypeEnum = pgEnum("contact_type", ["contact", "seminar_application"]);
 export const contactStatusEnum = pgEnum("contact_status", ["pending", "in_progress", "completed"]);
@@ -20,18 +21,35 @@ export const users = pgTable("users", {
    */
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
-  openId: varchar("openId", { length: 64 }).notNull().unique(),
-  name: text("name"),
-  email: varchar("email", { length: 320 }),
-  loginMethod: varchar("loginMethod", { length: 64 }),
+  openId: varchar("openId", { length: 64 }).unique(),
+  name: text("name").notNull(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  password: varchar("password", { length: 255 }), // bcrypt hashed password
+  companyName: varchar("companyName", { length: 200 }), // 所属会社名
+  loginMethod: varchar("loginMethod", { length: 64 }).default("email"),
   role: roleEnum("role").default("user").notNull(),
+  status: userStatusEnum("status").default("pending_approval").notNull(), // アカウントステータス
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+  lastSignedIn: timestamp("lastSignedIn"),
 });
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+/**
+ * User approvals table for tracking admin approvals
+ */
+export const userApprovals = pgTable("userApprovals", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("userId").notNull(), // 承認対象のユーザーID
+  approvedBy: integer("approvedBy").notNull(), // 承認したアドミンのID
+  approvedAt: timestamp("approvedAt").defaultNow().notNull(),
+  comment: text("comment"), // 承認時のコメント
+});
+
+export type UserApproval = typeof userApprovals.$inferSelect;
+export type InsertUserApproval = typeof userApprovals.$inferInsert;
 
 /**
  * Members table for storing member information

@@ -1,7 +1,7 @@
 import { eq, like, or, and, desc, asc, sql, gte, not } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact, eventRsvps } from "../drizzle/schema";
+import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact, eventRsvps, userApprovals } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -21,8 +21,8 @@ export async function getDb() {
 }
 
 export async function upsertUser(user: InsertUser): Promise<void> {
-  if (!user.openId) {
-    throw new Error("User openId is required for upsert");
+  if (!user.openId && !user.email) {
+    throw new Error("User openId or email is required for upsert");
   }
 
   const db = await getDb();
@@ -33,23 +33,21 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 
   try {
     const values: InsertUser = {
-      openId: user.openId,
+      name: user.name || '',
+      email: user.email || '',
+      openId: user.openId || null,
+      password: user.password || null,
+      companyName: user.companyName || null,
+      loginMethod: user.loginMethod || 'email',
+      role: user.role || 'user',
+      status: user.status || 'pending_approval',
     };
     const updateSet: Record<string, unknown> = {};
 
-    const textFields = ["name", "email", "loginMethod"] as const;
-    type TextField = (typeof textFields)[number];
-
-    const assignNullable = (field: TextField) => {
-      const value = user[field];
-      if (value === undefined) return;
-      const normalized = value ?? null;
-      values[field] = normalized;
-      updateSet[field] = normalized;
-    };
-
-    textFields.forEach(assignNullable);
-
+    if (user.name) updateSet.name = user.name;
+    if (user.email) updateSet.email = user.email;
+    if (user.loginMethod) updateSet.loginMethod = user.loginMethod;
+    if (user.companyName) updateSet.companyName = user.companyName;
     if (user.lastSignedIn !== undefined) {
       values.lastSignedIn = user.lastSignedIn;
       updateSet.lastSignedIn = user.lastSignedIn;
@@ -60,18 +58,26 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     } else if (user.openId === ENV.ownerOpenId) {
       values.role = 'admin';
       updateSet.role = 'admin';
+      values.status = 'active';
+      updateSet.status = 'active';
+    }
+    if (user.status !== undefined) {
+      values.status = user.status;
+      updateSet.status = user.status;
     }
 
-    if (!values.lastSignedIn) {
+    if (!values.lastSignedIn && user.openId) {
       values.lastSignedIn = new Date();
     }
 
-    if (Object.keys(updateSet).length === 0) {
+    if (Object.keys(updateSet).length === 0 && user.openId) {
       updateSet.lastSignedIn = new Date();
     }
 
+    // OAuth users use openId, email/password users use email
+    const conflictTarget = user.openId ? users.openId : users.email;
     await db.insert(users).values(values).onConflictDoUpdate({
-      target: users.openId,
+      target: conflictTarget,
       set: updateSet,
     });
   } catch (error) {
@@ -705,4 +711,55 @@ export async function deleteEventRsvp(id: number) {
 
   await db.delete(eventRsvps).where(eq(eventRsvps.id, id));
   return { success: true };
+}
+
+// ========== Authentication Helpers ==========
+
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result[0] || null;
+}
+
+export async function getUserById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result[0] || null;
+}
+
+export async function getPendingApprovalUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(users).where(eq(users.status, 'pending_approval')).orderBy(desc(users.createdAt));
+}
+
+export async function getAdminUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(users).where(and(eq(users.role, 'admin'), eq(users.status, 'active')));
+}
+
+export async function approveUser(userId: number, approvedBy: number, comment?: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Update user status to active
+  await db.update(users).set({ status: 'active' }).where(eq(users.id, userId));
+  
+  // Record approval
+  await db.insert(userApprovals).values({
+    userId,
+    approvedBy,
+    comment: comment || null,
+  });
+  
+  return { success: true };
+}
+
+export async function getUserApprovals(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(userApprovals).where(eq(userApprovals.userId, userId));
 }

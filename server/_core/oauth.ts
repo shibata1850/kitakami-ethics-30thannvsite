@@ -30,9 +30,10 @@ export function registerOAuthRoutes(app: Express) {
 
       await db.upsertUser({
         openId: userInfo.openId,
-        name: userInfo.name || null,
-        email: userInfo.email ?? null,
-        loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
+        name: userInfo.name || 'Unknown',
+        email: userInfo.email || '',
+        loginMethod: userInfo.loginMethod ?? userInfo.platform ?? 'oauth',
+        status: 'active', // OAuth users are automatically active
         lastSignedIn: new Date(),
       });
 

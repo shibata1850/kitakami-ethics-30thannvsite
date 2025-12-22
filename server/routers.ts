@@ -1,10 +1,13 @@
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME } from "../shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import { storagePut } from "./storage";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { ENV } from "./_core/env";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -18,6 +21,134 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+
+    // Register new user
+    register: publicProcedure
+      .input(
+        z.object({
+          name: z.string().min(1),
+          email: z.string().email(),
+          password: z.string().min(6),
+          companyName: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        // Check if user already exists
+        const existingUser = await db.getUserByEmail(input.email);
+        if (existingUser) {
+          throw new Error("Email already registered");
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(input.password, 10);
+
+        // Create user with pending_approval status
+        await db.upsertUser({
+          name: input.name,
+          email: input.email,
+          password: hashedPassword,
+          companyName: input.companyName || null,
+          loginMethod: "email",
+          role: "user",
+          status: "pending_approval",
+        });
+
+        // Get the created user
+        const user = await db.getUserByEmail(input.email);
+        if (!user) {
+          throw new Error("Failed to create user");
+        }
+
+        // Get all admins for approval notification
+        const admins = await db.getAdminUsers();
+        console.log(`[Auth] New user registration: ${input.email}, awaiting approval from ${admins.length} admins`);
+
+        return {
+          message: "Registration successful. Your account is pending approval from administrators.",
+          userId: user.id,
+        };
+      }),
+
+    // Login with email and password
+    login: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email(),
+          password: z.string(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        // Get user by email
+        const user = await db.getUserByEmail(input.email);
+        if (!user || !user.password) {
+          throw new Error("Invalid email or password");
+        }
+
+        // Check password
+        const passwordMatch = await bcrypt.compare(input.password, user.password);
+        if (!passwordMatch) {
+          throw new Error("Invalid email or password");
+        }
+
+        // Check if user is approved
+        if (user.status !== "active") {
+          throw new Error("Your account is pending approval");
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+          { userId: user.id, email: user.email, role: user.role },
+          ENV.jwtSecret,
+          { expiresIn: "7d" }
+        );
+
+        // Update last signed in
+        await db.upsertUser({
+          email: user.email,
+          name: user.name,
+          lastSignedIn: new Date(),
+        });
+
+        return {
+          message: "Login successful",
+          token,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            companyName: user.companyName,
+          },
+        };
+      }),
+
+    // Get pending approval users (admin only)
+    getPendingUsers: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Admin access required");
+      }
+      return db.getPendingApprovalUsers();
+    }),
+
+    // Approve user (admin only)
+    approveUser: protectedProcedure
+      .input(
+        z.object({
+          userId: z.number(),
+          comment: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user?.role !== "admin") {
+          throw new Error("Admin access required");
+        }
+        if (!ctx.user.id) {
+          throw new Error("User ID not found");
+        }
+
+        await db.approveUser(input.userId, ctx.user.id, input.comment);
+        return { message: "User approved successfully" };
+      }),
   }),
 
   members: router({
