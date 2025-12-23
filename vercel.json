@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "pnpm build",
+  "buildCommand": "pnpm build && pnpm build:api",
   "devCommand": "pnpm dev",
   "installCommand": "pnpm install",
   "framework": null,
@@ -16,7 +16,7 @@
     }
   ],
   "functions": {
-    "api/**/*.ts": {
+    "api/index.js": {
       "maxDuration": 30
     }
   },
