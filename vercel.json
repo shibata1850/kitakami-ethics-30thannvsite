@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "pnpm build && pnpm build:api",
+  "buildCommand": "pnpm build",
   "devCommand": "pnpm dev",
   "installCommand": "pnpm install",
   "framework": null,
@@ -16,8 +16,9 @@
     }
   ],
   "functions": {
-    "api/index.js": {
-      "maxDuration": 30
+    "api/index.ts": {
+      "maxDuration": 30,
+      "includeFiles": "server/**/*.ts,server/**/*.js,drizzle/**/*.ts,shared/**/*.ts"
     }
   },
   "env": {
