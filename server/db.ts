@@ -5,17 +5,31 @@ import { InsertUser, users, members, type InsertMember, officers, type InsertOff
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _client: ReturnType<typeof postgres> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      const client = postgres(process.env.DATABASE_URL);
-      _db = drizzle(client);
+      console.log("[Database] Initializing connection...");
+      // Configure for serverless environment
+      _client = postgres(process.env.DATABASE_URL, {
+        max: 1, // Single connection for serverless
+        idle_timeout: 20, // Close idle connections after 20 seconds
+        connect_timeout: 10, // Connection timeout in seconds
+        ssl: { rejectUnauthorized: false }, // Supabase SSL configuration
+        prepare: false, // Disable prepared statements for serverless
+      });
+      _db = drizzle(_client);
+      console.log("[Database] Connection initialized successfully");
     } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
+      console.error("[Database] Failed to connect:", error);
       _db = null;
+      _client = null;
     }
+  }
+  if (!process.env.DATABASE_URL) {
+    console.warn("[Database] DATABASE_URL environment variable is not set");
   }
   return _db;
 }
@@ -162,59 +176,69 @@ export interface MemberFilterOptions {
 }
 
 export async function getFilteredMembers(options: MemberFilterOptions) {
-  const db = await getDb();
-  if (!db) return [];
-  
-  let query = db.select().from(members);
+  try {
+    const db = await getDb();
+    if (!db) {
+      console.warn("[Database] getFilteredMembers: Database not available");
+      return [];
+    }
 
-  const conditions = [];
+    let query = db.select().from(members);
 
-  // Category filter
-  if (options.categories && options.categories.length > 0) {
-    conditions.push(
-      or(...options.categories.map(cat => eq(members.category, cat)))!
-    );
+    const conditions = [];
+
+    // Category filter
+    if (options.categories && options.categories.length > 0) {
+      conditions.push(
+        or(...options.categories.map(cat => eq(members.category, cat)))!
+      );
+    }
+
+    // Committee filter
+    if (options.committees && options.committees.length > 0) {
+      conditions.push(
+        or(...options.committees.map(com => eq(members.committee, com)))!
+      );
+    }
+
+    // Search query (name or company name)
+    if (options.searchQuery && options.searchQuery.trim()) {
+      const searchTerm = `%${options.searchQuery.trim()}%`;
+      conditions.push(
+        or(
+          like(members.name, searchTerm),
+          like(members.companyName, searchTerm)
+        )!
+      );
+    }
+
+    // Apply all conditions
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)!) as any;
+    }
+
+    // Sorting
+    switch (options.sortBy) {
+      case "date_desc":
+        query = query.orderBy(desc(members.createdAt)) as any;
+        break;
+      case "date_asc":
+        query = query.orderBy(asc(members.createdAt)) as any;
+        break;
+      case "random":
+        query = query.orderBy(sql`RANDOM()`) as any;
+        break;
+      default:
+        query = query.orderBy(desc(members.createdAt)) as any;
+    }
+
+    const result = await query;
+    console.log(`[Database] getFilteredMembers: Retrieved ${result.length} members`);
+    return result;
+  } catch (error) {
+    console.error("[Database] getFilteredMembers error:", error);
+    throw error; // Re-throw so tRPC can handle it properly
   }
-
-  // Committee filter
-  if (options.committees && options.committees.length > 0) {
-    conditions.push(
-      or(...options.committees.map(com => eq(members.committee, com)))!
-    );
-  }
-
-  // Search query (name or company name)
-  if (options.searchQuery && options.searchQuery.trim()) {
-    const searchTerm = `%${options.searchQuery.trim()}%`;
-    conditions.push(
-      or(
-        like(members.name, searchTerm),
-        like(members.companyName, searchTerm)
-      )!
-    );
-  }
-
-  // Apply all conditions
-  if (conditions.length > 0) {
-    query = query.where(and(...conditions)!) as any;
-  }
-
-  // Sorting
-  switch (options.sortBy) {
-    case "date_desc":
-      query = query.orderBy(desc(members.createdAt)) as any;
-      break;
-    case "date_asc":
-      query = query.orderBy(asc(members.createdAt)) as any;
-      break;
-    case "random":
-      query = query.orderBy(sql`RANDOM()`) as any;
-      break;
-    default:
-      query = query.orderBy(desc(members.createdAt)) as any;
-  }
-
-  return query;
 }
 
 // ========== Officers CRUD ==========
