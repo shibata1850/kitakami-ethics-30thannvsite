@@ -2,7 +2,7 @@ import * as esbuild from 'esbuild';
 
 // Build the API handler with all dependencies bundled
 await esbuild.build({
-  entryPoints: ['api/index.ts'],
+  entryPoints: ['src/api-handler.ts'],
   bundle: true,
   platform: 'node',
   target: 'node18',
