@@ -17,7 +17,8 @@ export async function getDb() {
         max: 1, // Single connection for serverless
         idle_timeout: 20, // Close idle connections after 20 seconds
         connect_timeout: 10, // Connection timeout in seconds
-        ssl: 'require', // Supabase requires SSL
+        ssl: { rejectUnauthorized: false }, // Supabase SSL configuration
+        prepare: false, // Disable prepared statements for serverless
       });
       _db = drizzle(_client);
       console.log("[Database] Connection initialized successfully");
