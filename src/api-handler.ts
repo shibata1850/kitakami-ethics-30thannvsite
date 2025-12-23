@@ -3,8 +3,17 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import express, { type ErrorRequestHandler } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+
+// Log at module load time to verify this bundled file is being used
+console.log('[API] Bundled handler loading...');
+console.log('[API] DATABASE_URL configured:', !!process.env.DATABASE_URL);
+console.log('[API] NODE_ENV:', process.env.NODE_ENV);
+
+// Import server modules (these should be bundled inline)
 import { appRouter } from '../server/routers';
 import { createContext } from '../server/_core/context';
+
+console.log('[API] Server modules imported successfully');
 
 const app = express();
 
@@ -37,6 +46,7 @@ app.get('/api/health', async (req, res) => {
       status: 'ok',
       timestamp: new Date().toISOString(),
       database: hasDbUrl ? 'configured' : 'not configured',
+      bundled: true, // Indicates this is the bundled version
       env: {
         NODE_ENV: process.env.NODE_ENV,
         hasJwtSecret: !!process.env.JWT_SECRET,
@@ -63,6 +73,7 @@ app.use(errorHandler);
 
 // Export for Vercel Serverless Functions
 export default async (req: VercelRequest, res: VercelResponse) => {
+  console.log('[API] Request received:', req.method, req.url);
   return new Promise((resolve, reject) => {
     app(req as any, res as any, (err: any) => {
       if (err) {
