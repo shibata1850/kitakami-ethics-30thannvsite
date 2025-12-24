@@ -82,6 +82,9 @@ export default function Header() {
           <Button asChild className="bg-primary hover:bg-primary/90 text-white font-bold shadow-md">
             <Link href="/joinus">入会案内</Link>
           </Button>
+          <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10 font-bold">
+            <Link href="/login">ログイン</Link>
+          </Button>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -129,6 +132,9 @@ export default function Header() {
             ))}
             <Button asChild className="w-full bg-primary text-white mt-4">
               <Link href="/joinus" onClick={() => setIsMobileMenuOpen(false)}>入会案内</Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary/10 mt-2">
+              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>ログイン</Link>
             </Button>
           </nav>
         </div>

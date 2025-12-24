@@ -100,6 +100,42 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   }
 }
 
+/**
+ * Create a new user (for email/password registration)
+ * Unlike upsertUser, this function is designed for new user creation only
+ */
+export async function createUser(user: {
+  name: string;
+  email: string;
+  password: string;
+  companyName?: string | null;
+  loginMethod?: string;
+  role?: 'user' | 'admin';
+  status?: 'pending_approval' | 'active' | 'suspended';
+}): Promise<{ id: number }> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  try {
+    const result = await db.insert(users).values({
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      companyName: user.companyName || null,
+      loginMethod: user.loginMethod || 'email',
+      role: user.role || 'user',
+      status: user.status || 'pending_approval',
+    }).returning({ id: users.id });
+
+    return result[0];
+  } catch (error) {
+    console.error("[Database] Failed to create user:", error);
+    throw error;
+  }
+}
+
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
   if (!db) {
