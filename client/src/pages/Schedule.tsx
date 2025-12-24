@@ -63,7 +63,7 @@ export default function Schedule() {
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
               定例活動
             </h2>
-            <div className="max-w-2xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               <Card className="border-pink-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="bg-pink-50">
                   <CardTitle className="text-2xl text-pink-700">
@@ -98,6 +98,44 @@ export default function Schedule() {
                     <div>
                       <p className="font-bold text-gray-900">参加費</p>
                       <p className="text-gray-700">会員：無料 / ゲスト：無料</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-pink-200 hover:shadow-lg transition-shadow">
+                <CardHeader className="bg-pink-50">
+                  <CardTitle className="text-2xl text-pink-700">
+                    経営者のつどい
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Calendar className="w-5 h-5 text-pink-600 mt-1" />
+                    <div>
+                      <p className="font-bold text-gray-900">開催日</p>
+                      <p className="text-gray-700">月1回（第3火曜日）</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-pink-600 mt-1" />
+                    <div>
+                      <p className="font-bold text-gray-900">時間</p>
+                      <p className="text-gray-700">18:30〜20:30</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-5 h-5 text-pink-600 mt-1" />
+                    <div>
+                      <p className="font-bold text-gray-900">会場</p>
+                      <p className="text-gray-700">市内飲食店（毎回異なります）</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Users className="w-5 h-5 text-pink-600 mt-1" />
+                    <div>
+                      <p className="font-bold text-gray-900">参加費</p>
+                      <p className="text-gray-700">実費（3,000円〜5,000円程度）</p>
                     </div>
                   </div>
                 </CardContent>
