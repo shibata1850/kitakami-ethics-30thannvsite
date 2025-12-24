@@ -1,11 +1,28 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, Users } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Tag, User, Loader2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+
+// Base44 Event type
+interface Base44Event {
+  id: string;
+  event_type?: string;
+  title?: string;
+  event_date?: string;
+  start_time?: string;
+  end_time?: string;
+  venue?: string;
+  venue_address?: string;
+  speaker_id?: string;
+  description?: string;
+  status?: string;
+  tags?: string[];
+}
 
 export default function Schedule() {
   const { data: upcomingSeminars = [] } = trpc.seminars.upcoming.useQuery();
+  const { data: base44Events = [], isLoading: eventsLoading, error: eventsError } = trpc.base44Events.upcoming.useQuery();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -36,6 +53,12 @@ export default function Schedule() {
                 className="inline-flex items-center px-6 py-3 bg-white border-2 border-pink-300 text-pink-700 font-semibold rounded-lg hover:bg-pink-50 transition-colors"
               >
                 経営者のつどい
+              </a>
+              <a
+                href="#event-list"
+                className="inline-flex items-center px-6 py-3 bg-white border-2 border-pink-300 text-pink-700 font-semibold rounded-lg hover:bg-pink-50 transition-colors"
+              >
+                イベント一覧
               </a>
             </div>
           </div>
@@ -188,8 +211,139 @@ export default function Schedule() {
           </div>
         </section>
 
+        {/* Base44 イベント一覧 */}
+        <section id="event-list" className="py-16 bg-white scroll-mt-20">
+          <div className="container">
+            <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
+              イベント一覧
+            </h2>
+            <p className="text-center text-gray-600 mb-12">
+              倫理法人会の各種イベント・行事をご案内します
+            </p>
+            <div className="max-w-4xl mx-auto space-y-6">
+              {eventsLoading ? (
+                <Card>
+                  <CardContent className="p-12 text-center text-gray-500">
+                    <Loader2 className="mx-auto h-12 w-12 text-pink-400 mb-4 animate-spin" />
+                    <p>イベント情報を読み込み中...</p>
+                  </CardContent>
+                </Card>
+              ) : eventsError ? (
+                <Card>
+                  <CardContent className="p-12 text-center text-gray-500">
+                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <p>イベント情報の取得に失敗しました</p>
+                    <p className="text-sm mt-2">しばらくしてから再度お試しください</p>
+                  </CardContent>
+                </Card>
+              ) : base44Events.length === 0 ? (
+                <Card>
+                  <CardContent className="p-12 text-center text-gray-500">
+                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <p>現在、予定されているイベントはありません。</p>
+                    <p className="text-sm mt-2">最新情報は随時更新されます。</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                (base44Events as Base44Event[]).map((event) => (
+                  <Card key={event.id} className="hover:shadow-lg transition-shadow border-pink-200">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                        <div className="flex-1">
+                          {/* イベントタイプバッジ */}
+                          {event.event_type && (
+                            <span className="inline-block px-3 py-1 text-xs font-semibold bg-pink-100 text-pink-700 rounded-full mb-3">
+                              {event.event_type}
+                            </span>
+                          )}
+
+                          {/* タイトル */}
+                          <h3 className="text-xl font-bold mb-3 text-gray-900">
+                            {event.title || "イベント"}
+                          </h3>
+
+                          {/* 日時 */}
+                          <div className="flex items-center gap-2 mb-2">
+                            <Calendar className="w-5 h-5 text-pink-600" />
+                            <span className="font-bold text-lg text-gray-900">
+                              {event.event_date
+                                ? new Date(event.event_date).toLocaleDateString("ja-JP", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    weekday: "short",
+                                  })
+                                : "日程未定"}
+                            </span>
+                            {(event.start_time || event.end_time) && (
+                              <>
+                                <Clock className="w-5 h-5 text-pink-600 ml-4" />
+                                <span className="text-gray-700">
+                                  {event.start_time || ""}
+                                  {event.start_time && event.end_time && " 〜 "}
+                                  {event.end_time || ""}
+                                </span>
+                              </>
+                            )}
+                          </div>
+
+                          {/* 会場 */}
+                          {(event.venue || event.venue_address) && (
+                            <div className="flex items-start gap-2 mt-2">
+                              <MapPin className="w-4 h-4 text-pink-600 mt-1" />
+                              <div>
+                                {event.venue && (
+                                  <span className="text-sm text-gray-700">{event.venue}</span>
+                                )}
+                                {event.venue_address && (
+                                  <p className="text-xs text-gray-500">{event.venue_address}</p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 説明 */}
+                          {event.description && (
+                            <p className="text-sm text-gray-600 mt-3 whitespace-pre-line">
+                              {event.description}
+                            </p>
+                          )}
+
+                          {/* タグ */}
+                          {event.tags && event.tags.length > 0 && (
+                            <div className="flex items-center gap-2 mt-3 flex-wrap">
+                              <Tag className="w-4 h-4 text-gray-400" />
+                              {event.tags.map((tag, index) => (
+                                <span
+                                  key={index}
+                                  className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 参加申込ボタン */}
+                        <div className="flex-shrink-0">
+                          <a href="/contact">
+                            <button className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition-colors whitespace-nowrap">
+                              参加申込
+                            </button>
+                          </a>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* 年間行事 */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-gray-50">
           <div className="container">
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
               年間行事
