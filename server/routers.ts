@@ -699,6 +699,164 @@ export const appRouter = router({
     }),
   }),
 
+  // Base44 Events API
+  base44Events: router({
+    // Public: Get events from Base44 API
+    list: publicProcedure
+      .input(
+        z.object({
+          event_type: z.string().optional(),
+          status: z.string().optional(),
+        }).optional()
+      )
+      .query(async ({ input }) => {
+        try {
+          const response = await fetch(
+            `https://app.base44.com/api/apps/6943944870829f16b01dab30/entities/Event`,
+            {
+              headers: {
+                'api_key': '8834846fdeeb4fa2aad4038a3117ccbc',
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`Base44 API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          // Filter events if needed
+          let events = data || [];
+
+          // Filter by event_type if specified
+          if (input?.event_type) {
+            events = events.filter((e: any) => e.event_type === input.event_type);
+          }
+
+          // Filter by status if specified (default: only approved events)
+          if (input?.status) {
+            events = events.filter((e: any) => e.status === input.status);
+          }
+
+          // Sort by event_date ascending (upcoming first)
+          events.sort((a: any, b: any) => {
+            const dateA = new Date(a.event_date || '');
+            const dateB = new Date(b.event_date || '');
+            return dateA.getTime() - dateB.getTime();
+          });
+
+          return events;
+        } catch (error) {
+          console.error('[Base44 API] Error fetching events:', error);
+          throw new Error('Failed to fetch events from Base44');
+        }
+      }),
+
+    // Public: Get upcoming events (event_date >= today)
+    upcoming: publicProcedure
+      .input(
+        z.object({
+          event_type: z.string().optional(),
+        }).optional()
+      )
+      .query(async ({ input }) => {
+        try {
+          const response = await fetch(
+            `https://app.base44.com/api/apps/6943944870829f16b01dab30/entities/Event`,
+            {
+              headers: {
+                'api_key': '8834846fdeeb4fa2aad4038a3117ccbc',
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`Base44 API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          let events = (data || []).filter((e: any) => {
+            const eventDate = new Date(e.event_date || '');
+            return eventDate >= today;
+          });
+
+          // Filter by event_type if specified
+          if (input?.event_type) {
+            events = events.filter((e: any) => e.event_type === input.event_type);
+          }
+
+          // Sort by event_date ascending
+          events.sort((a: any, b: any) => {
+            const dateA = new Date(a.event_date || '');
+            const dateB = new Date(b.event_date || '');
+            return dateA.getTime() - dateB.getTime();
+          });
+
+          return events;
+        } catch (error) {
+          console.error('[Base44 API] Error fetching upcoming events:', error);
+          throw new Error('Failed to fetch upcoming events from Base44');
+        }
+      }),
+
+    // Public: Get past events (event_date < today)
+    past: publicProcedure
+      .input(
+        z.object({
+          event_type: z.string().optional(),
+        }).optional()
+      )
+      .query(async ({ input }) => {
+        try {
+          const response = await fetch(
+            `https://app.base44.com/api/apps/6943944870829f16b01dab30/entities/Event`,
+            {
+              headers: {
+                'api_key': '8834846fdeeb4fa2aad4038a3117ccbc',
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`Base44 API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          let events = (data || []).filter((e: any) => {
+            const eventDate = new Date(e.event_date || '');
+            return eventDate < today;
+          });
+
+          // Filter by event_type if specified
+          if (input?.event_type) {
+            events = events.filter((e: any) => e.event_type === input.event_type);
+          }
+
+          // Sort by event_date descending (most recent first)
+          events.sort((a: any, b: any) => {
+            const dateA = new Date(a.event_date || '');
+            const dateB = new Date(b.event_date || '');
+            return dateB.getTime() - dateA.getTime();
+          });
+
+          return events;
+        } catch (error) {
+          console.error('[Base44 API] Error fetching past events:', error);
+          throw new Error('Failed to fetch past events from Base44');
+        }
+      }),
+  }),
+
   eventRsvps: router({
     // Public: Create a new RSVP (for form submission)
     create: publicProcedure
