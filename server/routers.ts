@@ -43,7 +43,7 @@ export const appRouter = router({
         const hashedPassword = await bcrypt.hash(input.password, 10);
 
         // Create user with pending_approval status
-        await db.upsertUser({
+        const newUser = await db.createUser({
           name: input.name,
           email: input.email,
           password: hashedPassword,
