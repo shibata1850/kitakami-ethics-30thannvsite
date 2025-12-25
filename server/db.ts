@@ -149,6 +149,25 @@ export async function getUserByOpenId(openId: string) {
 }
 
 /**
+ * Update user's lastSignedIn timestamp
+ */
+export async function updateLastSignedIn(userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot update lastSignedIn: database not available");
+    return;
+  }
+
+  try {
+    await db.update(users)
+      .set({ lastSignedIn: new Date(), updatedAt: new Date() })
+      .where(eq(users.id, userId));
+  } catch (error) {
+    console.error("[Database] Failed to update lastSignedIn:", error);
+  }
+}
+
+/**
  * Member database helpers
  */
 

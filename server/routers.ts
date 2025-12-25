@@ -103,11 +103,7 @@ export const appRouter = router({
         );
 
         // Update last signed in
-        await db.upsertUser({
-          email: user.email,
-          name: user.name,
-          lastSignedIn: new Date(),
-        });
+        await db.updateLastSignedIn(user.id);
 
         return {
           message: "Login successful",
