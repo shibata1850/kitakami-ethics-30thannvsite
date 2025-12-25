@@ -4,6 +4,7 @@ import axios, { type AxiosInstance } from "axios";
 import { parse as parseCookieHeader } from "cookie";
 import type { Request } from "express";
 import { SignJWT, jwtVerify } from "jose";
+import jwt from "jsonwebtoken";
 import type { User } from "../../drizzle/schema";
 import * as db from "../db";
 import { ENV } from "./env";
@@ -257,7 +258,26 @@ class SDKServer {
   }
 
   async authenticateRequest(req: Request): Promise<User> {
-    // Regular authentication flow
+    // Check for JWT Bearer token in Authorization header first (email/password login)
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      try {
+        const decoded = jwt.verify(token, ENV.jwtSecret) as { userId: number; email: string; role: string };
+        const user = await db.getUserByEmail(decoded.email);
+        if (user && user.status === "active") {
+          return user;
+        }
+        throw ForbiddenError("User not found or not active");
+      } catch (error) {
+        if (error instanceof jwt.JsonWebTokenError) {
+          throw ForbiddenError("Invalid token");
+        }
+        throw error;
+      }
+    }
+
+    // Regular OAuth authentication flow via session cookie
     const cookies = this.parseCookies(req.headers.cookie);
     const sessionCookie = cookies.get(COOKIE_NAME);
     const session = await this.verifySession(sessionCookie);
