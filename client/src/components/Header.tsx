@@ -23,7 +23,7 @@ export default function Header() {
     {
       label: "スケジュール",
       items: [
-        { label: "モーニングセミナー", href: "/schedule#morning-seminar" },
+        { label: "イベント一覧", href: "/schedule#event-list" },
         { label: "セミナーアーカイブ", href: "/seminars/archive" },
       ],
     },
