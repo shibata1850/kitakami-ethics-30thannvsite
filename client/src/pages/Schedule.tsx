@@ -1,10 +1,12 @@
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, Users, Tag, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Calendar, Clock, MapPin, Users, Tag, Loader2, Info, User, CheckCircle, X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
-// Base44 Event type
+// Base44 Event type with all fields
 interface Base44Event {
   id: string;
   event_type?: string;
@@ -14,14 +16,42 @@ interface Base44Event {
   end_time?: string;
   venue?: string;
   venue_address?: string;
+  manager_user_id?: string;
   speaker_id?: string;
-  description?: string;
   status?: string;
+  rejection_reason?: string;
+  approver_user_id?: string;
+  approved_at?: string;
   tags?: string[];
+  description?: string;
+  committee_id?: string;
+  created_date?: string;
 }
 
 export default function Schedule() {
   const { data: base44Events = [], isLoading: eventsLoading, error: eventsError } = trpc.base44Events.upcoming.useQuery();
+  const [selectedEvent, setSelectedEvent] = useState<Base44Event | null>(null);
+
+  const formatDate = (dateStr: string | undefined) => {
+    if (!dateStr) return "未定";
+    return new Date(dateStr).toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+    });
+  };
+
+  const formatDateTime = (dateStr: string | undefined) => {
+    if (!dateStr) return "未定";
+    return new Date(dateStr).toLocaleString("ja-JP", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -179,7 +209,11 @@ export default function Schedule() {
                 </Card>
               ) : (
                 (base44Events as Base44Event[]).map((event) => (
-                  <Card key={event.id} className="hover:shadow-lg transition-shadow border-pink-200">
+                  <Card
+                    key={event.id}
+                    className="hover:shadow-lg transition-shadow border-pink-200 cursor-pointer"
+                    onClick={() => setSelectedEvent(event)}
+                  >
                     <CardContent className="p-6">
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div className="flex-1">
@@ -199,14 +233,7 @@ export default function Schedule() {
                           <div className="flex items-center gap-2 mb-2">
                             <Calendar className="w-5 h-5 text-pink-600" />
                             <span className="font-bold text-lg text-gray-900">
-                              {event.event_date
-                                ? new Date(event.event_date).toLocaleDateString("ja-JP", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    weekday: "short",
-                                  })
-                                : "日程未定"}
+                              {formatDate(event.event_date)}
                             </span>
                             {(event.start_time || event.end_time) && (
                               <>
@@ -235,32 +262,16 @@ export default function Schedule() {
                             </div>
                           )}
 
-                          {/* 説明 */}
-                          {event.description && (
-                            <p className="text-sm text-gray-600 mt-3 whitespace-pre-line">
-                              {event.description}
-                            </p>
-                          )}
-
-                          {/* タグ */}
-                          {event.tags && event.tags.length > 0 && (
-                            <div className="flex items-center gap-2 mt-3 flex-wrap">
-                              <Tag className="w-4 h-4 text-gray-400" />
-                              {event.tags.map((tag, index) => (
-                                <span
-                                  key={index}
-                                  className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                          {/* 詳細を見るテキスト */}
+                          <p className="text-sm text-pink-600 mt-3 flex items-center gap-1">
+                            <Info className="w-4 h-4" />
+                            クリックして詳細を表示
+                          </p>
                         </div>
 
                         {/* 参加申込ボタン */}
                         <div className="flex-shrink-0">
-                          <a href="/contact">
+                          <a href="/contact" onClick={(e) => e.stopPropagation()}>
                             <button className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition-colors whitespace-nowrap">
                               参加申込
                             </button>
@@ -326,6 +337,200 @@ export default function Schedule() {
           </div>
         </section>
       </main>
+
+      {/* イベント詳細ダイアログ */}
+      <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-pink-700 flex items-center gap-2">
+              {selectedEvent?.event_type && (
+                <span className="inline-block px-3 py-1 text-xs font-semibold bg-pink-100 text-pink-700 rounded-full">
+                  {selectedEvent.event_type}
+                </span>
+              )}
+              {selectedEvent?.title || "イベント詳細"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedEvent && (
+            <div className="space-y-6 mt-4">
+              {/* 基本情報 */}
+              <div className="space-y-4">
+                <h3 className="font-bold text-gray-900 border-b border-pink-200 pb-2">基本情報</h3>
+
+                {/* 開催日時 */}
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-5 h-5 text-pink-600 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-gray-900">開催日</p>
+                    <p className="text-gray-700">{formatDate(selectedEvent.event_date)}</p>
+                  </div>
+                </div>
+
+                {/* 時間 */}
+                {(selectedEvent.start_time || selectedEvent.end_time) && (
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">時間</p>
+                      <p className="text-gray-700">
+                        {selectedEvent.start_time || ""}
+                        {selectedEvent.start_time && selectedEvent.end_time && " 〜 "}
+                        {selectedEvent.end_time || ""}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 会場 */}
+                {(selectedEvent.venue || selectedEvent.venue_address) && (
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">会場</p>
+                      {selectedEvent.venue && <p className="text-gray-700">{selectedEvent.venue}</p>}
+                      {selectedEvent.venue_address && (
+                        <p className="text-sm text-gray-500">{selectedEvent.venue_address}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 説明 */}
+                {selectedEvent.description && (
+                  <div className="flex items-start gap-3">
+                    <Info className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">説明</p>
+                      <p className="text-gray-700 whitespace-pre-line">{selectedEvent.description}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* タグ */}
+                {selectedEvent.tags && selectedEvent.tags.length > 0 && (
+                  <div className="flex items-start gap-3">
+                    <Tag className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">タグ</p>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {selectedEvent.tags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className="text-sm px-3 py-1 bg-pink-50 text-pink-700 rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 追加情報 */}
+              <div className="space-y-4">
+                <h3 className="font-bold text-gray-900 border-b border-pink-200 pb-2">追加情報</h3>
+
+                {/* ステータス */}
+                {selectedEvent.status && (
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">ステータス</p>
+                      <p className="text-gray-700">{selectedEvent.status}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 担当者ID */}
+                {selectedEvent.manager_user_id && (
+                  <div className="flex items-start gap-3">
+                    <User className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">担当者ID</p>
+                      <p className="text-gray-700">{selectedEvent.manager_user_id}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 講師ID */}
+                {selectedEvent.speaker_id && (
+                  <div className="flex items-start gap-3">
+                    <User className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">講師ID</p>
+                      <p className="text-gray-700">{selectedEvent.speaker_id}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 委員会ID */}
+                {selectedEvent.committee_id && (
+                  <div className="flex items-start gap-3">
+                    <Users className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">委員会ID</p>
+                      <p className="text-gray-700">{selectedEvent.committee_id}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 承認者ID */}
+                {selectedEvent.approver_user_id && (
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">承認者ID</p>
+                      <p className="text-gray-700">{selectedEvent.approver_user_id}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 承認日時 */}
+                {selectedEvent.approved_at && (
+                  <div className="flex items-start gap-3">
+                    <Calendar className="w-5 h-5 text-pink-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">承認日時</p>
+                      <p className="text-gray-700">{formatDateTime(selectedEvent.approved_at)}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 却下理由 */}
+                {selectedEvent.rejection_reason && (
+                  <div className="flex items-start gap-3">
+                    <X className="w-5 h-5 text-red-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-gray-900">却下理由</p>
+                      <p className="text-red-600">{selectedEvent.rejection_reason}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* イベントID */}
+                <div className="flex items-start gap-3">
+                  <Info className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-gray-500">イベントID</p>
+                    <p className="text-gray-400 text-sm">{selectedEvent.id}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 参加申込ボタン */}
+              <div className="pt-4 border-t border-gray-200">
+                <a href="/contact">
+                  <button className="w-full bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition-colors font-bold">
+                    参加申込はこちら
+                  </button>
+                </a>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
