@@ -130,11 +130,15 @@ export default function Login() {
           </CardFooter>
         </Card>
 
-        {/* ホームに戻るリンク */}
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-pink-600 hover:text-pink-700 hover:underline">
-            ← トップページに戻る
-          </Link>
+        {/* トップページに戻るボタン */}
+        <div className="mt-6">
+          <Button
+            variant="outline"
+            className="w-full border-gray-300 text-gray-600 hover:bg-gray-50"
+            asChild
+          >
+            <Link href="/">← トップページに戻る</Link>
+          </Button>
         </div>
       </div>
     </div>
