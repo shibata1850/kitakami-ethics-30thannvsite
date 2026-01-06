@@ -1,5 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import {
   Users,
   MessageSquare,
@@ -7,6 +9,12 @@ import {
   FileText,
   TrendingUp,
   Clock,
+  UserCog,
+  Mic,
+  PenSquare,
+  Mail,
+  CalendarCheck,
+  ArrowRight,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -87,6 +95,114 @@ export default function Dashboard() {
             </Card>
           );
         })}
+      </div>
+
+      {/* 管理機能メニュー */}
+      <div className="mb-8">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">管理機能</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Link href="/admin/members">
+            <Card className="hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer group">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                    <Users className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">会員管理</h3>
+                    <p className="text-sm text-gray-500">会員の追加・編集・削除</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/admin/officers">
+            <Card className="hover:shadow-lg hover:border-indigo-300 transition-all cursor-pointer group">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-indigo-50 group-hover:bg-indigo-100 transition-colors">
+                    <UserCog className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">役員管理</h3>
+                    <p className="text-sm text-gray-500">役職・委員会情報の管理</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/admin/seminars">
+            <Card className="hover:shadow-lg hover:border-purple-300 transition-all cursor-pointer group">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-purple-50 group-hover:bg-purple-100 transition-colors">
+                    <Mic className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">セミナー管理</h3>
+                    <p className="text-sm text-gray-500">モーニングセミナーの管理</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/admin/blog">
+            <Card className="hover:shadow-lg hover:border-pink-300 transition-all cursor-pointer group">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-pink-50 group-hover:bg-pink-100 transition-colors">
+                    <PenSquare className="w-6 h-6 text-pink-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">ブログ管理</h3>
+                    <p className="text-sm text-gray-500">記事の追加・編集・公開管理</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-pink-600 transition-colors" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/admin/contacts">
+            <Card className="hover:shadow-lg hover:border-green-300 transition-all cursor-pointer group">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-green-50 group-hover:bg-green-100 transition-colors">
+                    <Mail className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">お問い合わせ管理</h3>
+                    <p className="text-sm text-gray-500">問い合わせの閲覧・対応状況</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-green-600 transition-colors" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/admin/event-rsvps">
+            <Card className="hover:shadow-lg hover:border-orange-300 transition-all cursor-pointer group">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-orange-50 group-hover:bg-orange-100 transition-colors">
+                    <CalendarCheck className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">イベント予約管理</h3>
+                    <p className="text-sm text-gray-500">参加予約の閲覧・管理</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-orange-600 transition-colors" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
       </div>
 
       {/* 最近の活動 */}
