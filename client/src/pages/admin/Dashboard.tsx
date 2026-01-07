@@ -15,6 +15,7 @@ import {
   Mail,
   CalendarCheck,
   ArrowRight,
+  Home,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -64,11 +65,19 @@ export default function Dashboard() {
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">ダッシュボード</h1>
-        <p className="text-gray-600">
-          北上市倫理法人会の管理画面へようこそ
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">ダッシュボード</h1>
+          <p className="text-gray-600">
+            北上市倫理法人会の管理画面へようこそ
+          </p>
+        </div>
+        <Button variant="outline" asChild>
+          <Link href="/">
+            <Home className="w-4 h-4 mr-2" />
+            トップページへ戻る
+          </Link>
+        </Button>
       </div>
 
       {/* 統計カード */}
@@ -314,45 +323,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-
-      {/* 未対応の問い合わせ */}
-      {stats?.pendingContacts && stats.pendingContacts.length > 0 && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-orange-600" />
-              未対応の問い合わせ
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {stats.pendingContacts.map((contact: any) => (
-                <div
-                  key={contact.id}
-                  className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200"
-                >
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900">
-                      {contact.name}
-                    </p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {contact.email} | {contact.type}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-1">
-                      {contact.message}
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0 ml-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                      未対応
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
