@@ -178,7 +178,7 @@ export default function OfficerAdmin() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     if (confirm("本当に削除しますか？")) {
       deleteOfficer.mutate({ id });
     }

@@ -95,7 +95,7 @@ export default function ContactManagement() {
     setIsReplyDialogOpen(true);
   };
 
-  const handleStatusChange = (contactId: number, newStatus: ContactStatus) => {
+  const handleStatusChange = (contactId: string, newStatus: ContactStatus) => {
     updateStatus.mutate({ id: contactId, status: newStatus });
   };
 
@@ -107,7 +107,7 @@ export default function ContactManagement() {
     sendReply.mutate({ id: selectedContact.id, reply: replyText });
   };
 
-  const handleDelete = (contactId: number) => {
+  const handleDelete = (contactId: string) => {
     if (confirm("本当に削除しますか？")) {
       deleteContact.mutate({ id: contactId });
     }
