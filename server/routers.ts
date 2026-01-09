@@ -8,6 +8,7 @@ import { storagePut } from "./storage";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "./_core/env";
+import { memberApi, officerApi, inquiryApi } from "./base44";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -147,8 +148,11 @@ export const appRouter = router({
       }),
   }),
 
+  // ============================================
+  // Members Router - Base44 API連携
+  // ============================================
   members: router({
-    // Public: Get all members with optional filters
+    // Public: Get all members with optional filters (Base44 API)
     list: publicProcedure
       .input(
         z.object({
@@ -159,24 +163,58 @@ export const appRouter = router({
         })
       )
       .query(async ({ input }) => {
-        return db.getFilteredMembers(input);
+        try {
+          let members = await memberApi.getFiltered({
+            categories: input.categories,
+            committees: input.committees,
+            searchQuery: input.searchQuery,
+          });
+
+          // ソート処理
+          if (input.sortBy === "random") {
+            members = members.sort(() => Math.random() - 0.5);
+          } else if (input.sortBy === "date_desc") {
+            members = members.sort((a, b) =>
+              new Date(b.created_date).getTime() - new Date(a.created_date).getTime()
+            );
+          } else if (input.sortBy === "date_asc") {
+            members = members.sort((a, b) =>
+              new Date(a.created_date).getTime() - new Date(b.created_date).getTime()
+            );
+          }
+
+          return members;
+        } catch (error) {
+          console.error('[Members] Failed to fetch from Base44:', error);
+          throw new Error('会員情報の取得に失敗しました');
+        }
       }),
 
-    // Public: Get member by ID
+    // Public: Get member by ID (Base44 API)
     getById: publicProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ id: z.string() }))
       .query(async ({ input }) => {
-        return db.getMemberById(input.id);
+        try {
+          return await memberApi.getById(input.id);
+        } catch (error) {
+          console.error('[Members] Failed to get member:', error);
+          throw new Error('会員情報の取得に失敗しました');
+        }
       }),
 
-    // Public: Get related members (same category)
+    // Public: Get related members (same category) (Base44 API)
     getRelated: publicProcedure
-      .input(z.object({ id: z.number(), limit: z.number().default(4) }))
+      .input(z.object({ id: z.string(), limit: z.number().default(4) }))
       .query(async ({ input }) => {
-        return db.getRelatedMembers(input.id, input.limit);
+        try {
+          return await memberApi.getRelated(input.id, input.limit);
+        } catch (error) {
+          console.error('[Members] Failed to get related members:', error);
+          return [];
+        }
       }),
 
-    // Protected: Create new member (admin only)
+    // Protected: Create new member (admin only) - Base44で管理
     create: protectedProcedure
       .input(
         z.object({
@@ -187,18 +225,31 @@ export const appRouter = router({
           photoUrl: z.string().optional(),
           category: z.string().min(1),
           committee: z.string().optional(),
+          websiteUrl: z.string().optional(),
+          twitterUrl: z.string().optional(),
+          youtubeUrl: z.string().optional(),
+          tiktokUrl: z.string().optional(),
+          instagramUrl: z.string().optional(),
+          lineUrl: z.string().optional(),
+          services: z.string().optional(),
+          achievements: z.string().optional(),
           sortOrder: z.number().default(0),
         })
       )
       .mutation(async ({ input }) => {
-        return db.createMember(input);
+        try {
+          return await memberApi.create(input);
+        } catch (error) {
+          console.error('[Members] Failed to create member:', error);
+          throw new Error('会員の作成に失敗しました');
+        }
       }),
 
-    // Protected: Update member (admin only)
+    // Protected: Update member (admin only) - Base44で管理
     update: protectedProcedure
       .input(
         z.object({
-          id: z.number(),
+          id: z.string(),
           name: z.string().min(1).optional(),
           companyName: z.string().min(1).optional(),
           title: z.string().min(1).optional(),
@@ -206,22 +257,41 @@ export const appRouter = router({
           photoUrl: z.string().optional(),
           category: z.string().min(1).optional(),
           committee: z.string().optional(),
+          websiteUrl: z.string().optional(),
+          twitterUrl: z.string().optional(),
+          youtubeUrl: z.string().optional(),
+          tiktokUrl: z.string().optional(),
+          instagramUrl: z.string().optional(),
+          lineUrl: z.string().optional(),
+          services: z.string().optional(),
+          achievements: z.string().optional(),
           sortOrder: z.number().optional(),
         })
       )
       .mutation(async ({ input }) => {
-        const { id, ...data } = input;
-        return db.updateMember(id, data);
+        try {
+          const { id, ...data } = input;
+          return await memberApi.update(id, data);
+        } catch (error) {
+          console.error('[Members] Failed to update member:', error);
+          throw new Error('会員の更新に失敗しました');
+        }
       }),
 
-    // Protected: Delete member (admin only)
+    // Protected: Delete member (admin only) - Base44で管理
     delete: protectedProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ id: z.string() }))
       .mutation(async ({ input }) => {
-        return db.deleteMember(input.id);
+        try {
+          await memberApi.delete(input.id);
+          return { success: true };
+        } catch (error) {
+          console.error('[Members] Failed to delete member:', error);
+          throw new Error('会員の削除に失敗しました');
+        }
       }),
 
-    // Protected: Upload member photo to S3
+    // Protected: Upload member photo to S3 (継続使用)
     uploadPhoto: protectedProcedure
       .input(
         z.object({
@@ -238,41 +308,45 @@ export const appRouter = router({
         return { url: result.url };
       }),
 
-    // Protected: Export members to CSV
+    // Protected: Export members to CSV (Base44 API)
     exportCSV: protectedProcedure.query(async () => {
-      const members = await db.getAllMembers();
-      
-      // CSV header
-      const header = "氏名,会社名,タイトル,メッセージ,写真URL,カテゴリー,所属委員会,表示順序";
-      
-      // CSV rows
-      const rows = members.map(member => {
-        const escapeCsv = (str: string | null | undefined) => {
-          if (!str) return "";
-          // Escape double quotes and wrap in quotes if contains comma, newline, or quote
-          if (str.includes(",") || str.includes("\n") || str.includes('"')) {
-            return `"${str.replace(/"/g, '""')}"`;
-          }
-          return str;
-        };
-        
-        return [
-          escapeCsv(member.name),
-          escapeCsv(member.companyName),
-          escapeCsv(member.title),
-          escapeCsv(member.message),
-          escapeCsv(member.photoUrl || ""),
-          escapeCsv(member.category),
-          escapeCsv(member.committee || ""),
-          member.sortOrder.toString(),
-        ].join(",");
-      });
-      
-      const csv = [header, ...rows].join("\n");
-      return { csv };
+      try {
+        const members = await memberApi.list();
+
+        // CSV header
+        const header = "氏名,会社名,タイトル,メッセージ,写真URL,カテゴリー,所属委員会,表示順序";
+
+        // CSV rows
+        const rows = members.map(member => {
+          const escapeCsv = (str: string | null | undefined) => {
+            if (!str) return "";
+            if (str.includes(",") || str.includes("\n") || str.includes('"')) {
+              return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+          };
+
+          return [
+            escapeCsv(member.name),
+            escapeCsv(member.companyName),
+            escapeCsv(member.title),
+            escapeCsv(member.message),
+            escapeCsv(member.photoUrl || ""),
+            escapeCsv(member.category),
+            escapeCsv(member.committee || ""),
+            (member.sortOrder || 0).toString(),
+          ].join(",");
+        });
+
+        const csv = [header, ...rows].join("\n");
+        return { csv };
+      } catch (error) {
+        console.error('[Members] Failed to export CSV:', error);
+        throw new Error('CSVエクスポートに失敗しました');
+      }
     }),
 
-    // Protected: Import members from CSV
+    // Protected: Import members from CSV (Base44 API)
     importCSV: protectedProcedure
       .input(
         z.object({
@@ -281,26 +355,26 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         const lines = input.csvContent.split("\n").filter(line => line.trim());
-        
+
         if (lines.length < 2) {
           throw new Error("CSVファイルが空です");
         }
-        
+
         // Skip header
         const dataLines = lines.slice(1);
-        
+
         const parseCsvLine = (line: string): string[] => {
           const result: string[] = [];
           let current = "";
           let inQuotes = false;
-          
+
           for (let i = 0; i < line.length; i++) {
             const char = line[i];
             const nextChar = line[i + 1];
-            
+
             if (char === '"' && inQuotes && nextChar === '"') {
               current += '"';
-              i++; // Skip next quote
+              i++;
             } else if (char === '"') {
               inQuotes = !inQuotes;
             } else if (char === "," && !inQuotes) {
@@ -313,26 +387,26 @@ export const appRouter = router({
           result.push(current);
           return result;
         };
-        
+
         const imported: any[] = [];
         const errors: string[] = [];
-        
+
         for (let i = 0; i < dataLines.length; i++) {
           try {
             const fields = parseCsvLine(dataLines[i]);
-            
+
             if (fields.length < 6) {
               errors.push(`行 ${i + 2}: フィールド数が不足しています`);
               continue;
             }
-            
+
             const [name, companyName, title, message, photoUrl, category, committee, sortOrder] = fields;
-            
+
             if (!name || !companyName || !title || !message || !category) {
               errors.push(`行 ${i + 2}: 必須フィールドが空です`);
               continue;
             }
-            
+
             const memberData = {
               name: name.trim(),
               companyName: companyName.trim(),
@@ -343,36 +417,49 @@ export const appRouter = router({
               committee: committee?.trim() || undefined,
               sortOrder: parseInt(sortOrder || "0") || 0,
             };
-            
-            await db.createMember(memberData);
+
+            await memberApi.create(memberData);
             imported.push(memberData);
           } catch (error: any) {
             errors.push(`行 ${i + 2}: ${error.message}`);
           }
         }
-        
+
         return {
           success: imported.length,
           errors,
           total: dataLines.length,
         };
       }),
-   }),
+  }),
 
+  // ============================================
+  // Officers Router - Base44 API連携
+  // ============================================
   officers: router({
-    // Public: Get all officers
+    // Public: Get all officers (Base44 API)
     list: publicProcedure.query(async () => {
-      return db.getAllOfficers();
+      try {
+        return await officerApi.list();
+      } catch (error) {
+        console.error('[Officers] Failed to fetch from Base44:', error);
+        throw new Error('役員情報の取得に失敗しました');
+      }
     }),
 
-    // Public: Get officer by ID
+    // Public: Get officer by ID (Base44 API)
     getById: publicProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ id: z.string() }))
       .query(async ({ input }) => {
-        return db.getOfficerById(input.id);
+        try {
+          return await officerApi.getById(input.id);
+        } catch (error) {
+          console.error('[Officers] Failed to get officer:', error);
+          throw new Error('役員情報の取得に失敗しました');
+        }
       }),
 
-    // Protected: Create new officer (admin only)
+    // Protected: Create new officer (admin only) - Base44で管理
     create: protectedProcedure
       .input(
         z.object({
@@ -386,14 +473,19 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        return db.createOfficer(input);
+        try {
+          return await officerApi.create(input);
+        } catch (error) {
+          console.error('[Officers] Failed to create officer:', error);
+          throw new Error('役員の作成に失敗しました');
+        }
       }),
 
-    // Protected: Update officer (admin only)
+    // Protected: Update officer (admin only) - Base44で管理
     update: protectedProcedure
       .input(
         z.object({
-          id: z.number(),
+          id: z.string(),
           name: z.string().min(1).optional(),
           companyName: z.string().min(1).optional(),
           position: z.string().min(1).optional(),
@@ -404,18 +496,29 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        const { id, ...data } = input;
-        return db.updateOfficer(id, data);
+        try {
+          const { id, ...data } = input;
+          return await officerApi.update(id, data);
+        } catch (error) {
+          console.error('[Officers] Failed to update officer:', error);
+          throw new Error('役員の更新に失敗しました');
+        }
       }),
 
-    // Protected: Delete officer (admin only)
+    // Protected: Delete officer (admin only) - Base44で管理
     delete: protectedProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ id: z.string() }))
       .mutation(async ({ input }) => {
-        return db.deleteOfficer(input.id);
+        try {
+          await officerApi.delete(input.id);
+          return { success: true };
+        } catch (error) {
+          console.error('[Officers] Failed to delete officer:', error);
+          throw new Error('役員の削除に失敗しました');
+        }
       }),
 
-    // Protected: Upload photo
+    // Protected: Upload photo (継続使用)
     uploadPhoto: protectedProcedure
       .input(
         z.object({
@@ -613,8 +716,11 @@ export const appRouter = router({
       }),
   }),
 
+  // ============================================
+  // Contacts Router - Base44 Inquiry API連携
+  // ============================================
   contacts: router({
-    // Public: Create new contact submission
+    // Public: Create new contact submission (Base44 Inquiry API)
     create: publicProcedure
       .input(
         z.object({
@@ -627,13 +733,15 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        return db.createContact({
-          ...input,
-          status: "pending",
-        });
+        try {
+          return await inquiryApi.create(input);
+        } catch (error) {
+          console.error('[Contacts] Failed to create inquiry:', error);
+          throw new Error('お問い合わせの送信に失敗しました');
+        }
       }),
 
-    // Protected: Get all contacts with optional filters (admin only)
+    // Protected: Get all contacts with optional filters (admin only) - Base44 API
     list: protectedProcedure
       .input(
         z.object({
@@ -643,55 +751,132 @@ export const appRouter = router({
         })
       )
       .query(async ({ input }) => {
-        return db.getFilteredContacts(input);
+        try {
+          return await inquiryApi.getFiltered(input);
+        } catch (error) {
+          console.error('[Contacts] Failed to fetch inquiries:', error);
+          throw new Error('お問い合わせの取得に失敗しました');
+        }
       }),
 
-    // Protected: Get contact by ID (admin only)
+    // Protected: Get contact by ID (admin only) - Base44 API
     getById: protectedProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ id: z.string() }))
       .query(async ({ input }) => {
-        return db.getContactById(input.id);
+        try {
+          return await inquiryApi.getById(input.id);
+        } catch (error) {
+          console.error('[Contacts] Failed to get inquiry:', error);
+          throw new Error('お問い合わせの取得に失敗しました');
+        }
       }),
 
-    // Protected: Update contact status (admin only)
+    // Protected: Update contact status (admin only) - Base44 API
     updateStatus: protectedProcedure
       .input(
         z.object({
-          id: z.number(),
+          id: z.string(),
           status: z.enum(["pending", "in_progress", "completed"]),
         })
       )
       .mutation(async ({ input }) => {
-        return db.updateContactStatus(input.id, input.status);
+        try {
+          return await inquiryApi.update(input.id, { status: input.status });
+        } catch (error) {
+          console.error('[Contacts] Failed to update status:', error);
+          throw new Error('ステータスの更新に失敗しました');
+        }
       }),
 
-    // Protected: Reply to contact (admin only)
+    // Protected: Reply to contact (admin only) - Base44 API
     reply: protectedProcedure
       .input(
         z.object({
-          id: z.number(),
+          id: z.string(),
           reply: z.string().min(1),
         })
       )
       .mutation(async ({ input, ctx }) => {
-        if (!ctx.user?.id) {
-          throw new Error("User ID not found");
+        try {
+          return await inquiryApi.update(input.id, {
+            reply: input.reply,
+            repliedAt: new Date().toISOString(),
+            repliedBy: ctx.user?.email || 'unknown',
+            status: 'completed',
+          });
+        } catch (error) {
+          console.error('[Contacts] Failed to reply:', error);
+          throw new Error('返信の送信に失敗しました');
         }
-        return db.updateContactReply(input.id, input.reply, ctx.user.id);
       }),
 
-    // Protected: Delete contact (admin only)
+    // Protected: Delete contact (admin only) - Base44 API
     delete: protectedProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ id: z.string() }))
       .mutation(async ({ input }) => {
-        return db.deleteContact(input.id);
+        try {
+          await inquiryApi.delete(input.id);
+          return { success: true };
+        } catch (error) {
+          console.error('[Contacts] Failed to delete inquiry:', error);
+          throw new Error('お問い合わせの削除に失敗しました');
+        }
       }),
   }),
 
+  // ============================================
+  // Dashboard Router - ハイブリッド（Base44 + PostgreSQL）
+  // ============================================
   dashboard: router({
     // Protected: Get dashboard statistics (admin only)
     getStats: protectedProcedure.query(async () => {
-      return db.getDashboardStats();
+      try {
+        // Base44 APIからメンバー数と問い合わせ数を取得
+        const [members, inquiries] = await Promise.all([
+          memberApi.list(),
+          inquiryApi.list(),
+        ]);
+
+        const memberCount = members.length;
+        const contactCount = inquiries.length;
+        const pendingContactCount = inquiries.filter(i => i.status === 'pending').length;
+
+        // PostgreSQLから残りの統計を取得（seminars, blogPostsはまだPostgreSQL）
+        const dbStats = await db.getDashboardStats();
+
+        return {
+          memberCount,
+          contactCount,
+          pendingContactCount,
+          upcomingSeminarCount: dbStats.upcomingSeminarCount,
+          blogPostCount: dbStats.blogPostCount,
+          upcomingSeminars: dbStats.upcomingSeminars,
+          recentBlogPosts: dbStats.recentBlogPosts,
+          // pendingContactsはBase44から取得
+          pendingContacts: inquiries
+            .filter(i => i.status === 'pending')
+            .slice(0, 5)
+            .map(i => ({
+              id: i.id,
+              type: i.type,
+              name: i.name,
+              email: i.email,
+              phone: i.phone || null,
+              companyName: i.companyName || null,
+              message: i.message,
+              status: i.status || 'pending',
+              reply: i.reply || null,
+              repliedAt: i.repliedAt ? new Date(i.repliedAt) : null,
+              repliedBy: null,
+              createdAt: new Date(i.created_date),
+              updatedAt: new Date(i.updated_date),
+            })),
+        };
+      } catch (error) {
+        console.error('[Dashboard] Failed to fetch stats:', error);
+        // フォールバック: PostgreSQLから取得
+        return db.getDashboardStats();
+      }
     }),
   }),
 
