@@ -12,7 +12,7 @@ export function SidebarLinks() {
     {
       id: 2,
       title: "役員専用システム",
-      url: "https://example.com/officer-system",
+      url: "https://app-99436250-11d4-4bc6-89e5-c095cdd845ed.base44.app",
       bgColor: "bg-gradient-to-b from-yellow-400 to-yellow-500",
       hoverColor: "hover:from-yellow-500 hover:to-yellow-600",
     },
