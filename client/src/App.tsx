@@ -29,6 +29,7 @@ import Event30thAnniversaryRsvp from "./pages/Event30thAnniversaryRsvp";
 import EventRsvpAdmin from "./pages/EventRsvpAdmin";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import MembersOnly from "./pages/MembersOnly";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -59,6 +60,7 @@ function Router() {
       <Route path="/events/30th-anniversary/rsvp" component={Event30thAnniversaryRsvp} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/members-only" component={MembersOnly} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
