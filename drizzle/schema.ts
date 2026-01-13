@@ -180,3 +180,28 @@ export const eventRsvps = pgTable("eventRsvps", {
 
 export type EventRsvp = typeof eventRsvps.$inferSelect;
 export type InsertEventRsvp = typeof eventRsvps.$inferInsert;
+
+/**
+ * Attendance responses table for storing synced attendance data from Base44
+ */
+export const attendanceResponsesStatusEnum = pgEnum("attendance_response_status", ["pending", "attend", "absent", "late"]);
+
+export const attendanceResponses = pgTable("attendanceResponses", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  base44FormId: varchar("base44FormId", { length: 100 }), // Base44のFormエンティティID
+  base44ResponseId: varchar("base44ResponseId", { length: 100 }).unique(), // Base44のFormResponseエンティティID
+  formTitle: varchar("formTitle", { length: 300 }), // フォームタイトル（例：〇月〇日 モーニングセミナー出欠確認）
+  eventDate: varchar("eventDate", { length: 10 }), // イベント日付 YYYY-MM-DD
+  userId: varchar("userId", { length: 100 }), // 回答者のBase44ユーザーID
+  userName: varchar("userName", { length: 100 }), // 回答者名
+  userEmail: varchar("userEmail", { length: 320 }), // 回答者メールアドレス
+  status: attendanceResponsesStatusEnum("status").default("pending").notNull(), // 出欠状態
+  responseData: text("responseData"), // その他の回答データ（JSON形式）
+  respondedAt: timestamp("respondedAt"), // 回答日時
+  syncedAt: timestamp("syncedAt").defaultNow().notNull(), // 同期日時
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export type AttendanceResponse = typeof attendanceResponses.$inferSelect;
+export type InsertAttendanceResponse = typeof attendanceResponses.$inferInsert;
