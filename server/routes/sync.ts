@@ -3,11 +3,12 @@ import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { attendanceResponses, type InsertAttendanceResponse } from "../../drizzle/schema";
+import { ENV } from "../_core/env";
 
 const router = Router();
 
-// API Key for authentication (should be set in environment variables)
-const SYNC_API_KEY = process.env.SYNC_API_KEY || "your-sync-api-key-change-this";
+// API Key for authentication
+const SYNC_API_KEY = ENV.syncApiKey;
 
 // Database connection
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -36,6 +37,11 @@ async function getDb() {
 // Middleware to verify API key
 function verifyApiKey(req: any, res: any, next: any) {
   const apiKey = req.headers["x-api-key"] || req.query.api_key;
+
+  if (!SYNC_API_KEY) {
+    console.error("[Sync] SYNC_API_KEY is not configured");
+    return res.status(500).json({ error: "Server configuration error: SYNC_API_KEY not set" });
+  }
 
   if (!apiKey || apiKey !== SYNC_API_KEY) {
     console.warn("[Sync] Unauthorized sync attempt");
