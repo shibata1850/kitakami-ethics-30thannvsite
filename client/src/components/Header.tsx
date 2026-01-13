@@ -1,16 +1,25 @@
 import { useState } from "react";
-import { Link } from "wouter";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { Menu, X, ChevronDown, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout, loading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  const handleLogout = async () => {
+    await logout();
+    setLocation("/");
+  };
 
   const navItems = [
     {
@@ -81,9 +90,44 @@ export default function Header() {
           <Button asChild className="bg-primary hover:bg-primary/90 text-white font-bold shadow-md">
             <Link href="/joinus">入会案内</Link>
           </Button>
-          <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10 font-bold">
-            <Link href="/login">ログイン</Link>
-          </Button>
+          {loading ? (
+            <Button variant="outline" className="border-primary text-primary" disabled>
+              読み込み中...
+            </Button>
+          ) : isAuthenticated && user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 font-bold">
+                  <User className="h-4 w-4 mr-2" />
+                  <span className="max-w-[150px] truncate">{user.email}</span>
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href="/members-only" className="cursor-pointer">
+                    会員専用ページ
+                  </Link>
+                </DropdownMenuItem>
+                {user.role === "admin" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/dashboard" className="cursor-pointer">
+                      管理ダッシュボード
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  ログアウト
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10 font-bold">
+              <Link href="/login">ログイン</Link>
+            </Button>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -132,9 +176,41 @@ export default function Header() {
             <Button asChild className="w-full bg-primary text-white mt-4">
               <Link href="/joinus" onClick={() => setIsMobileMenuOpen(false)}>入会案内</Link>
             </Button>
-            <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary/10 mt-2">
-              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>ログイン</Link>
-            </Button>
+            {loading ? (
+              <Button variant="outline" className="w-full border-primary text-primary mt-2" disabled>
+                読み込み中...
+              </Button>
+            ) : isAuthenticated && user ? (
+              <div className="mt-2 space-y-2">
+                <div className="px-3 py-2 text-sm text-muted-foreground border rounded-md">
+                  <User className="inline h-4 w-4 mr-2" />
+                  <span className="truncate">{user.email}</span>
+                </div>
+                <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary/10">
+                  <Link href="/members-only" onClick={() => setIsMobileMenuOpen(false)}>会員専用ページ</Link>
+                </Button>
+                {user.role === "admin" && (
+                  <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary/10">
+                    <Link href="/admin/dashboard" onClick={() => setIsMobileMenuOpen(false)}>管理ダッシュボード</Link>
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  className="w-full border-destructive text-destructive hover:bg-destructive/10"
+                  onClick={() => {
+                    handleLogout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  ログアウト
+                </Button>
+              </div>
+            ) : (
+              <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary/10 mt-2">
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>ログイン</Link>
+              </Button>
+            )}
           </nav>
         </div>
       )}

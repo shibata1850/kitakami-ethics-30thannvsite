@@ -15,11 +15,11 @@ export default function MemberDetail() {
   const [, setLocation] = useLocation();
 
   const { data: member, isLoading } = trpc.members.getById.useQuery(
-    { id: parseInt(id || "0") }
+    { id: id || "" }
   );
 
   const { data: relatedMembers } = trpc.members.getRelated.useQuery(
-    { id: parseInt(id || "0"), limit: 4 },
+    { id: id || "", limit: 4 },
     { enabled: !!member }
   );
 

@@ -248,7 +248,7 @@ export default function MemberAdmin() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     if (confirm("本当に削除しますか？")) {
       deleteMember.mutate({ id });
     }
