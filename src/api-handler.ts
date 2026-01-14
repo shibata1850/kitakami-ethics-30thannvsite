@@ -12,6 +12,7 @@ console.log('[API] NODE_ENV:', process.env.NODE_ENV);
 // Import server modules (these should be bundled inline)
 import { appRouter } from '../server/routers';
 import { createContext } from '../server/_core/context';
+import syncRouter from '../server/routes/sync';
 
 console.log('[API] Server modules imported successfully');
 
@@ -24,6 +25,9 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(express.json());
+
+// Sync API for Base44 integration
+app.use('/api/sync', syncRouter);
 
 // tRPC endpoint
 app.use(
