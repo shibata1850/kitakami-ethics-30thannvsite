@@ -36,7 +36,14 @@ async function getDb() {
 
 // Middleware to verify API key
 function verifyApiKey(req: any, res: any, next: any) {
-  const apiKey = req.headers["x-api-key"] || req.query.api_key;
+  // Support both x-api-key header and Authorization: Bearer <key>
+  let apiKey = req.headers["x-api-key"] || req.query.api_key;
+
+  // Check Authorization header (Bearer token)
+  const authHeader = req.headers["authorization"];
+  if (!apiKey && authHeader && authHeader.startsWith("Bearer ")) {
+    apiKey = authHeader.substring(7); // Remove "Bearer " prefix
+  }
 
   if (!SYNC_API_KEY) {
     console.error("[Sync] SYNC_API_KEY is not configured");
