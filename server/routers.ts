@@ -1038,6 +1038,76 @@ export const appRouter = router({
       }),
   }),
 
+  // ============================================
+  // Attendance Router - 出欠登録
+  // ============================================
+  attendance: router({
+    // Protected: Register attendance for an event
+    register: protectedProcedure
+      .input(
+        z.object({
+          eventDate: z.string(), // YYYY-MM-DD
+          eventTitle: z.string(),
+          base44EventId: z.string().optional(),
+          status: z.enum(["attend", "absent", "late"]),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user?.email || !ctx.user?.name) {
+          throw new Error("ユーザー情報が取得できません");
+        }
+
+        return db.upsertAttendanceResponse({
+          eventDate: input.eventDate,
+          formTitle: input.eventTitle,
+          base44FormId: input.base44EventId,
+          userEmail: ctx.user.email,
+          userName: ctx.user.name,
+          status: input.status,
+        });
+      }),
+
+    // Protected: Get my attendance history
+    myHistory: protectedProcedure.query(async ({ ctx }) => {
+      if (!ctx.user?.email) {
+        throw new Error("ユーザー情報が取得できません");
+      }
+      return db.getAttendanceResponsesByEmail(ctx.user.email);
+    }),
+
+    // Protected: Get attendance list for specific event (admin or self)
+    getByEvent: protectedProcedure
+      .input(z.object({ eventDate: z.string() }))
+      .query(async ({ input }) => {
+        return db.getAttendanceResponsesByEventDate(input.eventDate);
+      }),
+
+    // Protected: Get attendance stats for specific event
+    getStats: protectedProcedure
+      .input(z.object({ eventDate: z.string() }))
+      .query(async ({ input }) => {
+        return db.getAttendanceStats(input.eventDate);
+      }),
+
+    // Protected: Get list of events with attendance data
+    getEventDates: protectedProcedure.query(async () => {
+      return db.getAttendanceEventDates();
+    }),
+
+    // Protected: Get filtered attendance responses (admin only)
+    list: protectedProcedure
+      .input(
+        z.object({
+          eventDate: z.string().optional(),
+          status: z.enum(["pending", "attend", "absent", "late"]).optional(),
+          searchQuery: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return db.getFilteredAttendanceResponses(input);
+      }),
+  }),
+
   eventRsvps: router({
     // Public: Create a new RSVP (for form submission)
     create: publicProcedure
