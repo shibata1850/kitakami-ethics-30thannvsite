@@ -8,7 +8,7 @@ import { storagePut } from "./storage";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "./_core/env";
-import { memberApi, officerApi, inquiryApi } from "./base44";
+import { memberApi, officerApi, inquiryApi, formApi, formResponseApi } from "./base44";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -1105,6 +1105,129 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         return db.getFilteredAttendanceResponses(input);
+      }),
+  }),
+
+  // ============================================
+  // Attendance Forms Router - Base44フォーム連携
+  // ============================================
+  attendanceForms: router({
+    // Protected: Get all active attendance forms
+    list: protectedProcedure.query(async () => {
+      try {
+        return await formApi.getActiveForms();
+      } catch (error) {
+        console.error('[AttendanceForms] Failed to get forms:', error);
+        return [];
+      }
+    }),
+
+    // Protected: Get form definition with event info
+    getFormDefinition: protectedProcedure
+      .input(z.object({ formId: z.string() }))
+      .query(async ({ input }) => {
+        try {
+          return await formApi.getFormDefinition(input.formId);
+        } catch (error) {
+          console.error('[AttendanceForms] Failed to get form definition:', error);
+          throw new Error('フォーム定義の取得に失敗しました');
+        }
+      }),
+
+    // Protected: Get my response for a form
+    getMyResponse: protectedProcedure
+      .input(z.object({ formId: z.string() }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user?.email) {
+          throw new Error('ユーザー情報が取得できません');
+        }
+        try {
+          return await formResponseApi.getUserResponseForForm(input.formId, ctx.user.email);
+        } catch (error) {
+          console.error('[AttendanceForms] Failed to get my response:', error);
+          return null;
+        }
+      }),
+
+    // Protected: Get all my responses
+    getMyResponses: protectedProcedure.query(async ({ ctx }) => {
+      if (!ctx.user?.email) {
+        throw new Error('ユーザー情報が取得できません');
+      }
+      try {
+        return await formResponseApi.getByUserEmail(ctx.user.email);
+      } catch (error) {
+        console.error('[AttendanceForms] Failed to get my responses:', error);
+        return [];
+      }
+    }),
+
+    // Protected: Submit attendance response
+    submitResponse: protectedProcedure
+      .input(
+        z.object({
+          formId: z.string(),
+          attendance: z.enum(['attend', 'absent', 'undecided']),
+          guestCount: z.number().optional(),
+          comment: z.string().optional(),
+          answers: z.record(z.any()).optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user?.email || !ctx.user?.name) {
+          throw new Error('ユーザー情報が取得できません');
+        }
+
+        try {
+          // Base44に回答を送信
+          const response = await formResponseApi.submitResponse({
+            form_id: input.formId,
+            user_name: ctx.user.name,
+            user_email: ctx.user.email,
+            attendance: input.attendance,
+            guest_count: input.guestCount,
+            comment: input.comment,
+            answers: input.answers,
+          });
+
+          // ローカルDBにも同期（バックアップ用）
+          const form = await formApi.getById(input.formId);
+          if (form) {
+            await db.upsertAttendanceResponse({
+              eventDate: form.event_date || new Date().toISOString().split('T')[0],
+              formTitle: form.title,
+              base44FormId: input.formId,
+              userEmail: ctx.user.email,
+              userName: ctx.user.name,
+              status: input.attendance === 'attend' ? 'attend' :
+                      input.attendance === 'absent' ? 'absent' : 'pending',
+            });
+          }
+
+          return {
+            success: true,
+            message: '出欠を登録しました',
+            data: response,
+          };
+        } catch (error) {
+          console.error('[AttendanceForms] Failed to submit response:', error);
+          throw new Error('出欠登録に失敗しました');
+        }
+      }),
+
+    // Protected: Get responses for a form (admin only)
+    getFormResponses: protectedProcedure
+      .input(z.object({ formId: z.string() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user?.role !== 'admin') {
+          throw new Error('管理者権限が必要です');
+        }
+        try {
+          return await formResponseApi.getByFormId(input.formId);
+        } catch (error) {
+          console.error('[AttendanceForms] Failed to get form responses:', error);
+          return [];
+        }
       }),
   }),
 

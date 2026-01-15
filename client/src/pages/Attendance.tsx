@@ -6,13 +6,10 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +29,8 @@ import {
   History,
   CalendarCheck,
   Users,
+  FileText,
+  HelpCircle,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -50,6 +49,26 @@ interface Base44Event {
   description?: string;
 }
 
+// Base44 Form type
+interface Base44Form {
+  id: string;
+  title: string;
+  event_id?: string;
+  event_date?: string;
+  deadline?: string;
+  questions?: Base44FormQuestion[];
+  status?: string;
+  created_date: string;
+}
+
+interface Base44FormQuestion {
+  id: string;
+  question: string;
+  type: 'text' | 'radio' | 'checkbox' | 'textarea' | 'select';
+  options?: string[];
+  required?: boolean;
+}
+
 // Attendance response type
 interface AttendanceResponse {
   id: number;
@@ -59,42 +78,85 @@ interface AttendanceResponse {
   respondedAt: Date | null;
 }
 
-type AttendanceStatus = "attend" | "absent" | "late";
+// Base44 Form Response type
+interface Base44FormResponse {
+  id: string;
+  form_id: string;
+  user_email?: string;
+  attendance: 'attend' | 'absent' | 'undecided';
+  guest_count?: number;
+  comment?: string;
+  answers?: Record<string, any>;
+  created_date: string;
+}
+
+type AttendanceStatus = "attend" | "absent" | "undecided";
 
 const statusLabels: Record<AttendanceStatus, string> = {
   attend: "出席",
   absent: "欠席",
-  late: "遅刻",
+  undecided: "未定",
 };
 
 const statusColors: Record<AttendanceStatus, string> = {
   attend: "bg-green-100 text-green-700 border-green-300",
   absent: "bg-red-100 text-red-700 border-red-300",
-  late: "bg-yellow-100 text-yellow-700 border-yellow-300",
+  undecided: "bg-gray-100 text-gray-700 border-gray-300",
 };
 
 export default function Attendance() {
   const { user, isAuthenticated, loading } = useAuth();
   const [, setLocation] = useLocation();
+  const [selectedForm, setSelectedForm] = useState<Base44Form | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<Base44Event | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<AttendanceStatus>("attend");
+  const [guestCount, setGuestCount] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
+  const [formAnswers, setFormAnswers] = useState<Record<string, any>>({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Fetch upcoming events from Base44
+  // Fetch Base44 attendance forms
+  const { data: attendanceForms = [], isLoading: formsLoading } = trpc.attendanceForms.list.useQuery(
+    undefined,
+    { enabled: isAuthenticated }
+  );
+
+  // Fetch upcoming events from Base44 (fallback)
   const { data: upcomingEvents = [], isLoading: eventsLoading } = trpc.base44Events.upcoming.useQuery();
 
-  // Fetch user's attendance history
+  // Fetch user's Base44 form responses
+  const { data: myFormResponses = [], refetch: refetchFormResponses } = trpc.attendanceForms.getMyResponses.useQuery(
+    undefined,
+    { enabled: isAuthenticated }
+  );
+
+  // Fetch user's local attendance history
   const { data: myHistory = [], isLoading: historyLoading, refetch: refetchHistory } = trpc.attendance.myHistory.useQuery(
     undefined,
     { enabled: isAuthenticated }
   );
 
-  // Register attendance mutation
+  // Submit Base44 form response mutation
+  const submitFormMutation = trpc.attendanceForms.submitResponse.useMutation({
+    onSuccess: () => {
+      toast.success("出欠を登録しました");
+      setIsDialogOpen(false);
+      refetchFormResponses();
+      refetchHistory();
+      resetForm();
+    },
+    onError: (error) => {
+      toast.error(`登録に失敗しました: ${error.message}`);
+    },
+  });
+
+  // Legacy: Register attendance mutation (for events without forms)
   const registerMutation = trpc.attendance.register.useMutation({
     onSuccess: () => {
       toast.success("出欠を登録しました");
       setIsDialogOpen(false);
       refetchHistory();
+      resetForm();
     },
     onError: (error) => {
       toast.error(`登録に失敗しました: ${error.message}`);
@@ -107,10 +169,19 @@ export default function Attendance() {
     }
   }, [loading, isAuthenticated, setLocation]);
 
+  const resetForm = () => {
+    setSelectedStatus("attend");
+    setGuestCount(0);
+    setComment("");
+    setFormAnswers({});
+    setSelectedForm(null);
+    setSelectedEvent(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-pink-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
         <span className="ml-2 text-lg text-muted-foreground">読み込み中...</span>
       </div>
     );
@@ -130,43 +201,134 @@ export default function Attendance() {
     });
   };
 
-  const getEventDateString = (event: Base44Event): string => {
-    if (!event.event_date) return "";
-    return event.event_date.split("T")[0];
+  const formatDeadline = (dateStr: string | undefined | null) => {
+    if (!dateStr) return null;
+    const deadline = new Date(dateStr);
+    const now = new Date();
+    const isExpired = deadline < now;
+    return {
+      text: formatDate(dateStr),
+      isExpired,
+    };
   };
 
-  // Check if user has already registered for an event
-  const getMyRegistration = (eventDate: string): AttendanceResponse | undefined => {
-    return myHistory.find((h) => h.eventDate === eventDate);
+  // Check if user has already responded to a form
+  const getMyFormResponse = (formId: string): Base44FormResponse | undefined => {
+    return (myFormResponses as Base44FormResponse[]).find((r) => r.form_id === formId);
   };
 
-  const handleOpenDialog = (event: Base44Event) => {
+  // Handle opening form dialog
+  const handleOpenFormDialog = (form: Base44Form) => {
+    setSelectedForm(form);
+    setSelectedEvent(null);
+
+    const existing = getMyFormResponse(form.id);
+    if (existing) {
+      setSelectedStatus(existing.attendance);
+      setGuestCount(existing.guest_count || 0);
+      setComment(existing.comment || "");
+      setFormAnswers(existing.answers || {});
+    } else {
+      resetForm();
+      setSelectedForm(form);
+    }
+    setIsDialogOpen(true);
+  };
+
+  // Handle opening event dialog (legacy, for events without forms)
+  const handleOpenEventDialog = (event: Base44Event) => {
     setSelectedEvent(event);
-    const existing = getMyRegistration(getEventDateString(event));
+    setSelectedForm(null);
+
+    const eventDate = event.event_date?.split("T")[0] || "";
+    const existing = myHistory.find((h) => h.eventDate === eventDate);
     if (existing && existing.status !== "pending") {
-      setSelectedStatus(existing.status as AttendanceStatus);
+      setSelectedStatus(existing.status === "late" ? "attend" : existing.status as AttendanceStatus);
     } else {
       setSelectedStatus("attend");
     }
     setIsDialogOpen(true);
   };
 
-  const handleRegister = () => {
-    if (!selectedEvent) return;
-
-    const eventDate = getEventDateString(selectedEvent);
-    if (!eventDate) {
-      toast.error("イベントの日付が不明です");
-      return;
+  // Handle form submission
+  const handleSubmit = () => {
+    if (selectedForm) {
+      // Submit to Base44 form
+      submitFormMutation.mutate({
+        formId: selectedForm.id,
+        attendance: selectedStatus,
+        guestCount: guestCount > 0 ? guestCount : undefined,
+        comment: comment || undefined,
+        answers: Object.keys(formAnswers).length > 0 ? formAnswers : undefined,
+      });
+    } else if (selectedEvent) {
+      // Legacy: Submit to local DB
+      const eventDate = selectedEvent.event_date?.split("T")[0];
+      if (!eventDate) {
+        toast.error("イベントの日付が不明です");
+        return;
+      }
+      registerMutation.mutate({
+        eventDate,
+        eventTitle: selectedEvent.title || "イベント",
+        base44EventId: selectedEvent.id,
+        status: selectedStatus === "undecided" ? "absent" : selectedStatus,
+      });
     }
-
-    registerMutation.mutate({
-      eventDate,
-      eventTitle: selectedEvent.title || "イベント",
-      base44EventId: selectedEvent.id,
-      status: selectedStatus,
-    });
   };
+
+  // Render form questions
+  const renderFormQuestions = (questions: Base44FormQuestion[]) => {
+    return questions.map((q) => (
+      <div key={q.id} className="space-y-2">
+        <Label className={q.required ? "after:content-['*'] after:ml-0.5 after:text-red-500" : ""}>
+          {q.question}
+        </Label>
+        {q.type === "text" && (
+          <Input
+            value={formAnswers[q.id] || ""}
+            onChange={(e) => setFormAnswers({ ...formAnswers, [q.id]: e.target.value })}
+            placeholder="入力してください"
+          />
+        )}
+        {q.type === "textarea" && (
+          <Textarea
+            value={formAnswers[q.id] || ""}
+            onChange={(e) => setFormAnswers({ ...formAnswers, [q.id]: e.target.value })}
+            placeholder="入力してください"
+            rows={3}
+          />
+        )}
+        {q.type === "radio" && q.options && (
+          <RadioGroup
+            value={formAnswers[q.id] || ""}
+            onValueChange={(value) => setFormAnswers({ ...formAnswers, [q.id]: value })}
+          >
+            {q.options.map((opt, idx) => (
+              <div key={idx} className="flex items-center space-x-2">
+                <RadioGroupItem value={opt} id={`${q.id}-${idx}`} />
+                <Label htmlFor={`${q.id}-${idx}`} className="font-normal">{opt}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        )}
+        {q.type === "select" && q.options && (
+          <select
+            className="w-full p-2 border rounded-md"
+            value={formAnswers[q.id] || ""}
+            onChange={(e) => setFormAnswers({ ...formAnswers, [q.id]: e.target.value })}
+          >
+            <option value="">選択してください</option>
+            {q.options.map((opt, idx) => (
+              <option key={idx} value={opt}>{opt}</option>
+            ))}
+          </select>
+        )}
+      </div>
+    ));
+  };
+
+  const isSubmitting = submitFormMutation.isPending || registerMutation.isPending;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -191,17 +353,106 @@ export default function Attendance() {
         {/* Main Content */}
         <section className="py-8">
           <div className="container">
-            <Tabs defaultValue="events" className="max-w-4xl mx-auto">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
+            <Tabs defaultValue="forms" className="max-w-4xl mx-auto">
+              <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsTrigger value="forms" className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  出欠フォーム
+                </TabsTrigger>
                 <TabsTrigger value="events" className="flex items-center gap-2">
                   <CalendarCheck className="h-4 w-4" />
-                  出欠登録
+                  イベント
                 </TabsTrigger>
                 <TabsTrigger value="history" className="flex items-center gap-2">
                   <History className="h-4 w-4" />
                   登録履歴
                 </TabsTrigger>
               </TabsList>
+
+              {/* Forms Tab - Base44 Forms */}
+              <TabsContent value="forms">
+                <div className="space-y-4">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">
+                    出欠確認フォーム
+                  </h2>
+
+                  {formsLoading ? (
+                    <Card>
+                      <CardContent className="p-12 text-center">
+                        <Loader2 className="mx-auto h-8 w-8 text-blue-400 animate-spin mb-4" />
+                        <p className="text-gray-500">フォームを読み込み中...</p>
+                      </CardContent>
+                    </Card>
+                  ) : attendanceForms.length === 0 ? (
+                    <Card>
+                      <CardContent className="p-12 text-center">
+                        <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                        <p className="text-gray-500">現在、回答可能な出欠フォームはありません。</p>
+                        <p className="text-sm text-gray-400 mt-2">
+                          「イベント」タブから直接出欠登録することもできます。
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    (attendanceForms as Base44Form[]).map((form) => {
+                      const response = getMyFormResponse(form.id);
+                      const hasResponded = !!response;
+                      const deadline = formatDeadline(form.deadline);
+
+                      return (
+                        <Card key={form.id} className="hover:shadow-md transition-shadow">
+                          <CardContent className="p-6">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                              <div className="flex-1">
+                                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                  {form.title}
+                                </h3>
+
+                                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                                  {form.event_date && (
+                                    <div className="flex items-center gap-1">
+                                      <Calendar className="h-4 w-4 text-blue-600" />
+                                      <span>{formatDate(form.event_date)}</span>
+                                    </div>
+                                  )}
+                                  {deadline && (
+                                    <div className={`flex items-center gap-1 ${deadline.isExpired ? 'text-red-500' : ''}`}>
+                                      <Clock className="h-4 w-4" />
+                                      <span>締切: {deadline.text}</span>
+                                      {deadline.isExpired && <span className="text-xs">(締切済)</span>}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                {hasResponded && (
+                                  <span
+                                    className={`px-3 py-1 text-sm font-medium rounded-full border ${
+                                      statusColors[response.attendance]
+                                    }`}
+                                  >
+                                    {statusLabels[response.attendance]}
+                                  </span>
+                                )}
+
+                                <Button
+                                  onClick={() => handleOpenFormDialog(form)}
+                                  variant={hasResponded ? "outline" : "default"}
+                                  className={hasResponded ? "" : "bg-blue-600 hover:bg-blue-700"}
+                                  disabled={deadline?.isExpired}
+                                >
+                                  {deadline?.isExpired ? "締切済" : hasResponded ? "変更する" : "回答する"}
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })
+                  )}
+                </div>
+              </TabsContent>
 
               {/* Events Tab */}
               <TabsContent value="events">
@@ -226,8 +477,8 @@ export default function Attendance() {
                     </Card>
                   ) : (
                     (upcomingEvents as Base44Event[]).map((event) => {
-                      const eventDate = getEventDateString(event);
-                      const registration = getMyRegistration(eventDate);
+                      const eventDate = event.event_date?.split("T")[0] || "";
+                      const registration = myHistory.find((h) => h.eventDate === eventDate);
                       const hasRegistered = registration && registration.status !== "pending";
 
                       return (
@@ -235,19 +486,16 @@ export default function Attendance() {
                           <CardContent className="p-6">
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                               <div className="flex-1">
-                                {/* Event Type Badge */}
                                 {event.event_type && (
                                   <span className="inline-block px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full mb-2">
                                     {event.event_type}
                                   </span>
                                 )}
 
-                                {/* Title */}
                                 <h3 className="text-lg font-bold text-gray-900 mb-2">
                                   {event.title || "イベント"}
                                 </h3>
 
-                                {/* Date & Time */}
                                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
                                   <div className="flex items-center gap-1">
                                     <Calendar className="h-4 w-4 text-blue-600" />
@@ -273,20 +521,19 @@ export default function Attendance() {
                               </div>
 
                               <div className="flex items-center gap-3">
-                                {/* Registration Status */}
                                 {hasRegistered && (
                                   <span
                                     className={`px-3 py-1 text-sm font-medium rounded-full border ${
-                                      statusColors[registration.status as AttendanceStatus]
+                                      statusColors[registration.status === "late" ? "attend" : registration.status as AttendanceStatus] || "bg-gray-100"
                                     }`}
                                   >
-                                    {statusLabels[registration.status as AttendanceStatus]}
+                                    {registration.status === "late" ? "出席(遅刻)" :
+                                     statusLabels[registration.status as AttendanceStatus] || registration.status}
                                   </span>
                                 )}
 
-                                {/* Register Button */}
                                 <Button
-                                  onClick={() => handleOpenDialog(event)}
+                                  onClick={() => handleOpenEventDialog(event)}
                                   variant={hasRegistered ? "outline" : "default"}
                                   className={hasRegistered ? "" : "bg-blue-600 hover:bg-blue-700"}
                                 >
@@ -322,7 +569,7 @@ export default function Attendance() {
                         <History className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                         <p className="text-gray-500">まだ出欠登録がありません。</p>
                         <p className="text-sm text-gray-400 mt-2">
-                          「出欠登録」タブからイベントを選択して登録してください。
+                          「出欠フォーム」または「イベント」タブから登録してください。
                         </p>
                       </CardContent>
                     </Card>
@@ -342,10 +589,16 @@ export default function Attendance() {
                               </div>
                               <span
                                 className={`px-3 py-1 text-sm font-medium rounded-full border ${
-                                  statusColors[record.status as AttendanceStatus] || "bg-gray-100 text-gray-700"
+                                  record.status === "attend" ? statusColors.attend :
+                                  record.status === "absent" ? statusColors.absent :
+                                  record.status === "late" ? "bg-yellow-100 text-yellow-700 border-yellow-300" :
+                                  statusColors.undecided
                                 }`}
                               >
-                                {statusLabels[record.status as AttendanceStatus] || record.status}
+                                {record.status === "attend" ? "出席" :
+                                 record.status === "absent" ? "欠席" :
+                                 record.status === "late" ? "遅刻" :
+                                 "未定"}
                               </span>
                             </div>
                           </CardContent>
@@ -371,7 +624,9 @@ export default function Attendance() {
               </CardHeader>
               <CardContent className="text-gray-700">
                 <ul className="list-disc list-inside space-y-2">
-                  <li>出欠の登録・変更は各イベントの開催前日までに行ってください。</li>
+                  <li>「出欠フォーム」タブでは、Base44システムと連携した出欠確認フォームに回答できます。</li>
+                  <li>「イベント」タブでは、Base44に登録されているイベントへの出欠を直接登録できます。</li>
+                  <li>出欠の登録・変更は各イベントの締切日までに行ってください。</li>
                   <li>登録後も変更は可能です。「変更する」ボタンから再登録できます。</li>
                   <li>急な変更がある場合は、事務局までご連絡ください。</li>
                 </ul>
@@ -383,46 +638,86 @@ export default function Attendance() {
 
       {/* Registration Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>出欠登録</DialogTitle>
             <DialogDescription>
-              {selectedEvent?.title || "イベント"} ({formatDate(selectedEvent?.event_date)})
+              {selectedForm?.title || selectedEvent?.title || "イベント"}
+              {(selectedForm?.event_date || selectedEvent?.event_date) && (
+                <span className="block mt-1">
+                  ({formatDate(selectedForm?.event_date || selectedEvent?.event_date)})
+                </span>
+              )}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-4">
-            <label className="text-sm font-medium text-gray-700 mb-2 block">
-              出欠を選択してください
-            </label>
-            <Select
-              value={selectedStatus}
-              onValueChange={(value) => setSelectedStatus(value as AttendanceStatus)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="attend">
-                  <div className="flex items-center gap-2">
+          <div className="py-4 space-y-6">
+            {/* Attendance Selection */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">出欠を選択してください</Label>
+              <RadioGroup
+                value={selectedStatus}
+                onValueChange={(value) => setSelectedStatus(value as AttendanceStatus)}
+                className="grid grid-cols-3 gap-3"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="attend" id="attend" />
+                  <Label htmlFor="attend" className="flex items-center gap-1 cursor-pointer">
                     <Check className="h-4 w-4 text-green-600" />
                     出席
-                  </div>
-                </SelectItem>
-                <SelectItem value="absent">
-                  <div className="flex items-center gap-2">
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="absent" id="absent" />
+                  <Label htmlFor="absent" className="flex items-center gap-1 cursor-pointer">
                     <X className="h-4 w-4 text-red-600" />
                     欠席
-                  </div>
-                </SelectItem>
-                <SelectItem value="late">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-yellow-600" />
-                    遅刻
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="undecided" id="undecided" />
+                  <Label htmlFor="undecided" className="flex items-center gap-1 cursor-pointer">
+                    <HelpCircle className="h-4 w-4 text-gray-600" />
+                    未定
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Guest Count (for forms) */}
+            {selectedForm && (
+              <div className="space-y-2">
+                <Label htmlFor="guestCount">同伴者数</Label>
+                <Input
+                  id="guestCount"
+                  type="number"
+                  min="0"
+                  value={guestCount}
+                  onChange={(e) => setGuestCount(parseInt(e.target.value) || 0)}
+                  placeholder="0"
+                />
+              </div>
+            )}
+
+            {/* Form Questions */}
+            {selectedForm?.questions && selectedForm.questions.length > 0 && (
+              <div className="space-y-4 pt-4 border-t">
+                <h4 className="font-medium text-gray-900">追加の質問</h4>
+                {renderFormQuestions(selectedForm.questions)}
+              </div>
+            )}
+
+            {/* Comment */}
+            <div className="space-y-2">
+              <Label htmlFor="comment">コメント（任意）</Label>
+              <Textarea
+                id="comment"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="連絡事項があればご記入ください"
+                rows={3}
+              />
+            </div>
           </div>
 
           <DialogFooter>
@@ -430,11 +725,11 @@ export default function Attendance() {
               キャンセル
             </Button>
             <Button
-              onClick={handleRegister}
-              disabled={registerMutation.isPending}
+              onClick={handleSubmit}
+              disabled={isSubmitting}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {registerMutation.isPending ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   登録中...
