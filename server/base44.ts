@@ -74,6 +74,11 @@ async function base44Request<T>(
     ? `${BASE44_BASE_URL}/${entityName}/${id}`
     : `${BASE44_BASE_URL}/${entityName}`;
 
+  console.log(`[Base44 Request] ${method} ${url}`);
+  if (body) {
+    console.log('[Base44 Request] Body:', JSON.stringify(body, null, 2));
+  }
+
   const options: RequestInit = {
     method,
     headers: {
@@ -90,10 +95,13 @@ async function base44Request<T>(
 
   if (!response.ok) {
     const errorText = await response.text();
+    console.error(`[Base44 Request] Error (${response.status}):`, errorText);
     throw new Error(`Base44 API error (${response.status}): ${errorText}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log(`[Base44 Request] Response:`, JSON.stringify(result, null, 2).substring(0, 500));
+  return result;
 }
 
 // ============================================
@@ -506,34 +514,53 @@ export const formResponseApi = {
     comment?: string;
     answers?: Record<string, any>;
   }): Promise<Base44FormResponse> {
+    console.log('[Base44] submitResponse called with data:', JSON.stringify(data, null, 2));
+
     try {
       // 既存の回答をチェック
+      console.log('[Base44] Checking for existing response...');
       const existing = await this.getUserResponseForForm(data.form_id, data.user_email);
+      console.log('[Base44] Existing response:', existing);
 
       if (existing) {
         // 更新
-        return await base44Request<Base44FormResponse>(
+        console.log('[Base44] Updating existing response:', existing.id);
+        const updateData = {
+          attendance: data.attendance,
+          guest_count: data.guest_count,
+          comment: data.comment,
+          answers: data.answers,
+        };
+        console.log('[Base44] Update data:', JSON.stringify(updateData, null, 2));
+
+        const result = await base44Request<Base44FormResponse>(
           'FormResponse',
           'PUT',
           existing.id,
-          {
-            attendance: data.attendance,
-            guest_count: data.guest_count,
-            comment: data.comment,
-            answers: data.answers,
-          }
+          updateData
         );
+        console.log('[Base44] Update result:', result);
+        return result;
       } else {
         // 新規作成
-        return await base44Request<Base44FormResponse>(
+        console.log('[Base44] Creating new response...');
+        console.log('[Base44] Create data:', JSON.stringify(data, null, 2));
+
+        const result = await base44Request<Base44FormResponse>(
           'FormResponse',
           'POST',
           undefined,
           data
         );
+        console.log('[Base44] Create result:', result);
+        return result;
       }
-    } catch (error) {
-      console.error('[Base44] Failed to submit response:', error);
+    } catch (error: any) {
+      console.error('[Base44] Failed to submit response:', {
+        error: error,
+        message: error?.message,
+        stack: error?.stack,
+      });
       throw error;
     }
   },

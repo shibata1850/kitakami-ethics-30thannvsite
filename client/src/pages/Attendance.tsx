@@ -21,33 +21,16 @@ import {
 import {
   Calendar,
   Clock,
-  MapPin,
   Check,
   X,
   AlertCircle,
   Loader2,
   History,
-  CalendarCheck,
-  Users,
   FileText,
   HelpCircle,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-
-// Base44 Event type
-interface Base44Event {
-  id: string;
-  event_type?: string;
-  title?: string;
-  event_date?: string;
-  start_time?: string;
-  end_time?: string;
-  venue?: string;
-  venue_address?: string;
-  status?: string;
-  description?: string;
-}
 
 // Base44 Form type
 interface Base44Form {
@@ -108,7 +91,6 @@ export default function Attendance() {
   const { user, isAuthenticated, loading } = useAuth();
   const [, setLocation] = useLocation();
   const [selectedForm, setSelectedForm] = useState<Base44Form | null>(null);
-  const [selectedEvent, setSelectedEvent] = useState<Base44Event | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<AttendanceStatus>("attend");
   const [guestCount, setGuestCount] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
@@ -120,9 +102,6 @@ export default function Attendance() {
     undefined,
     { enabled: isAuthenticated }
   );
-
-  // Fetch upcoming events from Base44 (fallback)
-  const { data: upcomingEvents = [], isLoading: eventsLoading } = trpc.base44Events.upcoming.useQuery();
 
   // Fetch user's Base44 form responses
   const { data: myFormResponses = [], refetch: refetchFormResponses } = trpc.attendanceForms.getMyResponses.useQuery(
@@ -150,18 +129,6 @@ export default function Attendance() {
     },
   });
 
-  // Legacy: Register attendance mutation (for events without forms)
-  const registerMutation = trpc.attendance.register.useMutation({
-    onSuccess: () => {
-      toast.success("出欠を登録しました");
-      setIsDialogOpen(false);
-      refetchHistory();
-      resetForm();
-    },
-    onError: (error) => {
-      toast.error(`登録に失敗しました: ${error.message}`);
-    },
-  });
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -175,7 +142,6 @@ export default function Attendance() {
     setComment("");
     setFormAnswers({});
     setSelectedForm(null);
-    setSelectedEvent(null);
   };
 
   if (loading) {
@@ -220,7 +186,6 @@ export default function Attendance() {
   // Handle opening form dialog
   const handleOpenFormDialog = (form: Base44Form) => {
     setSelectedForm(form);
-    setSelectedEvent(null);
 
     const existing = getMyFormResponse(form.id);
     if (existing) {
@@ -235,21 +200,6 @@ export default function Attendance() {
     setIsDialogOpen(true);
   };
 
-  // Handle opening event dialog (legacy, for events without forms)
-  const handleOpenEventDialog = (event: Base44Event) => {
-    setSelectedEvent(event);
-    setSelectedForm(null);
-
-    const eventDate = event.event_date?.split("T")[0] || "";
-    const existing = myHistory.find((h) => h.eventDate === eventDate);
-    if (existing && existing.status !== "pending") {
-      setSelectedStatus(existing.status === "late" ? "attend" : existing.status as AttendanceStatus);
-    } else {
-      setSelectedStatus("attend");
-    }
-    setIsDialogOpen(true);
-  };
-
   // Handle form submission
   const handleSubmit = () => {
     if (selectedForm) {
@@ -260,19 +210,6 @@ export default function Attendance() {
         guestCount: guestCount > 0 ? guestCount : undefined,
         comment: comment || undefined,
         answers: Object.keys(formAnswers).length > 0 ? formAnswers : undefined,
-      });
-    } else if (selectedEvent) {
-      // Legacy: Submit to local DB
-      const eventDate = selectedEvent.event_date?.split("T")[0];
-      if (!eventDate) {
-        toast.error("イベントの日付が不明です");
-        return;
-      }
-      registerMutation.mutate({
-        eventDate,
-        eventTitle: selectedEvent.title || "イベント",
-        base44EventId: selectedEvent.id,
-        status: selectedStatus === "undecided" ? "absent" : selectedStatus,
       });
     }
   };
@@ -328,7 +265,7 @@ export default function Attendance() {
     ));
   };
 
-  const isSubmitting = submitFormMutation.isPending || registerMutation.isPending;
+  const isSubmitting = submitFormMutation.isPending;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -354,14 +291,10 @@ export default function Attendance() {
         <section className="py-8">
           <div className="container">
             <Tabs defaultValue="forms" className="max-w-4xl mx-auto">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="forms" className="flex items-center gap-2">
                   <FileText className="h-4 w-4" />
                   出欠フォーム
-                </TabsTrigger>
-                <TabsTrigger value="events" className="flex items-center gap-2">
-                  <CalendarCheck className="h-4 w-4" />
-                  イベント
                 </TabsTrigger>
                 <TabsTrigger value="history" className="flex items-center gap-2">
                   <History className="h-4 w-4" />
@@ -389,7 +322,7 @@ export default function Attendance() {
                         <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                         <p className="text-gray-500">現在、回答可能な出欠フォームはありません。</p>
                         <p className="text-sm text-gray-400 mt-2">
-                          「イベント」タブから直接出欠登録することもできます。
+                          新しいフォームが追加されるまでお待ちください。
                         </p>
                       </CardContent>
                     </Card>
@@ -454,101 +387,6 @@ export default function Attendance() {
                 </div>
               </TabsContent>
 
-              {/* Events Tab */}
-              <TabsContent value="events">
-                <div className="space-y-4">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">
-                    今後のイベント・セミナー
-                  </h2>
-
-                  {eventsLoading ? (
-                    <Card>
-                      <CardContent className="p-12 text-center">
-                        <Loader2 className="mx-auto h-8 w-8 text-blue-400 animate-spin mb-4" />
-                        <p className="text-gray-500">イベント情報を読み込み中...</p>
-                      </CardContent>
-                    </Card>
-                  ) : upcomingEvents.length === 0 ? (
-                    <Card>
-                      <CardContent className="p-12 text-center">
-                        <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                        <p className="text-gray-500">現在、予定されているイベントはありません。</p>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    (upcomingEvents as Base44Event[]).map((event) => {
-                      const eventDate = event.event_date?.split("T")[0] || "";
-                      const registration = myHistory.find((h) => h.eventDate === eventDate);
-                      const hasRegistered = registration && registration.status !== "pending";
-
-                      return (
-                        <Card key={event.id} className="hover:shadow-md transition-shadow">
-                          <CardContent className="p-6">
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                              <div className="flex-1">
-                                {event.event_type && (
-                                  <span className="inline-block px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full mb-2">
-                                    {event.event_type}
-                                  </span>
-                                )}
-
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                  {event.title || "イベント"}
-                                </h3>
-
-                                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-                                  <div className="flex items-center gap-1">
-                                    <Calendar className="h-4 w-4 text-blue-600" />
-                                    <span>{formatDate(event.event_date)}</span>
-                                  </div>
-                                  {(event.start_time || event.end_time) && (
-                                    <div className="flex items-center gap-1">
-                                      <Clock className="h-4 w-4 text-blue-600" />
-                                      <span>
-                                        {event.start_time}
-                                        {event.start_time && event.end_time && " 〜 "}
-                                        {event.end_time}
-                                      </span>
-                                    </div>
-                                  )}
-                                  {event.venue && (
-                                    <div className="flex items-center gap-1">
-                                      <MapPin className="h-4 w-4 text-blue-600" />
-                                      <span>{event.venue}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-3">
-                                {hasRegistered && (
-                                  <span
-                                    className={`px-3 py-1 text-sm font-medium rounded-full border ${
-                                      statusColors[registration.status === "late" ? "attend" : registration.status as AttendanceStatus] || "bg-gray-100"
-                                    }`}
-                                  >
-                                    {registration.status === "late" ? "出席(遅刻)" :
-                                     statusLabels[registration.status as AttendanceStatus] || registration.status}
-                                  </span>
-                                )}
-
-                                <Button
-                                  onClick={() => handleOpenEventDialog(event)}
-                                  variant={hasRegistered ? "outline" : "default"}
-                                  className={hasRegistered ? "" : "bg-blue-600 hover:bg-blue-700"}
-                                >
-                                  {hasRegistered ? "変更する" : "出欠登録"}
-                                </Button>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })
-                  )}
-                </div>
-              </TabsContent>
-
               {/* History Tab */}
               <TabsContent value="history">
                 <div className="space-y-4">
@@ -569,7 +407,7 @@ export default function Attendance() {
                         <History className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                         <p className="text-gray-500">まだ出欠登録がありません。</p>
                         <p className="text-sm text-gray-400 mt-2">
-                          「出欠フォーム」または「イベント」タブから登録してください。
+                          「出欠フォーム」タブから登録してください。
                         </p>
                       </CardContent>
                     </Card>
@@ -625,7 +463,6 @@ export default function Attendance() {
               <CardContent className="text-gray-700">
                 <ul className="list-disc list-inside space-y-2">
                   <li>「出欠フォーム」タブでは、Base44システムと連携した出欠確認フォームに回答できます。</li>
-                  <li>「イベント」タブでは、Base44に登録されているイベントへの出欠を直接登録できます。</li>
                   <li>出欠の登録・変更は各イベントの締切日までに行ってください。</li>
                   <li>登録後も変更は可能です。「変更する」ボタンから再登録できます。</li>
                   <li>急な変更がある場合は、事務局までご連絡ください。</li>
@@ -642,10 +479,10 @@ export default function Attendance() {
           <DialogHeader>
             <DialogTitle>出欠登録</DialogTitle>
             <DialogDescription>
-              {selectedForm?.title || selectedEvent?.title || "イベント"}
-              {(selectedForm?.event_date || selectedEvent?.event_date) && (
+              {selectedForm?.title || "イベント"}
+              {selectedForm?.event_date && (
                 <span className="block mt-1">
-                  ({formatDate(selectedForm?.event_date || selectedEvent?.event_date)})
+                  ({formatDate(selectedForm.event_date)})
                 </span>
               )}
             </DialogDescription>

@@ -1174,11 +1174,22 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ ctx, input }) => {
+        console.log('[AttendanceForms] submitResponse called with:', {
+          formId: input.formId,
+          attendance: input.attendance,
+          guestCount: input.guestCount,
+          comment: input.comment,
+          userEmail: ctx.user?.email,
+          userName: ctx.user?.name,
+        });
+
         if (!ctx.user?.email || !ctx.user?.name) {
+          console.error('[AttendanceForms] User info missing:', { email: ctx.user?.email, name: ctx.user?.name });
           throw new Error('ユーザー情報が取得できません');
         }
 
         try {
+          console.log('[AttendanceForms] Submitting to Base44...');
           // Base44に回答を送信
           const response = await formResponseApi.submitResponse({
             form_id: input.formId,
@@ -1189,8 +1200,10 @@ export const appRouter = router({
             comment: input.comment,
             answers: input.answers,
           });
+          console.log('[AttendanceForms] Base44 response:', response);
 
           // ローカルDBにも同期（バックアップ用）
+          console.log('[AttendanceForms] Syncing to local DB...');
           const form = await formApi.getById(input.formId);
           if (form) {
             await db.upsertAttendanceResponse({
@@ -1202,6 +1215,7 @@ export const appRouter = router({
               status: input.attendance === 'attend' ? 'attend' :
                       input.attendance === 'absent' ? 'absent' : 'pending',
             });
+            console.log('[AttendanceForms] Local DB sync complete');
           }
 
           return {
@@ -1209,9 +1223,14 @@ export const appRouter = router({
             message: '出欠を登録しました',
             data: response,
           };
-        } catch (error) {
-          console.error('[AttendanceForms] Failed to submit response:', error);
-          throw new Error('出欠登録に失敗しました');
+        } catch (error: any) {
+          console.error('[AttendanceForms] Failed to submit response:', {
+            error: error,
+            message: error?.message,
+            stack: error?.stack,
+            name: error?.name,
+          });
+          throw new Error('出欠登録に失敗しました: ' + (error?.message || 'Unknown error'));
         }
       }),
 
