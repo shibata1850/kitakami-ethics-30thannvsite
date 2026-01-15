@@ -1,7 +1,7 @@
 import { eq, like, or, and, desc, asc, sql, gte, not } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact, eventRsvps, userApprovals } from "../drizzle/schema";
+import { InsertUser, users, members, type InsertMember, officers, type InsertOfficer, seminars, type InsertSeminar, blogPosts, type InsertBlogPost, contacts, type InsertContact, eventRsvps, userApprovals, attendanceResponses, type InsertAttendanceResponse } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -841,4 +841,169 @@ export async function getUserApprovals(userId: number) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(userApprovals).where(eq(userApprovals.userId, userId));
+}
+
+// ========== Attendance Responses ==========
+
+/**
+ * Create or update attendance response for a user and event
+ */
+export async function upsertAttendanceResponse(data: {
+  eventDate: string;
+  formTitle: string;
+  base44FormId?: string;
+  userEmail: string;
+  userName: string;
+  status: "pending" | "attend" | "absent" | "late";
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Check if response already exists for this user and event date
+  const existing = await db
+    .select()
+    .from(attendanceResponses)
+    .where(
+      and(
+        eq(attendanceResponses.userEmail, data.userEmail),
+        eq(attendanceResponses.eventDate, data.eventDate)
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    // Update existing
+    await db
+      .update(attendanceResponses)
+      .set({
+        status: data.status,
+        formTitle: data.formTitle,
+        userName: data.userName,
+        respondedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(attendanceResponses.id, existing[0].id));
+    return { ...existing[0], status: data.status, updated: true };
+  } else {
+    // Insert new
+    const [result] = await db
+      .insert(attendanceResponses)
+      .values({
+        eventDate: data.eventDate,
+        formTitle: data.formTitle,
+        base44FormId: data.base44FormId || null,
+        userEmail: data.userEmail,
+        userName: data.userName,
+        status: data.status,
+        respondedAt: new Date(),
+      })
+      .returning();
+    return { ...result, created: true };
+  }
+}
+
+/**
+ * Get attendance responses for a specific user email
+ */
+export async function getAttendanceResponsesByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(attendanceResponses)
+    .where(eq(attendanceResponses.userEmail, email))
+    .orderBy(desc(attendanceResponses.eventDate));
+}
+
+/**
+ * Get attendance responses for a specific event date
+ */
+export async function getAttendanceResponsesByEventDate(eventDate: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(attendanceResponses)
+    .where(eq(attendanceResponses.eventDate, eventDate))
+    .orderBy(asc(attendanceResponses.userName));
+}
+
+/**
+ * Get all attendance responses with optional filters
+ */
+export async function getFilteredAttendanceResponses(options: {
+  eventDate?: string;
+  status?: "pending" | "attend" | "absent" | "late";
+  searchQuery?: string;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [];
+
+  if (options.eventDate) {
+    conditions.push(eq(attendanceResponses.eventDate, options.eventDate));
+  }
+
+  if (options.status) {
+    conditions.push(eq(attendanceResponses.status, options.status));
+  }
+
+  if (options.searchQuery && options.searchQuery.trim()) {
+    const searchTerm = `%${options.searchQuery.trim()}%`;
+    conditions.push(
+      or(
+        like(attendanceResponses.userName, searchTerm),
+        like(attendanceResponses.userEmail, searchTerm),
+        like(attendanceResponses.formTitle, searchTerm)
+      )!
+    );
+  }
+
+  let query = db.select().from(attendanceResponses);
+
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions)!) as any;
+  }
+
+  query = query.orderBy(desc(attendanceResponses.eventDate), asc(attendanceResponses.userName)) as any;
+
+  return query;
+}
+
+/**
+ * Get attendance statistics for an event date
+ */
+export async function getAttendanceStats(eventDate: string) {
+  const db = await getDb();
+  if (!db) return { total: 0, attend: 0, absent: 0, late: 0, pending: 0 };
+
+  const responses = await db
+    .select()
+    .from(attendanceResponses)
+    .where(eq(attendanceResponses.eventDate, eventDate));
+
+  return {
+    total: responses.length,
+    attend: responses.filter((r) => r.status === "attend").length,
+    absent: responses.filter((r) => r.status === "absent").length,
+    late: responses.filter((r) => r.status === "late").length,
+    pending: responses.filter((r) => r.status === "pending").length,
+  };
+}
+
+/**
+ * Get unique event dates from attendance responses
+ */
+export async function getAttendanceEventDates() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const results = await db
+    .selectDistinct({ eventDate: attendanceResponses.eventDate, formTitle: attendanceResponses.formTitle })
+    .from(attendanceResponses)
+    .where(sql`${attendanceResponses.eventDate} IS NOT NULL`)
+    .orderBy(desc(attendanceResponses.eventDate));
+
+  return results.filter((r) => r.eventDate !== null);
 }

@@ -51,8 +51,8 @@ export default function MembersOnly() {
       title: "出欠登録システム",
       description: "モーニングセミナーの出欠を登録",
       icon: Calendar,
-      href: "https://example.com/attendance-system",
-      external: true,
+      href: "/attendance",
+      external: false,
       color: "bg-blue-500",
     },
   ];

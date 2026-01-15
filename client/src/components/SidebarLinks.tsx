@@ -30,9 +30,10 @@ export function SidebarLinks() {
     {
       id: 3,
       title: "出欠登録システム",
-      url: "https://example.com/attendance-system",
+      url: "/attendance",
       bgColor: "bg-gradient-to-b from-blue-400 to-blue-500",
       hoverColor: "hover:from-blue-500 hover:to-blue-600",
+      internal: true,
     },
   ];
 

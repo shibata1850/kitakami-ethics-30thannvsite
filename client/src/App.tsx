@@ -30,6 +30,7 @@ import EventRsvpAdmin from "./pages/EventRsvpAdmin";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MembersOnly from "./pages/MembersOnly";
+import Attendance from "./pages/Attendance";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -61,6 +62,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/members-only" component={MembersOnly} />
+      <Route path="/attendance" component={Attendance} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

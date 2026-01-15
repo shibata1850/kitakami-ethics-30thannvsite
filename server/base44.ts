@@ -335,3 +335,206 @@ export const base44 = {
 };
 
 export default base44;
+
+// ============================================
+// Form API - 出欠確認フォーム
+// ============================================
+
+// Form エンティティ
+export interface Base44Form extends Base44Entity {
+  title: string;
+  event_id?: string;
+  event_date?: string;
+  deadline?: string;
+  questions?: Base44FormQuestion[];
+  status?: 'draft' | 'active' | 'closed';
+}
+
+// Form質問
+export interface Base44FormQuestion {
+  id: string;
+  question: string;
+  type: 'text' | 'radio' | 'checkbox' | 'textarea' | 'select';
+  options?: string[];
+  required?: boolean;
+}
+
+// FormResponse エンティティ
+export interface Base44FormResponse extends Base44Entity {
+  form_id: string;
+  user_id?: string;
+  user_name?: string;
+  user_email?: string;
+  attendance: 'attend' | 'absent' | 'undecided';
+  guest_count?: number;
+  comment?: string;
+  answers?: Record<string, any>;
+}
+
+// Event エンティティ（既存）
+export interface Base44Event extends Base44Entity {
+  title?: string;
+  event_type?: string;
+  event_date?: string;
+  start_time?: string;
+  end_time?: string;
+  venue?: string;
+  venue_address?: string;
+  description?: string;
+  status?: string;
+}
+
+export const formApi = {
+  /**
+   * 全フォーム取得
+   */
+  async list(): Promise<Base44Form[]> {
+    try {
+      const data = await base44Request<Base44Form[]>('Form');
+      return data.sort((a, b) =>
+        new Date(b.created_date).getTime() - new Date(a.created_date).getTime()
+      );
+    } catch (error) {
+      console.error('[Base44] Failed to list forms:', error);
+      return [];
+    }
+  },
+
+  /**
+   * アクティブなフォーム取得（出欠登録可能なもの）
+   */
+  async getActiveForms(): Promise<Base44Form[]> {
+    const forms = await this.list();
+    const now = new Date();
+    return forms.filter(f => {
+      if (f.status === 'closed') return false;
+      if (f.deadline && new Date(f.deadline) < now) return false;
+      return true;
+    });
+  },
+
+  /**
+   * フォーム詳細取得
+   */
+  async getById(id: string): Promise<Base44Form | null> {
+    try {
+      return await base44Request<Base44Form>('Form', 'GET', id);
+    } catch (error) {
+      console.error(`[Base44] Failed to get form ${id}:`, error);
+      return null;
+    }
+  },
+
+  /**
+   * フォーム定義取得（関連イベント情報付き）
+   */
+  async getFormDefinition(formId: string): Promise<{
+    form: Base44Form;
+    event: Base44Event | null;
+  } | null> {
+    try {
+      const form = await this.getById(formId);
+      if (!form) return null;
+
+      let event: Base44Event | null = null;
+      if (form.event_id) {
+        try {
+          event = await base44Request<Base44Event>('Event', 'GET', form.event_id);
+        } catch (e) {
+          console.warn(`[Base44] Event ${form.event_id} not found for form ${formId}`);
+        }
+      }
+
+      return { form, event };
+    } catch (error) {
+      console.error(`[Base44] Failed to get form definition ${formId}:`, error);
+      return null;
+    }
+  },
+};
+
+export const formResponseApi = {
+  /**
+   * フォームへの回答を取得
+   */
+  async getByFormId(formId: string): Promise<Base44FormResponse[]> {
+    try {
+      const allResponses = await base44Request<Base44FormResponse[]>('FormResponse');
+      return allResponses.filter(r => r.form_id === formId);
+    } catch (error) {
+      console.error(`[Base44] Failed to get responses for form ${formId}:`, error);
+      return [];
+    }
+  },
+
+  /**
+   * ユーザーの回答を取得
+   */
+  async getByUserEmail(email: string): Promise<Base44FormResponse[]> {
+    try {
+      const allResponses = await base44Request<Base44FormResponse[]>('FormResponse');
+      return allResponses.filter(r => r.user_email === email);
+    } catch (error) {
+      console.error(`[Base44] Failed to get responses for user ${email}:`, error);
+      return [];
+    }
+  },
+
+  /**
+   * 特定フォームへのユーザーの回答を取得
+   */
+  async getUserResponseForForm(formId: string, userEmail: string): Promise<Base44FormResponse | null> {
+    try {
+      const responses = await this.getByFormId(formId);
+      return responses.find(r => r.user_email === userEmail) || null;
+    } catch (error) {
+      console.error(`[Base44] Failed to get user response:`, error);
+      return null;
+    }
+  },
+
+  /**
+   * 出欠回答を作成/更新
+   */
+  async submitResponse(data: {
+    form_id: string;
+    user_id?: string;
+    user_name: string;
+    user_email: string;
+    attendance: 'attend' | 'absent' | 'undecided';
+    guest_count?: number;
+    comment?: string;
+    answers?: Record<string, any>;
+  }): Promise<Base44FormResponse> {
+    try {
+      // 既存の回答をチェック
+      const existing = await this.getUserResponseForForm(data.form_id, data.user_email);
+
+      if (existing) {
+        // 更新
+        return await base44Request<Base44FormResponse>(
+          'FormResponse',
+          'PUT',
+          existing.id,
+          {
+            attendance: data.attendance,
+            guest_count: data.guest_count,
+            comment: data.comment,
+            answers: data.answers,
+          }
+        );
+      } else {
+        // 新規作成
+        return await base44Request<Base44FormResponse>(
+          'FormResponse',
+          'POST',
+          undefined,
+          data
+        );
+      }
+    } catch (error) {
+      console.error('[Base44] Failed to submit response:', error);
+      throw error;
+    }
+  },
+};
