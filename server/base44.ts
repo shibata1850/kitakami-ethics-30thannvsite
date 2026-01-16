@@ -502,11 +502,10 @@ export const formResponseApi = {
   },
 
   /**
-   * 出欠回答を作成/更新
+   * 出欠回答を作成/更新（Base44バックエンド関数経由）
    */
   async submitResponse(data: {
     form_id: string;
-    user_id?: string;
     user_name: string;
     user_email: string;
     attendance: 'attend' | 'absent' | 'undecided';
@@ -517,44 +516,39 @@ export const formResponseApi = {
     console.log('[Base44] submitResponse called with data:', JSON.stringify(data, null, 2));
 
     try {
-      // 既存の回答をチェック
-      console.log('[Base44] Checking for existing response...');
-      const existing = await this.getUserResponseForForm(data.form_id, data.user_email);
-      console.log('[Base44] Existing response:', existing);
+      // Base44のバックエンド関数 updateAttendanceFromExternalSite を呼び出す
+      const functionUrl = `${BASE44_BASE_URL.replace('/entities', '/functions')}/updateAttendanceFromExternalSite`;
+      console.log('[Base44] Calling backend function:', functionUrl);
 
-      if (existing) {
-        // 更新
-        console.log('[Base44] Updating existing response:', existing.id);
-        const updateData = {
-          attendance: data.attendance,
-          guest_count: data.guest_count,
-          comment: data.comment,
-          answers: data.answers,
-        };
-        console.log('[Base44] Update data:', JSON.stringify(updateData, null, 2));
+      const requestBody = {
+        form_id: data.form_id,
+        user_email: data.user_email,
+        attendance: data.attendance,
+        guest_count: data.guest_count,
+        comment: data.comment,
+        answers: data.answers,
+        api_key: BASE44_API_KEY,
+      };
+      console.log('[Base44] Request body:', JSON.stringify(requestBody, null, 2));
 
-        const result = await base44Request<Base44FormResponse>(
-          'FormResponse',
-          'PUT',
-          existing.id,
-          updateData
-        );
-        console.log('[Base44] Update result:', result);
-        return result;
-      } else {
-        // 新規作成
-        console.log('[Base44] Creating new response...');
-        console.log('[Base44] Create data:', JSON.stringify(data, null, 2));
+      const response = await fetch(functionUrl, {
+        method: 'POST',
+        headers: {
+          'api_key': BASE44_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
 
-        const result = await base44Request<Base44FormResponse>(
-          'FormResponse',
-          'POST',
-          undefined,
-          data
-        );
-        console.log('[Base44] Create result:', result);
-        return result;
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[Base44] Backend function error (${response.status}):`, errorText);
+        throw new Error(`Base44 API error (${response.status}): ${errorText}`);
       }
+
+      const result = await response.json();
+      console.log('[Base44] Backend function response:', JSON.stringify(result, null, 2));
+      return result;
     } catch (error: any) {
       console.error('[Base44] Failed to submit response:', {
         error: error,
