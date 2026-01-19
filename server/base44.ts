@@ -7,6 +7,8 @@
 const BASE44_APP_ID = '6943944870829f16b01dab30';
 const BASE44_API_KEY = process.env.BASE44_API_KEY || '8834846fdeeb4fa2aad4038a3117ccbc';
 const BASE44_BASE_URL = `https://app.base44.com/api/apps/${BASE44_APP_ID}/entities`;
+// バックエンド関数用のサブドメインURL
+const BASE44_FUNCTIONS_URL = 'https://app-99436250-11d4-4bc6-89e5-c095cdd845ed.base44.com/api/functions';
 
 // Base44 エンティティ共通フィールド
 interface Base44Entity {
@@ -516,8 +518,8 @@ export const formResponseApi = {
     console.log('[Base44] submitResponse called with data:', JSON.stringify(data, null, 2));
 
     try {
-      // Base44のバックエンド関数 updateAttendanceFromExternalSite を呼び出す
-      const functionUrl = `${BASE44_BASE_URL.replace('/entities', '/functions')}/updateAttendanceFromExternalSite`;
+      // Base44のバックエンド関数 updateAttendanceFromExternalSite を呼び出す（サブドメイン経由）
+      const functionUrl = `${BASE44_FUNCTIONS_URL}/updateAttendanceFromExternalSite`;
       console.log('[Base44] Calling backend function:', functionUrl);
 
       const requestBody = {
