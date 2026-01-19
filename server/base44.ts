@@ -9,6 +9,8 @@ const BASE44_API_KEY = process.env.BASE44_API_KEY || '8834846fdeeb4fa2aad4038a31
 const BASE44_BASE_URL = `https://app.base44.com/api/apps/${BASE44_APP_ID}/entities`;
 // バックエンド関数用のサブドメインURL
 const BASE44_FUNCTIONS_URL = 'https://app-99436250-11d4-4bc6-89e5-c095cdd845ed.base44.app/api/functions';
+// バックエンド関数用の外部サイトAPIキー
+const BASE44_EXTERNAL_API_KEY = 'ba16f5d337e3eb671be53c4cb3f35c772df8a2286160004cb4d3e924c829157a';
 
 // Base44 エンティティ共通フィールド
 interface Base44Entity {
@@ -529,14 +531,14 @@ export const formResponseApi = {
         guest_count: data.guest_count,
         comment: data.comment,
         answers: data.answers,
-        api_key: BASE44_API_KEY,
+        api_key: BASE44_EXTERNAL_API_KEY,
       };
       console.log('[Base44] Request body:', JSON.stringify(requestBody, null, 2));
 
       const response = await fetch(functionUrl, {
         method: 'POST',
         headers: {
-          'api_key': BASE44_API_KEY,
+          'api_key': BASE44_EXTERNAL_API_KEY,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
